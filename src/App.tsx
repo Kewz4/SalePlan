@@ -26,7 +26,7 @@ const AVATARS = [
   "https://25nlk7g645.ucarecd.net/fa4658c8-38f5-446e-91dc-6f9100b109d8/SquareCharacter.png"
 ];
 
-type Screen = 'ONBOARDING' | 'USER_LOGIN' | 'USER_REGISTER' | 'USER_ONBOARDING_PREFS' | 'USER_HOME' | 'USER_SEARCH' | 'USER_REVIEWS' | 'USER_PROFILE' | 'USER_WALLET' | 'COMMERCE_LOGIN' | 'COMMERCE_DASHBOARD' | 'COMMERCE_CREATE_EXPERIENCE' | 'REGISTER_CHOICE' | 'LOGIN_CHOICE' | 'FAQ' | 'ABOUT' | 'CONTACT' | 'AFFILIATE';
+type Screen = 'ONBOARDING' | 'USER_LOGIN' | 'USER_REGISTER' | 'USER_ONBOARDING_PREFS' | 'USER_HOME' | 'USER_SEARCH' | 'USER_REVIEWS' | 'USER_PROFILE' | 'USER_WALLET' | 'USER_PLUS' | 'USER_PLUS_MANAGE' | 'COMMERCE_LOGIN' | 'COMMERCE_DASHBOARD' | 'COMMERCE_CREATE_EXPERIENCE' | 'REGISTER_CHOICE' | 'LOGIN_CHOICE' | 'FAQ' | 'ABOUT' | 'CONTACT' | 'AFFILIATE';
 
 const ALL_CATEGORIES = [
   { id: 'gastro', name: 'Gastronomía' },
@@ -218,24 +218,31 @@ const LEVELS = [
   { n: 2,  name: 'Mochilero Pro',         xp: 850,  next: 1000,  benefits: ['10% dcto. en Museo de Arte', 'Café gratis c/ compra $5+ en Café Central', 'Insignia Explorer'],  icon: Crown,    grad: 'from-[#253884] to-blue-600',      locked: false, done: false, isCurrent: true },
   { n: 3,  name: 'Explorador Maestro',    xp: 0,    next: 1500,  benefits: ['Acceso VIP a Flash Events', '15% dcto. en Burger Fest', 'Prioridad en nuevos retos'],         icon: Trophy,   grad: 'from-amber-400 to-yellow-600',    locked: true  },
   { n: 4,  name: 'Cazador de Sellos',     xp: 0,    next: 2000,  benefits: ['3x puntos en Flash', '20% dcto. en tiendas aliadas', 'Badge animado en perfil'],              icon: Backpack, grad: 'from-emerald-500 to-teal-600',   locked: true  },
-  { n: 5,  name: 'Viajero Local',         xp: 0,    next: 2800,  benefits: ['Café en Café 1840 mensual GRATIS', '5% cashback en aliados', 'Acceso mapa secreto'],          icon: Compass,  grad: 'from-sky-500 to-blue-700',        locked: true  },
+  { n: 5,  name: 'Viajero Local',         xp: 0,    next: 2800,  benefits: ['1 mes gratis SalePlan+', '15% dcto. en Café 1840', '5% cashback en todos los aliados'],         icon: Compass,  grad: 'from-sky-500 to-blue-700',        locked: true  },
   { n: 6,  name: 'Embajador Urbano',      xp: 0,    next: 3800,  benefits: ['Preventa exclusiva Flash Events', 'Perfil destacado en buscador', '25% dcto. Zona Rosa'],     icon: Sparkles, grad: 'from-violet-500 to-purple-700',   locked: true  },
   { n: 7,  name: 'Coleccionista Élite',   xp: 0,    next: 5000,  benefits: ['Skip filas en eventos aliados', 'Notificaciones 24h antes de Flash', 'Pack sorpresa mensual'], icon: Trophy,   grad: 'from-rose-500 to-pink-700',       locked: true  },
-  { n: 8,  name: 'Guardián del Barrio',   xp: 0,    next: 6500,  benefits: ['Reseñas con verificado badge', '2x puntos sáb-dom', 'Mesa VIP en restaurantes aliados'],      icon: Crown,    grad: 'from-indigo-500 to-blue-900',     locked: true  },
-  { n: 9,  name: 'Leyenda Capitalina',    xp: 0,    next: 8500,  benefits: ['Invitación a eventos privados SalePlan', 'Pack bienvenida anual ($50 valor)', '30% en aliados'], icon: Sparkles, grad: 'from-[#253884] to-indigo-900',    locked: true  },
-  { n: 10, name: 'Crónica Salvadoreña',   xp: 0,    next: 11000, benefits: ['Sello de honor permanente', 'Tarjeta de visita digital SalePlan', 'Free entry Noche Museos'], icon: Trophy,   grad: 'from-amber-600 to-yellow-800',    locked: true  },
-  { n: 11, name: 'Explorador Nacional',   xp: 0,    next: 14000, benefits: ['Acceso beta zonas nuevas', '15% dcto. paquetes turísticos aliados', 'Comisión 5% referidos'], icon: Mountain, grad: 'from-emerald-600 to-green-900',   locked: true  },
-  { n: 12, name: 'Pionero del Pasaporte', xp: 0,    next: 17500, benefits: ['Pasaporte físico coleccionable', 'Número de serie exclusivo', '40% dcto. en aliados top'],   icon: Backpack, grad: 'from-teal-500 to-cyan-800',       locked: true  },
-  { n: 13, name: 'Maestro Viajero',       xp: 0,    next: 22000, benefits: ['Mentoría a nuevos exploradores', 'Badge animado premium', 'Free noche en hotel aliado'],       icon: Compass,  grad: 'from-sky-600 to-blue-900',        locked: true  },
-  { n: 14, name: 'Héroe Urbano',          xp: 0,    next: 27500, benefits: ['Nombre en créditos de la app', 'Acceso curado de tours privados', '50% off aliados'],         icon: Crown,    grad: 'from-violet-600 to-purple-900',   locked: true  },
-  { n: 15, name: 'Ciudadano de Oro',      xp: 0,    next: 34000, benefits: ['1 sello gratis cada mes', 'Canal Telegram VIP con ofertas 48h antes', '10% cashback global'], icon: Trophy,   grad: 'from-yellow-500 to-amber-700',    locked: true  },
-  { n: 16, name: 'Embajador Nacional',    xp: 0,    next: 42000, benefits: ['Presencia en eventos nacionales', 'Kit de prensa SalePlan', 'Free vuelo doméstico (sorteo)'], icon: Sparkles, grad: 'from-rose-600 to-red-900',        locked: true  },
-  { n: 17, name: 'Gran Explorador',       xp: 0,    next: 52000, benefits: ['Descuento en TODOS los aliados', '4x puntos Flash permanente', 'Curación ruta semanal'],       icon: Mountain, grad: 'from-[#253884] to-purple-900',    locked: true  },
-  { n: 18, name: 'Cronista del País',     xp: 0,    next: 65000, benefits: ['Reportaje en blog oficial', 'Tarjeta NFC SalePlan exclusiva', 'Comisión 10% referidos'],       icon: Backpack, grad: 'from-emerald-700 to-teal-900',    locked: true  },
-  { n: 19, name: 'Guía Certificado',      xp: 0,    next: 80000, benefits: ['Crea guías de viaje propias en app', 'Línea directa soporte 24/7', 'Entrada VIP permanente'],  icon: Compass,  grad: 'from-sky-700 to-indigo-900',      locked: true  },
-  { n: 20, name: 'Leyenda SalePlan',      xp: 0,    next: 100000,benefits: ['Nombre en Tabla de Honor', 'Acceso vitalicio a todo VIP', 'Cena con fundadores SalePlan'],     icon: Trophy,   grad: 'from-amber-700 to-yellow-900',    locked: true  },
-  { n: 21, name: 'Patriarca Explorador',  xp: 0,    next: 130000,benefits: ['Estatua digital en mapa SalePlan', 'Crea retos oficiales verificados', 'Revenue sharing'],       icon: Crown,    grad: 'from-violet-700 to-purple-900',   locked: true  },
-  { n: 22, name: 'Dios de la Ciudad',     xp: 0,    next: 999999,benefits: ['Junta directiva advisory', 'TODO gratis de por vida', 'Tu foto en app de bienvenida'],         icon: Sparkles, grad: 'from-rose-700 to-pink-900',       locked: true  },
+  { n: 8,  name: 'Guardián del Barrio',   xp: 0,    next: 6500,  benefits: ['2 meses gratis SalePlan+', 'Reseñas con badge Verificado', '30% dcto. en restaurantes aliados'],   icon: Crown,    grad: 'from-indigo-500 to-blue-900',     locked: true  },
+  { n: 9,  name: 'Leyenda Capitalina',    xp: 0,    next: 8500,  benefits: ['Invitaciones a eventos presenciales SalePlan', 'Pack bienvenida físico ($50 valor)', '35% dcto. en aliados'], icon: Sparkles, grad: 'from-[#253884] to-indigo-900',    locked: true  },
+  { n: 10, name: 'Crónica Salvadoreña',   xp: 0,    next: 11000, benefits: ['3 meses gratis SalePlan+', 'Tarjeta digital SalePlan verificada', 'Entrada gratis Noche de Museos'], icon: Trophy,   grad: 'from-amber-600 to-yellow-800',    locked: true  },
+  { n: 11, name: 'Explorador Nacional',   xp: 0,    next: 14000, benefits: ['Acceso anticipado a nuevas zonas', '20% dcto. paquetes turísticos aliados', 'Badge exclusivo en perfil'], icon: Mountain, grad: 'from-emerald-600 to-green-900',   locked: true  },
+  { n: 12, name: 'Pionero del Pasaporte', xp: 0,    next: 17500, benefits: ['Pasaporte físico coleccionable edición limitada', 'Número de serie grabado', '40% dcto. en aliados top'],   icon: Backpack, grad: 'from-teal-500 to-cyan-800',       locked: true  },
+  { n: 13, name: 'Maestro Viajero',       xp: 0,    next: 22000, benefits: ['3 meses gratis SalePlan+', 'Badge animado premium en perfil', 'Noche gratis en hotel aliado'],       icon: Compass,  grad: 'from-sky-600 to-blue-900',        locked: true  },
+  { n: 14, name: 'Héroe Urbano',          xp: 0,    next: 27500, benefits: ['Acceso anticipado a experiencias Plus curadas', 'Pack de stickers digitales exclusivo', '45% dcto. en aliados'], icon: Crown,    grad: 'from-violet-600 to-purple-900',   locked: true  },
+  { n: 15, name: 'Ciudadano de Oro',      xp: 0,    next: 34000, benefits: ['6 meses gratis SalePlan+', '1 sello gratis cada mes', '10% cashback global en aliados'], icon: Trophy,   grad: 'from-yellow-500 to-amber-700',    locked: true  },
+  { n: 16, name: 'Embajador Nacional',    xp: 0,    next: 42000, benefits: ['Invitación a eventos exclusivos SalePlan', 'Kit físico SalePlan (camiseta + stickers)', '55% dcto. en experiencias aliadas'], icon: Sparkles, grad: 'from-rose-600 to-red-900',        locked: true  },
+  { n: 17, name: 'Gran Explorador',       xp: 0,    next: 52000, benefits: ['1 año gratis SalePlan+', '4x puntos en Flash permanente', 'Curación de ruta personalizada semanal'],       icon: Mountain, grad: 'from-[#253884] to-purple-900',    locked: true  },
+  { n: 18, name: 'Cronista del País',     xp: 0,    next: 65000, benefits: ['Tarjeta NFC SalePlan exclusiva', 'Pack sorpresa bimestral a domicilio', '60% dcto. en aliados premium'],       icon: Backpack, grad: 'from-emerald-700 to-teal-900',    locked: true  },
+  { n: 19, name: 'Guía Certificado',      xp: 0,    next: 80000, benefits: ['Placa verificada en tu perfil SalePlan', 'Atención prioritaria soporte 24/7', 'Entrada VIP permanente en eventos aliados'],  icon: Compass,  grad: 'from-sky-700 to-indigo-900',      locked: true  },
+  { n: 20, name: 'Leyenda SalePlan',      xp: 0,    next: 100000,benefits: ['SalePlan+ de por vida GRATIS', 'Nombre en Tabla de Honor permanente', 'Experiencias VIP curadas mensualmente'],     icon: Trophy,   grad: 'from-amber-700 to-yellow-900',    locked: true  },
+  { n: 21, name: 'Patriarca Explorador',  xp: 0,    next: 130000,benefits: ['Pasaporte de edición especial físico firmado', 'Pack premium sorpresa mensual a domicilio', 'Todos los descuentos al máximo nivel'], icon: Crown,    grad: 'from-violet-700 to-purple-900',   locked: true  },
+  { n: 22, name: 'Dios de la Ciudad',     xp: 0,    next: 999999,benefits: ['SalePlan+ vitalicio + todos los beneficios desbloqueados', 'Experiencia VIP curada personalizada cada mes', 'Reconocimiento permanente en pantalla de inicio del app'], icon: Sparkles, grad: 'from-rose-700 to-pink-900',       locked: true  },
+];
+
+const CURATED_ITINERARIES = [
+  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'La mejor gastronomía local en un solo día. Pupusas, café de especialidad y más.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500' },
+  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías y teatros imprescindibles. Para el alma curiosa.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600' },
+  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600' },
+  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'El corazón colonial de El Salvador en un recorrido imperdible.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600' },
 ];
 
 // Motion stagger variants — Emil: stagger 30-80ms between items
@@ -284,6 +291,9 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [removeConfirmId, setRemoveConfirmId] = useState<number | null>(null);
   const [recentlyViewed, setRecentlyViewed] = useState<number[]>([]);
+  const [hasSalePlanPlus, setHasSalePlanPlus] = useState(false);
+  const [showPlusAnimation, setShowPlusAnimation] = useState(false);
+  const [stampModalSuccess, setStampModalSuccess] = useState(false);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -563,6 +573,7 @@ export default function App() {
                     { label: 'Acerca de SalePlan',   screen: 'ABOUT',           icon: <Book size={20} strokeWidth={1.5} />,        color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Contacto',             screen: 'CONTACT',         icon: <Mail size={20} strokeWidth={1.5} />,        color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Afíliate',             screen: 'AFFILIATE',       icon: <Store size={20} strokeWidth={1.5} />,       color: 'bg-blue-50 text-[#253884]' },
+                    { label: hasSalePlanPlus ? 'Mi SalePlan+' : 'SalePlan+ — $3.99/mes', screen: hasSalePlanPlus ? 'USER_PLUS_MANAGE' : 'USER_PLUS', icon: <Sparkles size={20} strokeWidth={1.5} />, color: 'bg-yellow-50 text-yellow-700' },
                   ].map((item, idx) => (
                     <motion.button
                       key={item.screen}
@@ -924,8 +935,9 @@ export default function App() {
 
   const renderUserWallet = () => {
     const myRoute = POIS.filter(poi => savedPOIs.includes(poi.id));
-    const totalSlots = 6;
-    const poiW = (p: typeof myRoute[0]) => p.isFlash ? Math.min(3, getFlashStamps(p.pts)) : 1;
+    const totalSlots = hasSalePlanPlus ? 10 : 6;
+    const COLS = 3;
+    const poiW = (p: typeof myRoute[0]) => p.isFlash ? Math.min(COLS, getFlashStamps(p.pts)) : 1;
     const occupiedCells = myRoute.reduce((sum, poi) => sum + poiW(poi), 0);
     const emptyCells = Math.max(0, totalSlots - occupiedCells);
 
@@ -950,7 +962,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Passport grid — flex-row layout eliminates col-span centering bugs */}
+              {/* Passport grid — flex-row layout, inline flex values to avoid Tailwind JIT misses */}
               {(() => {
                 type GridCell = { kind: 'poi'; poi: typeof myRoute[0] } | { kind: 'empty'; idx: number };
                 const cells: GridCell[] = [
@@ -961,108 +973,118 @@ export default function App() {
                 let row: GridCell[] = [], rowW = 0;
                 for (const cell of cells) {
                   const w = cell.kind === 'poi' ? poiW(cell.poi) : 1;
-                  if (rowW + w > 3) {
-                    while (rowW < 3) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
+                  if (rowW + w > COLS) {
+                    while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
                     rows.push(row); row = []; rowW = 0;
                   }
                   row.push(cell); rowW += w;
-                  if (rowW === 3) { rows.push(row); row = []; rowW = 0; }
+                  if (rowW === COLS) { rows.push(row); row = []; rowW = 0; }
                 }
                 if (row.length) {
-                  while (rowW < 3) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
+                  while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
                   rows.push(row);
                 }
+
+                const PassportCell = ({ poi, pw }: { poi: typeof myRoute[0]; pw: number }) => {
+                  const isStamped = stampedPOIs.includes(poi.id);
+                  const isJustStamped = justStampedId === poi.id;
+                  return (
+                    <div
+                      onClick={() => { if (!isStamped) { setStampModalSuccess(false); setQrModalPOIId(poi.id); } else navigateTo('USER_SEARCH', poi.id); }}
+                      style={{ flex: pw, aspectRatio: `${pw}/1` }}
+                      className={`${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
+                    >
+                      {poi.isFlash && (
+                        <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
+                          <Zap size={8} strokeWidth={2.5} /> Flash
+                        </span>
+                      )}
+                      {isStamped ? (
+                        <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
+                          <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
+                        </div>
+                      ) : (
+                        <button
+                          onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); }}
+                          className="absolute top-1.5 right-1.5 w-5 h-5 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center z-10 transition-colors"
+                        >
+                          <X size={10} strokeWidth={3} />
+                        </button>
+                      )}
+                      <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
+                        <PoiIcon id={poi.id} size={pw > 1 ? 32 : 28} strokeWidth={1.5} />
+                        <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
+                      </div>
+                    </div>
+                  );
+                };
+
                 return (
                   <div className="flex flex-col gap-3">
                     {rows.map((r, ri) => {
                       const poiCells = r.filter(c => c.kind === 'poi');
+                      // Lone flash: single POI taking less than full row → center it
                       const isLoneFlash = poiCells.length === 1 && poiCells[0].kind === 'poi' && poiCells[0].poi.isFlash;
                       if (isLoneFlash) {
                         const cell = poiCells[0];
                         if (cell.kind !== 'poi') return null;
-                        const { poi } = cell;
-                        const pw = poiW(poi);
-                        const isStamped = stampedPOIs.includes(poi.id);
-                        const isJustStamped = justStampedId === poi.id;
-                        const widthStyle = pw === 3 ? '100%' : pw === 2 ? 'calc(66.67% - 6px)' : 'calc(33.33% - 8px)';
+                        const pw = poiW(cell.poi);
+                        const pct = pw === COLS ? '100%' : pw === 2 ? 'calc(66.67% - 6px)' : 'calc(33.33% - 8px)';
                         return (
-                          <div key={ri} className="flex justify-center gap-3">
-                            <div
-                              onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
-                              style={{ width: widthStyle, aspectRatio: `${pw}/1` }}
-                              className={`${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
-                            >
-                              <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
-                                <Zap size={8} strokeWidth={2.5} /> Flash
-                              </span>
-                              {isStamped && (
-                                <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
-                                  <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
-                                </div>
-                              )}
-                              <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
-                                <PoiIcon id={poi.id} size={32} strokeWidth={1.5} />
-                                <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
-                              </div>
+                          <div key={ri} className="flex justify-center">
+                            <div style={{ width: pct }}>
+                              <PassportCell poi={cell.poi} pw={pw} />
                             </div>
                           </div>
                         );
                       }
                       return (
-                      <div key={ri} className="flex gap-3">
-                        {r.map((cell, ci) => {
-                          if (cell.kind === 'empty') {
-                            const isPlaceholder = cell.idx < 0;
-                            return isPlaceholder ? (
-                              <div key={`ph-${ri}-${ci}`} className="flex-1 aspect-square opacity-0 pointer-events-none" />
-                            ) : (
-                              <button
-                                key={`e-${ri}-${ci}`}
-                                onClick={() => navigateTo('USER_SEARCH')}
-                                className="flex-1 aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
-                              >
-                                <span className="text-gray-300 font-black text-2xl group-hover:text-[#253884] transition-colors duration-200">+</span>
-                                <p className="text-[8px] font-bold text-gray-400 group-hover:text-[#253884] uppercase mt-1 transition-colors duration-200">Agregar</p>
-                              </button>
-                            );
-                          }
-                          const { poi } = cell;
-                          const isStamped = stampedPOIs.includes(poi.id);
-                          const isJustStamped = justStampedId === poi.id;
-                          const isFlash = poi.isFlash;
-                          const pw = poiW(poi);
-                          return (
-                            <div
-                              key={poi.id}
-                              onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
-                              style={{ aspectRatio: isFlash ? `${pw}/1` : '1/1' }}
-                              className={`${isFlash ? `flex-[${pw}]` : 'flex-1'} ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
-                            >
-                              {isFlash && (
-                                <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
-                                  <Zap size={8} strokeWidth={2.5} /> Flash
-                                </span>
-                              )}
-                              {isStamped && (
-                                <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
-                                  <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
-                                </div>
-                              )}
-                              <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
-                                <PoiIcon id={poi.id} size={isFlash ? 32 : 28} strokeWidth={1.5} />
-                                <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                        <div key={ri} className="flex gap-3">
+                          {r.map((cell, ci) => {
+                            if (cell.kind === 'empty') {
+                              return cell.idx < 0 ? (
+                                <div key={`ph-${ri}-${ci}`} style={{ flex: 1, aspectRatio: '1/1' }} className="opacity-0 pointer-events-none" />
+                              ) : (
+                                <button
+                                  key={`e-${ri}-${ci}`}
+                                  onClick={() => navigateTo('USER_SEARCH')}
+                                  style={{ flex: 1, aspectRatio: '1/1' }}
+                                  className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
+                                >
+                                  <span className="text-gray-300 font-black text-2xl group-active:text-[#253884]">+</span>
+                                  <p className="text-[8px] font-bold text-gray-400 uppercase mt-1">Agregar</p>
+                                </button>
+                              );
+                            }
+                            return <PassportCell key={cell.poi.id} poi={cell.poi} pw={poiW(cell.poi)} />;
+                          })}
+                        </div>
                       );
                     })}
                   </div>
                 );
               })()}
 
-              <div className="mt-8">
+              {!hasSalePlanPlus && (
+                <button
+                  onClick={() => navigateTo('USER_PLUS')}
+                  className="mt-6 w-full bg-gradient-to-r from-[#253884] to-indigo-500 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.97] transition-transform shadow-md"
+                >
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                    <Sparkles size={20} strokeWidth={1.5} className="text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <p className="text-white font-heading text-base tracking-tight leading-tight">SalePlan<span className="text-yellow-300">+</span></p>
+                    <p className="text-blue-200 text-[10px] font-semibold">10 paradas · 2x XP · Itinerarios expertos</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-yellow-300 font-black text-sm">$3.99</p>
+                    <p className="text-blue-200 text-[9px] font-bold">/mes</p>
+                  </div>
+                </button>
+              )}
+
+              <div className="mt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
                     Ruta de Hoy
@@ -1169,8 +1191,18 @@ export default function App() {
                                 return null;
                               })()}
                             </div>
-                            <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
-                              {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
+                            <div className="flex items-center gap-2 shrink-0">
+                              {!isStamped && (
+                                <button
+                                  onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); haptic([10, 20]); }}
+                                  className="w-7 h-7 rounded-full bg-red-50 text-red-400 flex items-center justify-center active:scale-[0.97] transition-transform border border-red-100"
+                                >
+                                  <X size={12} strokeWidth={2.5} />
+                                </button>
+                              )}
+                              <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
+                                {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
+                              </div>
                             </div>
                           </div>
                         );
@@ -1202,55 +1234,92 @@ export default function App() {
                   transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
                   className="fixed inset-0 z-50 flex items-center justify-center p-6 pointer-events-none"
                 >
-                  <div className="bg-white w-full max-w-sm rounded-3xl p-6 relative flex flex-col items-center pointer-events-auto">
-                    <button onClick={() => setQrModalPOIId(null)} className="absolute top-4 right-4 w-8 h-8 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
+                  <div className="bg-white w-full max-w-sm rounded-3xl p-6 relative flex flex-col items-center pointer-events-auto overflow-hidden">
+                    <button onClick={() => { setQrModalPOIId(null); setStampModalSuccess(false); }} className="absolute top-4 right-4 w-8 h-8 bg-gray-100 text-gray-500 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform z-10">
                       <X size={14} strokeWidth={2.5} />
                     </button>
-                    <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-2 text-center mt-2">Confirmar Parada</h3>
-                    <p className="text-center text-gray-500 text-sm font-medium mb-6">Muestra este código al comercio para escanear y recibir tu sello y beneficios.</p>
 
-                    <div className="bg-white p-4 rounded-3xl border-4 border-[#253884] subtle-shadow mb-6">
-                      <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=sp-stamp-${qrModalPOIId}`} alt="QR de Pasaporte" className="w-48 h-48 mix-blend-multiply" />
-                    </div>
+                    <AnimatePresence mode="wait">
+                      {stampModalSuccess ? (
+                        <motion.div
+                          key="success"
+                          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                          className="w-full flex flex-col items-center pt-2"
+                        >
+                          <motion.div
+                            initial={{ scale: 2, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                            className="w-20 h-20 bg-[#253884] rounded-full flex items-center justify-center mb-4 shadow-lg"
+                          >
+                            <img src={ICONS.LOGO} className="w-12 h-12 brightness-0 invert" alt="Sello" />
+                          </motion.div>
+                          <p className="text-xs font-black text-yellow-500 uppercase tracking-[0.2em] mb-1">¡Sellado!</p>
+                          <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-1 text-center">
+                            {POIS.find(p => p.id === qrModalPOIId)?.name}
+                          </h3>
+                          <p className="text-gray-400 font-medium text-sm text-center mb-6">Tu sello ha sido registrado exitosamente.</p>
+                          <button
+                            onClick={() => { setQrModalPOIId(null); setStampModalSuccess(false); navigateTo('USER_REVIEWS'); }}
+                            className="w-full bg-[#253884] text-white py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.97] transition-transform mb-3"
+                          >
+                            <img src={ICONS.STAR_FILLED} className="w-5 h-5 invert" alt="" /> Dejar Reseña
+                          </button>
+                          <button
+                            onClick={() => { setQrModalPOIId(null); setStampModalSuccess(false); }}
+                            className="w-full bg-gray-50 border border-gray-100 text-gray-500 py-3 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform"
+                          >
+                            Cerrar
+                          </button>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="scan"
+                          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                          className="w-full flex flex-col items-center"
+                        >
+                          <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-2 text-center mt-2">Confirmar Parada</h3>
+                          <p className="text-center text-gray-500 text-sm font-medium mb-6">Muestra este código al comercio para escanear y recibir tu sello y beneficios.</p>
 
-                    <button
-                      onClick={() => {
-                        const id = qrModalPOIId!;
-                        const poi = POIS.find(p => p.id === id)!;
-                        const poiStamps = poi.isFlash ? getFlashStamps(poi.pts) : 1;
-                        const pts = poi.isFlash ? poiStamps * 15 : 10;
+                          <div className="bg-white p-4 rounded-3xl border-4 border-[#253884] subtle-shadow mb-6">
+                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=sp-stamp-${qrModalPOIId}`} alt="QR de Pasaporte" className="w-48 h-48 mix-blend-multiply" />
+                          </div>
 
-                        const myRoute = POIS.filter(p => savedPOIs.includes(p.id));
-                        const totalSlots = 6;
-                        const qrPoiW = (p: typeof myRoute[0]) => p.isFlash ? Math.min(3, getFlashStamps(p.pts)) : 1;
-                        const occupiedCells = myRoute.reduce((sum, p) => sum + qrPoiW(p), 0);
-                        const stampedCells = myRoute.reduce((sum, p) => stampedPOIs.includes(p.id) ? sum + qrPoiW(p) : sum, 0);
-                        const remainingUnstamped = occupiedCells - stampedCells;
-                        const overflow = Math.max(0, poiStamps - remainingUnstamped);
+                          <button
+                            onClick={() => {
+                              const id = qrModalPOIId!;
+                              const poi = POIS.find(p => p.id === id)!;
+                              const poiStamps = poi.isFlash ? getFlashStamps(poi.pts) : 1;
+                              const pts = (poi.isFlash ? poiStamps * 15 : 10) * (hasSalePlanPlus ? 2 : 1);
 
-                        const newStamped = [...stampedPOIs, id];
-                        const allStamped = myRoute.every(p => newStamped.includes(p.id));
-                        const isFull = occupiedCells >= totalSlots;
+                              const currentRoute = POIS.filter(p => savedPOIs.includes(p.id));
+                              const currentSlots = hasSalePlanPlus ? 10 : 6;
+                              const qrPoiW = (p: typeof currentRoute[0]) => p.isFlash ? Math.min(3, getFlashStamps(p.pts)) : 1;
+                              const occupiedCells = currentRoute.reduce((sum, p) => sum + qrPoiW(p), 0);
+                              const stampedCells = currentRoute.reduce((sum, p) => stampedPOIs.includes(p.id) ? sum + qrPoiW(p) : sum, 0);
+                              const remainingUnstamped = occupiedCells - stampedCells;
+                              const overflow = Math.max(0, poiStamps - remainingUnstamped);
 
-                        setStampedPOIs(newStamped);
-                        setJustStampedId(id);
-                        setQrModalPOIId(null);
-                        setPassportPoints(prev => prev + pts + (allStamped && isFull ? 50 : 0));
-                        if (overflow > 0) setCarryOverStamps(prev => prev + overflow);
-                        haptic([15, 30, 15, 60]);
-                        setTimeout(() => setJustStampedId(null), 1200);
-                        if (allStamped && isFull) setTimeout(() => setShowPassportComplete(true), 900);
-                      }}
-                      className="w-full bg-[#253884] text-white py-4 rounded-xl font-bold uppercase tracking-wide subtle-shadow active:scale-[0.97] transition-transform"
-                    >
-                      [Demo] Simular Escaneo
-                    </button>
-                    <button
-                      onClick={() => { setQrModalPOIId(null); navigateTo('USER_REVIEWS'); }}
-                      className="w-full bg-gray-50 border border-gray-200 text-[#253884] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
-                    >
-                      <img src={ICONS.STAR_FILLED} className="w-4 h-4 opacity-80" alt="" /> Dejar Reseña
-                    </button>
+                              const newStamped = [...stampedPOIs, id];
+                              const allStamped = currentRoute.every(p => newStamped.includes(p.id));
+                              const isFull = occupiedCells >= currentSlots;
+
+                              setStampedPOIs(newStamped);
+                              setJustStampedId(id);
+                              setStampModalSuccess(true);
+                              setPassportPoints(prev => prev + pts + (allStamped && isFull ? 50 : 0));
+                              if (overflow > 0) setCarryOverStamps(prev => prev + overflow);
+                              haptic([15, 30, 15, 60]);
+                              setTimeout(() => setJustStampedId(null), 1200);
+                              if (allStamped && isFull) setTimeout(() => { setQrModalPOIId(null); setStampModalSuccess(false); setShowPassportComplete(true); }, 1200);
+                            }}
+                            className="w-full bg-[#253884] text-white py-4 rounded-xl font-bold uppercase tracking-wide subtle-shadow active:scale-[0.97] transition-transform"
+                          >
+                            [Demo] Simular Escaneo
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
               </>
@@ -1515,7 +1584,14 @@ export default function App() {
               <p className="text-[10px] uppercase font-bold text-gray-400 mt-1">En Ruta</p>
             </div>
           </div>
-          <div className="pt-4">
+          <div className="pt-4 space-y-3">
+            <button
+              onClick={() => navigateTo(hasSalePlanPlus ? 'USER_PLUS_MANAGE' : 'USER_PLUS')}
+              className={`w-full py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.97] transition-transform ${hasSalePlanPlus ? 'bg-gradient-to-r from-[#253884] to-indigo-600 text-white shadow-md' : 'bg-[#e6eaf8] text-[#253884] border border-[#253884]/20'}`}
+            >
+              <Sparkles size={16} strokeWidth={2} />
+              {hasSalePlanPlus ? 'SalePlan+ Activo — Gestionar' : 'Hazte SalePlan+ — $3.99/mes'}
+            </button>
             <button onClick={() => navigateTo('ONBOARDING')} className="w-full py-4 bg-gray-50 text-red-600 rounded-xl font-bold text-sm tracking-wide border border-transparent active:scale-[0.97] transition-transform">
               Cerrar Sesión
             </button>
@@ -2272,6 +2348,220 @@ export default function App() {
     </Layout>
   );
 
+  const renderUserPlus = () => (
+    <Layout bgClass="bg-gray-50">
+      <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+        {/* Hero */}
+        <div className="relative bg-gradient-to-br from-[#253884] via-indigo-700 to-purple-800 px-6 pt-14 pb-14 overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            {[...Array(20)].map((_, i) => (
+              <div key={i} className="absolute rounded-full bg-white" style={{ width: 4 + (i % 5) * 6, height: 4 + (i % 5) * 6, top: `${(i * 17) % 100}%`, left: `${(i * 23) % 100}%`, opacity: 0.3 + (i % 4) * 0.2 }} />
+            ))}
+          </div>
+          <button onClick={() => navigateTo('USER_WALLET')} className="absolute top-6 left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
+            <ChevronLeft size={20} strokeWidth={2} className="text-white" />
+          </button>
+          <div className="relative z-10 text-center">
+            <div className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 font-black text-xs uppercase px-4 py-1.5 rounded-full mb-4 tracking-wider">
+              <Sparkles size={12} strokeWidth={2.5} /> Desbloquea lo mejor
+            </div>
+            <h1 className="text-5xl font-heading text-white tracking-tight mb-1">SalePlan<span className="text-yellow-300">+</span></h1>
+            <p className="text-blue-200 font-medium text-base mb-6">Explora más, gana más, vive más.</p>
+            <div className="bg-white/10 border border-white/20 rounded-2xl px-6 py-4 inline-block">
+              <p className="text-4xl font-heading text-white">$3.99<span className="text-lg text-blue-200 font-semibold">/mes</span></p>
+              <p className="text-blue-200 text-xs font-medium mt-1">Cancela cuando quieras · Sin compromiso</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 pt-8 space-y-4">
+          {/* Feature cards */}
+          {[
+            { icon: '🎫', title: 'Hasta 10 paradas por Pasaporte', desc: 'El doble de aventura. Planea rutas épicas con más comercios aliados.', color: 'bg-blue-50 border-blue-100' },
+            { icon: '⚡', title: '2× XP en cada parada', desc: 'Sube de nivel el doble de rápido y desbloquea beneficios exclusivos antes.', color: 'bg-yellow-50 border-yellow-100' },
+            { icon: '🗺️', title: 'Itinerarios de Expertos', desc: 'Accede a rutas curadas por expertos en turismo con temáticas únicas.', color: 'bg-purple-50 border-purple-100' },
+            { icon: '🌟', title: 'Eventos Premium exclusivos', desc: 'Flash Events con recompensas dobles solo disponibles para miembros Plus.', color: 'bg-amber-50 border-amber-100' },
+            { icon: '🏅', title: 'Badge Plus en tu perfil', desc: 'Distingue tu perfil con el ícono exclusivo de miembro SalePlan+.', color: 'bg-indigo-50 border-indigo-100' },
+          ].map(f => (
+            <div key={f.title} className={`flex items-start gap-4 p-4 rounded-2xl border ${f.color}`}>
+              <span className="text-2xl shrink-0 mt-0.5">{f.icon}</span>
+              <div>
+                <p className="font-bold text-[#253884] text-sm mb-0.5">{f.title}</p>
+                <p className="text-gray-500 text-xs font-medium leading-relaxed">{f.desc}</p>
+              </div>
+            </div>
+          ))}
+
+          {/* Curated Itineraries preview */}
+          <div className="pt-2">
+            <h3 className="text-xl font-heading text-[#253884] tracking-tight mb-3">Itinerarios Incluidos</h3>
+            <div className="space-y-3">
+              {CURATED_ITINERARIES.map(it => (
+                <div key={it.id} className={`bg-gradient-to-r ${it.color} rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden`}>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-6xl opacity-20">{it.emoji}</div>
+                  <span className="text-3xl shrink-0">{it.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-heading text-white text-base tracking-tight">{it.title}</p>
+                    <p className="text-white/70 text-xs font-medium mt-0.5 line-clamp-1">{it.description}</p>
+                    <p className="text-white/60 text-[10px] font-bold uppercase tracking-wider mt-1">{it.stops.length} paradas incluidas</p>
+                  </div>
+                  <Lock size={16} className="text-white/50 shrink-0" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Subscribe CTA */}
+          <div className="pt-4 pb-4">
+            <button
+              onClick={() => {
+                setHasSalePlanPlus(true);
+                setShowPlusAnimation(true);
+                haptic([20, 40, 20, 80]);
+                setTimeout(() => { setShowPlusAnimation(false); navigateTo('USER_PLUS_MANAGE'); }, 3200);
+              }}
+              className="w-full py-5 bg-gradient-to-r from-[#253884] to-indigo-600 text-white font-heading text-xl rounded-2xl shadow-lg active:scale-[0.97] transition-transform relative overflow-hidden"
+            >
+              <span className="relative z-10">Comenzar SalePlan+ — $3.99/mes</span>
+            </button>
+            <p className="text-center text-gray-400 text-xs font-medium mt-3">Sin compromiso · Cancela en cualquier momento</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Purchase animation overlay */}
+      <AnimatePresence>
+        {showPlusAnimation && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-[#253884] z-[200]" />
+            <motion.div className="fixed inset-0 z-[201] flex flex-col items-center justify-center p-8 text-center">
+              {/* Passport expanding animation */}
+              <motion.div
+                initial={{ width: 180, height: 120 }}
+                animate={{ width: 300, height: 200 }}
+                transition={{ delay: 0.5, duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
+                className="bg-white rounded-3xl shadow-2xl mb-8 flex flex-col items-center justify-center relative overflow-hidden"
+              >
+                <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                  className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-1 rounded-full"
+                >
+                  Plus
+                </motion.div>
+                <img src={ICONS.LOGO} className="w-12 h-12 mb-2" alt="SalePlan" />
+                <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }}
+                  className="grid grid-cols-5 gap-1 px-4"
+                >
+                  {[...Array(10)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 1.0 + i * 0.07, duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+                      className="w-7 h-7 bg-[#e6eaf8] border border-[#253884]/20 rounded-lg"
+                    />
+                  ))}
+                </motion.div>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.8 }}>
+                <p className="text-yellow-300 font-black text-xs uppercase tracking-[0.2em] mb-2">¡Bienvenido!</p>
+                <h2 className="text-white font-heading text-4xl tracking-tight mb-2">SalePlan<span className="text-yellow-300">+</span> Activo</h2>
+                <p className="text-blue-200 font-medium text-sm">Tu pasaporte ahora tiene 10 espacios.<br />Gana 2× XP en cada visita.</p>
+              </motion.div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </Layout>
+  );
+
+  const renderUserPlusManage = () => (
+    <Layout bgClass="bg-gray-50">
+      <div className="flex-1 pb-24 p-6 pt-12">
+        <div className="flex items-center gap-4 mb-8">
+          <button onClick={() => navigateTo('USER_PROFILE')} className="w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center subtle-shadow active:scale-[0.97] transition-transform">
+            <ChevronLeft size={20} strokeWidth={2} className="text-[#253884]" />
+          </button>
+          <h2 className="text-3xl font-heading text-[#253884] tracking-tight">Mi SalePlan<span className="text-indigo-500">+</span></h2>
+        </div>
+
+        {/* Active plan card */}
+        <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 mb-6 relative overflow-hidden shadow-lg">
+          <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-3 py-1 rounded-full tracking-wider">Activo</div>
+          <Sparkles size={40} strokeWidth={1} className="text-white/20 absolute bottom-4 right-4" />
+          <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-1">Tu plan actual</p>
+          <h3 className="text-white font-heading text-3xl tracking-tight mb-3">SalePlan<span className="text-yellow-300">+</span></h3>
+          <p className="text-blue-200 text-sm font-medium mb-4">Renovación: 20 de junio, 2026</p>
+          <div className="flex items-baseline gap-1">
+            <p className="text-white font-heading text-2xl">$3.99</p>
+            <p className="text-blue-200 font-medium text-sm">/mes</p>
+          </div>
+        </div>
+
+        {/* Benefits active */}
+        <div className="bg-white rounded-3xl p-5 subtle-shadow mb-4">
+          <h4 className="font-black text-[#253884] text-xs uppercase tracking-[0.15em] mb-4">Beneficios Activos</h4>
+          <div className="space-y-3">
+            {[
+              { icon: '🎫', label: '10 paradas por Pasaporte', sub: 'El doble que el plan gratuito' },
+              { icon: '⚡', label: '2× XP en cada parada', sub: 'Sube de nivel más rápido' },
+              { icon: '🗺️', label: 'Itinerarios de Expertos', sub: `${CURATED_ITINERARIES.length} rutas curadas disponibles` },
+              { icon: '🌟', label: 'Eventos Premium exclusivos', sub: 'Flash Events con 2× recompensas' },
+              { icon: '🏅', label: 'Badge Plus en tu perfil', sub: 'Visible para todos' },
+            ].map(b => (
+              <div key={b.label} className="flex items-center gap-3">
+                <span className="text-xl shrink-0">{b.icon}</span>
+                <div className="flex-1">
+                  <p className="font-bold text-[#253884] text-sm">{b.label}</p>
+                  <p className="text-gray-400 text-xs font-medium">{b.sub}</p>
+                </div>
+                <Check size={14} strokeWidth={2.5} className="text-green-500 shrink-0" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Curated itineraries */}
+        <div className="bg-white rounded-3xl p-5 subtle-shadow mb-4">
+          <h4 className="font-black text-[#253884] text-xs uppercase tracking-[0.15em] mb-4">Itinerarios de Expertos</h4>
+          <div className="space-y-3">
+            {CURATED_ITINERARIES.map(it => (
+              <button
+                key={it.id}
+                onClick={() => {
+                  const maxSlots = hasSalePlanPlus ? 10 : 6;
+                const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, maxSlots - savedPOIs.length);
+                  if (toAdd.length === 0) return;
+                  setSavedPOIs(prev => [...prev, ...toAdd]);
+                  haptic([10, 20, 10]);
+                  navigateTo('USER_WALLET');
+                }}
+                className={`w-full flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r ${it.color} active:scale-[0.97] transition-transform`}
+              >
+                <span className="text-2xl shrink-0">{it.emoji}</span>
+                <div className="flex-1 text-left">
+                  <p className="font-heading text-white text-sm tracking-tight">{it.title}</p>
+                  <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">{it.stops.length} paradas</p>
+                </div>
+                <ArrowRight size={16} className="text-white/70 shrink-0" strokeWidth={2} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Cancel */}
+        <button
+          onClick={() => { setHasSalePlanPlus(false); navigateTo('USER_PROFILE'); }}
+          className="w-full py-4 bg-white text-red-500 rounded-2xl font-bold text-sm border border-red-100 active:scale-[0.97] transition-transform subtle-shadow"
+        >
+          Cancelar Suscripción
+        </button>
+      </div>
+      <BottomNav active="profile" />
+    </Layout>
+  );
+
   const renderCurrentScreen = () => {
     switch (currentScreen) {
       case 'ONBOARDING':                 return renderOnboarding();
@@ -2289,6 +2579,8 @@ export default function App() {
       case 'USER_WALLET':                return renderUserWallet();
       case 'USER_REVIEWS':               return renderUserReviews();
       case 'USER_PROFILE':               return renderUserProfile();
+      case 'USER_PLUS':                  return renderUserPlus();
+      case 'USER_PLUS_MANAGE':           return renderUserPlusManage();
       case 'COMMERCE_LOGIN':             return renderCommerceLogin();
       case 'COMMERCE_DASHBOARD':         return renderCommerceDashboard();
       case 'COMMERCE_CREATE_EXPERIENCE': return renderCommerceCreateExperience();
