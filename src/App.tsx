@@ -1212,14 +1212,14 @@ export default function App() {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
                 <div key={it.id} className="flex-none pb-2" style={{ minWidth: deckW }}>
-                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-4 relative overflow-hidden shadow-xl flex flex-col`} >
+                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-3 relative overflow-hidden shadow-xl flex flex-col`} >
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
                       <p className="text-white text-[9px] font-black uppercase tracking-wider">{it.month}</p>
                     </div>
                     {/* Expert */}
-                    <div className="flex items-center gap-3 mb-3 pr-24">
-                      <img src={it.expert.avatar} className="w-11 h-11 rounded-full border-2 border-white/60 shrink-0 shadow-md" alt={it.expert.name} />
+                    <div className="flex items-center gap-2 mb-2 pr-20">
+                      <img src={it.expert.avatar} className="w-8 h-8 rounded-full border-2 border-white/60 shrink-0 shadow-sm" alt={it.expert.name} />
                       <div className="min-w-0">
                         <p className="text-white font-bold text-sm leading-tight">{it.expert.name}</p>
                         <p className="text-white/70 text-[10px] font-bold">{it.expert.role}</p>
@@ -1227,20 +1227,20 @@ export default function App() {
                     </div>
                     {/* Title & description */}
                     <div className="mb-3">
-                      <h3 className="text-white font-heading text-2xl tracking-tight leading-tight">{it.title}</h3>
-                      <p className="text-white/80 text-xs font-medium mt-1 leading-relaxed">{it.description}</p>
+                      <h3 className="text-white font-heading text-lg tracking-tight leading-tight">{it.title}</h3>
+                      <p className="text-white/75 text-[10px] font-medium mt-1 leading-snug line-clamp-2">{it.description}</p>
                     </div>
                     {/* Reward bar */}
-                    <div className="bg-white/20 border border-white/20 rounded-xl px-3 py-2 mb-4 flex items-center justify-between">
-                      <span className="text-white/80 text-xs font-bold">Completar itinerario</span>
-                      <span className="text-yellow-300 font-black text-base">+{it.reward} pts</span>
+                    <div className="bg-white/20 border border-white/20 rounded-xl px-3 py-1.5 mb-3 flex items-center justify-between">
+                      <span className="text-white/80 text-[10px] font-bold">Completar itinerario</span>
+                      <span className="text-yellow-300 font-black text-sm">+{it.reward} pts</span>
                     </div>
                     {/* Stop grid */}
-                    <div className="grid grid-cols-3 gap-1.5 mb-4 mt-auto">
+                    <div className="grid grid-cols-3 gap-1 mb-3 mt-2">
                       {itStops.slice(0, 6).map(poi => (
-                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl aspect-square flex flex-col items-center justify-center p-1.5 gap-1">
-                          <PoiIcon id={poi.id} size={16} strokeWidth={1.5} className="text-white shrink-0" />
-                          <p className="text-white text-[9px] font-bold leading-tight text-center">{poi.name}</p>
+                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl h-[52px] flex flex-col items-center justify-center p-1 gap-0.5">
+                          <PoiIcon id={poi.id} size={13} strokeWidth={1.5} className="text-white shrink-0" />
+                          <p className="text-white text-[8px] font-bold leading-tight text-center line-clamp-2">{poi.name}</p>
                         </div>
                       ))}
                     </div>
@@ -1251,7 +1251,7 @@ export default function App() {
                         if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
                         setActivePassportIdx(0);
                       }}
-                      className="w-full py-3.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-2"
+                      className="w-full py-2.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-1"
                     >
                       Usar este Itinerario →
                     </button>
