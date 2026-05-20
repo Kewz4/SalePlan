@@ -395,7 +395,14 @@ export default function App() {
   const BottomNav = ({ active }: { active: string }) => (
     <div className="fixed bottom-0 w-full max-w-md mx-auto bg-white border-t border-gray-100 flex justify-around items-center h-20 px-2 z-40 pb-safe shadow-[0_-4px_20px_rgba(37,56,132,0.05)]">
       <button onClick={() => navigateTo('USER_WALLET')} className="relative flex flex-col items-center justify-center w-14 h-14 active:scale-[0.97] transition-transform">
-        <img src={ICONS.NAV_PASSPORT} className={`w-6 h-6 transition-opacity duration-200 ${active === 'wallet' ? '' : 'opacity-40'}`} alt="Pasaporte" />
+        <div className="relative">
+          <img src={ICONS.NAV_PASSPORT} className={`w-6 h-6 transition-opacity duration-200 ${active === 'wallet' ? '' : 'opacity-40'}`} alt="Pasaporte" />
+          {carryOverStamps > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-yellow-900 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-sm border border-white">
+              {carryOverStamps}
+            </span>
+          )}
+        </div>
         {active === 'wallet' && <div className="absolute bottom-1 w-4 h-[3px] bg-[#253884] rounded-full" />}
       </button>
       <button onClick={() => navigateTo('USER_HOME')} className="relative flex flex-col items-center justify-center w-14 h-14 active:scale-[0.97] transition-transform">
@@ -1140,7 +1147,7 @@ export default function App() {
         </div>
 
         <div className="w-full space-y-4 mb-4">
-          <h3 className="text-xl font-heading text-[#253884] tracking-tight px-2">Kardex de Niveles</h3>
+          <h3 className="text-xl font-heading text-[#253884] tracking-tight px-2">Progreso de Niveles</h3>
           <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4">
             <div className="snap-center shrink-0 w-[85%] bg-gray-200 rounded-3xl p-5 subtle-shadow text-gray-500 relative overflow-hidden grayscale">
               <div className="absolute -right-4 -bottom-4 opacity-10 text-blue-400">
@@ -1513,19 +1520,19 @@ export default function App() {
       return (
         <Layout bgClass="bg-white">
           <div className="flex-1 overflow-y-auto no-scrollbar pb-24 relative">
-            <div className={`h-64 ${poi.color.split(' ')[0]} relative w-full rounded-b-[2.5rem] overflow-hidden shadow-sm`}>
+            <div className="h-64 relative w-full rounded-b-[2.5rem] overflow-hidden shadow-sm bg-gray-100">
               <img
                 src={getPoiImage(poi.id)}
                 alt={poi.name}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
               />
-              <div className={`absolute inset-0 ${poi.color.split(' ')[0]} opacity-60`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
               <button onClick={() => window.history.back()} className="absolute top-6 left-6 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-sm active:scale-[0.97] transition-transform z-10">
                 <ChevronLeft size={20} strokeWidth={2} className="text-[#253884]" />
               </button>
-              <div className={`absolute bottom-6 left-6 ${poi.color.split(' ')[1]} z-10`}>
-                <PoiIcon id={poi.id} size={48} strokeWidth={0.9} />
+              <div className={`absolute bottom-5 right-5 z-10 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-white ${poi.color.split(' ')[1]}`}>
+                <PoiIcon id={poi.id} size={22} strokeWidth={1.5} />
               </div>
             </div>
 
@@ -1729,16 +1736,15 @@ export default function App() {
                       >
                         {isSaved ? <Check size={12} strokeWidth={2.5} /> : '+'}
                       </button>
-                      <div className={`w-full h-24 rounded-xl overflow-hidden mb-2.5 relative ${poi.color.split(' ')[0]}`}>
+                      <div className="w-full h-24 rounded-xl overflow-hidden mb-2.5 relative bg-gray-100">
                         <img
                           src={getPoiImage(poi.id)}
                           alt={poi.name}
                           className="absolute inset-0 w-full h-full object-cover"
                           loading="lazy"
                         />
-                        <div className={`absolute inset-0 ${poi.color.split(' ')[0]} opacity-50`} />
-                        <div className={`absolute bottom-1.5 right-1.5 ${poi.color.split(' ')[1]}`}>
-                          <PoiIcon id={poi.id} size={16} strokeWidth={1.5} />
+                        <div className={`absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center border border-white/80 ${poi.color.split(' ')[1]}`}>
+                          <PoiIcon id={poi.id} size={13} strokeWidth={1.8} />
                         </div>
                       </div>
                       <h3 className="font-bold text-[#253884] text-sm leading-tight mb-0.5">{poi.name}</h3>
