@@ -570,7 +570,7 @@ export default function App() {
                 <p className="text-[10px] uppercase font-bold text-gray-300 tracking-[0.2em] mb-8">Navegación</p>
                 <div className="flex flex-col gap-2">
                   {[
-                    { label: 'Registrarme',          screen: 'REGISTER_CHOICE', icon: <UserPlus size={20} strokeWidth={1.5} />,    color: 'bg-blue-50 text-[#253884]' },
+                    { label: 'Iniciar Sesión',        screen: 'LOGIN_CHOICE',    icon: <LogIn size={20} strokeWidth={1.5} />,      color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Preguntas Frecuentes', screen: 'FAQ',             icon: <HelpCircle size={20} strokeWidth={1.5} />,  color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Acerca de SalePlan',   screen: 'ABOUT',           icon: <Book size={20} strokeWidth={1.5} />,        color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Contacto',             screen: 'CONTACT',         icon: <Mail size={20} strokeWidth={1.5} />,        color: 'bg-blue-50 text-[#253884]' },
@@ -1011,10 +1011,11 @@ export default function App() {
               const idx = Math.round(el.scrollLeft / el.clientWidth);
               if (idx !== activePassportIdx) setActivePassportIdx(idx);
             }}
-            className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory mt-4"
+            className="flex overflow-x-scroll no-scrollbar snap-x snap-mandatory mt-4 w-full"
+            style={{ touchAction: 'pan-x pinch-zoom', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
           >
             {/* ── Card 0: Personal passport ── */}
-            <div className="flex-none w-full snap-center px-5 pb-2">
+            <div className="flex-none snap-center px-5 pb-2" style={{ width: '100%' }}>
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header with name + badges */}
                 <div className="flex items-center gap-3 mb-5 pt-1">
@@ -1160,7 +1161,7 @@ export default function App() {
             {hasSalePlanPlus ? CURATED_ITINERARIES.map(it => {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
-                <div key={it.id} className="flex-none w-full snap-center px-5 pb-2">
+                <div key={it.id} className="flex-none snap-center px-5 pb-2" style={{ width: '100%' }}>
                   <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-5 relative overflow-hidden shadow-lg`}>
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
@@ -1210,7 +1211,7 @@ export default function App() {
               );
             }) : (
               /* Non-Plus: teaser card */
-              <div className="flex-none w-full snap-center px-5 pb-2">
+              <div className="flex-none snap-center px-5 pb-2" style={{ width: '100%' }}>
                 <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
                   <div className="absolute inset-0 opacity-10 pointer-events-none">
                     {[...Array(8)].map((_, i) => (
