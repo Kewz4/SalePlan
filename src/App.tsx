@@ -239,10 +239,10 @@ const LEVELS = [
 ];
 
 const CURATED_ITINERARIES = [
-  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'La mejor gastronomía local en un solo día. Pupusas, café de especialidad y más.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500' },
-  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías y teatros imprescindibles. Para el alma curiosa.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600' },
-  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600' },
-  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'El corazón colonial de El Salvador en un recorrido imperdible.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600' },
+  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'Desde el mejor café de especialidad hasta pupusas artesanales — recorrido culinario.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500', expert: { name: 'Chef María Martínez', role: 'Chef · Crítica Gastronómica', avatar: AVATARS[1] }, reward: 420, month: 'Mayo 2026' },
+  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías contemporáneas y teatro. Circuito cultural completo.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600', expert: { name: 'Andrés Villalba', role: 'Curador · Museo Nacional', avatar: AVATARS[0] }, reward: 380, month: 'Mayo 2026' },
+  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza pura.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600', expert: { name: 'Valeria Ortiz', role: 'Guía Ecológica · Bióloga', avatar: AVATARS[2] }, reward: 450, month: 'Mayo 2026' },
+  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'Catedral, mercados coloniales y centros culturales del corazón de El Salvador.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600', expert: { name: 'Prof. Jorge Salinas', role: 'Historiador · UTEC', avatar: AVATARS[3] }, reward: 400, month: 'Mayo 2026' },
 ];
 
 // Motion stagger variants — Emil: stagger 30-80ms between items
@@ -283,6 +283,7 @@ export default function App() {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const levelsScrollRef = useRef<HTMLDivElement>(null);
+  const deckScrollRef = useRef<HTMLDivElement>(null);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [profileName, setProfileName] = useState('Explorador');
   const [profileEmail, setProfileEmail] = useState('explorador@aventura.com');
@@ -294,6 +295,7 @@ export default function App() {
   const [hasSalePlanPlus, setHasSalePlanPlus] = useState(false);
   const [showPlusAnimation, setShowPlusAnimation] = useState(false);
   const [stampModalSuccess, setStampModalSuccess] = useState(false);
+  const [activePassportIdx, setActivePassportIdx] = useState(0);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -527,8 +529,8 @@ export default function App() {
           <span className="font-heading text-2xl text-[#253884] tracking-tighter pt-1">SalePlan</span>
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => navigateTo('LOGIN_CHOICE')} className="text-[10px] font-bold px-3 py-2 text-[#253884] uppercase whitespace-nowrap active:opacity-70 transition-opacity">
-            Iniciar Sesión
+          <button onClick={() => navigateTo('REGISTER_CHOICE')} className="text-[10px] font-bold px-3 py-2 text-[#253884] uppercase whitespace-nowrap active:opacity-70 transition-opacity">
+            Registro
           </button>
           <button onClick={() => setIsMenuOpen(true)} className="w-10 h-10 flex items-center justify-center bg-gray-50 rounded-xl text-[#253884] active:scale-[0.97] transition-transform">
             <Menu size={22} strokeWidth={2} />
@@ -573,7 +575,6 @@ export default function App() {
                     { label: 'Acerca de SalePlan',   screen: 'ABOUT',           icon: <Book size={20} strokeWidth={1.5} />,        color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Contacto',             screen: 'CONTACT',         icon: <Mail size={20} strokeWidth={1.5} />,        color: 'bg-blue-50 text-[#253884]' },
                     { label: 'Afíliate',             screen: 'AFFILIATE',       icon: <Store size={20} strokeWidth={1.5} />,       color: 'bg-blue-50 text-[#253884]' },
-                    { label: hasSalePlanPlus ? 'Mi SalePlan+' : 'SalePlan+ — $3.99/mes', screen: hasSalePlanPlus ? 'USER_PLUS_MANAGE' : 'USER_PLUS', icon: <Sparkles size={20} strokeWidth={1.5} />, color: 'bg-yellow-50 text-yellow-700' },
                   ].map((item, idx) => (
                     <motion.button
                       key={item.screen}
@@ -594,10 +595,14 @@ export default function App() {
                   ))}
                 </div>
 
-                <div className="mt-12 bg-blue-50 p-6 rounded-3xl border border-blue-100 relative overflow-hidden shadow-sm">
-                  <div className="relative z-10">
-                    <h4 className="text-xl font-heading mb-1 text-[#253884] tracking-tight">¿Ya tienes cuenta?</h4>
-                    <p className="text-xs text-blue-600/60 mb-6 font-medium">Ingresa para continuar explorando la ciudad.</p>
+                <div className="mt-10 rounded-3xl overflow-hidden shadow-md border border-[#253884]/10">
+                  <div className="bg-[#253884] px-6 pt-6 pb-8 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+                    <img src={ICONS.LOGO} className="h-7 mb-3 brightness-0 invert opacity-80 relative z-10" alt="SalePlan" />
+                    <h4 className="text-xl font-heading text-white tracking-tight mb-1 relative z-10">¿Ya tienes cuenta?</h4>
+                    <p className="text-blue-200 text-xs font-medium relative z-10">Continúa explorando y ganando sellos.</p>
+                  </div>
+                  <div className="bg-white px-6 py-5">
                     <button
                       onClick={() => { setIsMenuOpen(false); navigateTo('LOGIN_CHOICE'); }}
                       className="w-full py-4 bg-[#253884] text-white font-bold rounded-2xl text-sm tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-lg"
@@ -672,6 +677,45 @@ export default function App() {
             </motion.div>
           ))}
         </motion.div>
+
+        {/* SalePlan+ section */}
+        <div className="w-full mb-12">
+          <h2 className="text-2xl font-heading text-[#191308] mb-2 tracking-tight">SalePlan<span className="text-indigo-500">+</span></h2>
+          <p className="text-xs text-gray-500 font-medium mb-6">La experiencia completa de exploración de la ciudad.</p>
+          <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-xl text-left mb-4">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-3 py-1 rounded-full mb-4 tracking-wider">
+                <Sparkles size={10} strokeWidth={2.5} /> Premium
+              </div>
+              <div className="flex items-baseline gap-1 mb-4">
+                <p className="text-white font-heading text-4xl tracking-tight">$3.99</p>
+                <p className="text-blue-200 font-bold text-sm">/mes</p>
+              </div>
+              <div className="space-y-3 mb-6">
+                {[
+                  { icon: '🎫', text: 'Hasta 10 paradas por Pasaporte' },
+                  { icon: '⚡', text: '2× XP — sube de nivel más rápido' },
+                  { icon: '🗺️', text: '4 Itinerarios de expertos cada mes' },
+                  { icon: '🌟', text: 'Flash Events exclusivos con 2× recompensas' },
+                  { icon: '🏅', text: 'Badge Plus visible en tu perfil' },
+                ].map(f => (
+                  <div key={f.text} className="flex items-center gap-3">
+                    <span className="text-lg shrink-0">{f.icon}</span>
+                    <p className="text-white/90 text-sm font-medium">{f.text}</p>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => navigateTo('REGISTER_CHOICE')}
+                className="w-full py-4 bg-white text-[#253884] font-bold rounded-2xl text-sm active:scale-[0.97] transition-transform shadow-lg"
+              >
+                Comenzar — Registro Gratis
+              </button>
+            </div>
+          </div>
+          <p className="text-[10px] text-gray-400 font-medium text-center">Sin compromiso · Cancela cuando quieras</p>
+        </div>
       </div>
     </Layout>
   );
@@ -795,8 +839,16 @@ export default function App() {
             <div className="flex justify-between items-center mb-8 relative z-10">
               <div>
                 <p className="text-blue-200 text-xs font-semibold mb-1 uppercase tracking-wider">Hola,</p>
-                <h2 className="text-4xl font-heading text-white tracking-tight">{profileName}</h2>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <h2 className="text-4xl font-heading text-white tracking-tight">{profileName}</h2>
+                  {hasSalePlanPlus && (
+                    <span className="bg-yellow-400 text-yellow-900 text-[8px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider">
+                      <Sparkles size={7} strokeWidth={2} /> Plus
+                    </span>
+                  )}
+                  <span className="bg-white/25 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Nv.2</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
                   <div className="flex-1 max-w-[120px] bg-white/20 rounded-full h-1.5">
                     <div className="bg-white h-1.5 rounded-full" style={{ width: '85%' }} />
                   </div>
@@ -941,285 +993,385 @@ export default function App() {
     const occupiedCells = myRoute.reduce((sum, poi) => sum + poiW(poi), 0);
     const emptyCells = Math.max(0, totalSlots - occupiedCells);
 
+    const totalCards = hasSalePlanPlus ? 1 + CURATED_ITINERARIES.length : 2;
+
     return (
       <Layout bgClass="bg-gray-50">
-        <div className="flex-1 pb-24 p-6 pt-12 flex flex-col items-center relative">
-          <div className="absolute inset-0 bg-[#e6eaf8] opacity-50 z-0 h-64 rounded-b-[3rem]" />
-
-          <div className="relative z-10 w-full mb-6 text-center">
-            <h2 className="text-3xl font-heading text-[#253884] mb-3 tracking-tight">Mi Pasaporte</h2>
+        <div className="flex-1 pb-24 flex flex-col">
+          {/* Gradient header */}
+          <div className="bg-[#e6eaf8] pt-12 pb-6 rounded-b-[2.5rem] shadow-sm">
+            <h2 className="text-3xl font-heading text-[#253884] tracking-tight text-center">Mi Pasaporte</h2>
           </div>
 
-          <div className="relative z-10 w-full">
-            <div className="bg-white rounded-3xl p-6 subtle-shadow card-shadow relative">
-              <div className="flex items-center gap-4 mb-6 pt-2">
-                <div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden">
-                  <img src={selectedAvatar} className="w-full h-full object-cover" alt="Avatar" />
-                </div>
-                <div>
-                  <p className="text-xl font-heading text-[#253884]">Explorador</p>
-                  <p className="font-medium text-xs text-gray-500">{myRoute.length} Paradas Planeadas</p>
-                </div>
-              </div>
-
-              {/* Passport grid — flex-row layout, inline flex values to avoid Tailwind JIT misses */}
-              {(() => {
-                type GridCell = { kind: 'poi'; poi: typeof myRoute[0] } | { kind: 'empty'; idx: number };
-                const cells: GridCell[] = [
-                  ...myRoute.map(poi => ({ kind: 'poi' as const, poi })),
-                  ...Array.from({ length: emptyCells }, (_, i) => ({ kind: 'empty' as const, idx: i })),
-                ];
-                const rows: GridCell[][] = [];
-                let row: GridCell[] = [], rowW = 0;
-                for (const cell of cells) {
-                  const w = cell.kind === 'poi' ? poiW(cell.poi) : 1;
-                  if (rowW + w > COLS) {
-                    while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
-                    rows.push(row); row = []; rowW = 0;
-                  }
-                  row.push(cell); rowW += w;
-                  if (rowW === COLS) { rows.push(row); row = []; rowW = 0; }
-                }
-                if (row.length) {
-                  while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
-                  rows.push(row);
-                }
-
-                const PassportCell = ({ poi, pw }: { poi: typeof myRoute[0]; pw: number }) => {
-                  const isStamped = stampedPOIs.includes(poi.id);
-                  const isJustStamped = justStampedId === poi.id;
-                  return (
-                    <div
-                      onClick={() => { if (!isStamped) { setStampModalSuccess(false); setQrModalPOIId(poi.id); } else navigateTo('USER_SEARCH', poi.id); }}
-                      style={{ flex: pw, aspectRatio: `${pw}/1` }}
-                      className={`${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
-                    >
-                      {poi.isFlash && (
-                        <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
-                          <Zap size={8} strokeWidth={2.5} /> Flash
+          {/* Card deck — horizontal snap scroll */}
+          <div
+            ref={deckScrollRef}
+            onScroll={e => {
+              const el = e.currentTarget;
+              const idx = Math.round(el.scrollLeft / el.clientWidth);
+              if (idx !== activePassportIdx) setActivePassportIdx(idx);
+            }}
+            className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory mt-4"
+          >
+            {/* ── Card 0: Personal passport ── */}
+            <div className="flex-none w-full snap-center px-5 pb-2">
+              <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
+                {/* Header with name + badges */}
+                <div className="flex items-center gap-3 mb-5 pt-1">
+                  <div className="w-14 h-14 rounded-full bg-gray-100 overflow-hidden shrink-0">
+                    <img src={selectedAvatar} className="w-full h-full object-cover" alt="Avatar" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                      <p className="text-lg font-heading text-[#253884] leading-tight">{profileName}</p>
+                      {hasSalePlanPlus && (
+                        <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider shrink-0">
+                          <Sparkles size={7} strokeWidth={2} /> Plus
                         </span>
                       )}
-                      {isStamped ? (
-                        <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
-                          <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
-                        </div>
-                      ) : (
-                        <button
-                          onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); }}
-                          className="absolute top-1.5 right-1.5 w-5 h-5 bg-black/20 hover:bg-black/40 text-white rounded-full flex items-center justify-center z-10 transition-colors"
-                        >
-                          <X size={10} strokeWidth={3} />
-                        </button>
-                      )}
-                      <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
-                        <PoiIcon id={poi.id} size={pw > 1 ? 32 : 28} strokeWidth={1.5} />
-                        <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
-                      </div>
+                      <span className="bg-[#e6eaf8] text-[#253884] text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">Nv.2</span>
                     </div>
-                  );
-                };
+                    <p className="font-medium text-xs text-gray-500">{myRoute.length} Paradas · {stampedPOIs.length} Selladas</p>
+                  </div>
+                </div>
 
-                return (
-                  <div className="flex flex-col gap-3">
-                    {rows.map((r, ri) => {
-                      const poiCells = r.filter(c => c.kind === 'poi');
-                      // Lone flash: single POI taking less than full row → center it
-                      const isLoneFlash = poiCells.length === 1 && poiCells[0].kind === 'poi' && poiCells[0].poi.isFlash;
-                      if (isLoneFlash) {
-                        const cell = poiCells[0];
-                        if (cell.kind !== 'poi') return null;
-                        const pw = poiW(cell.poi);
-                        const pct = pw === COLS ? '100%' : pw === 2 ? 'calc(66.67% - 6px)' : 'calc(33.33% - 8px)';
-                        return (
-                          <div key={ri} className="flex justify-center">
-                            <div style={{ width: pct }}>
-                              <PassportCell poi={cell.poi} pw={pw} />
+                {/* Passport grid */}
+                {(() => {
+                  type GridCell = { kind: 'poi'; poi: typeof myRoute[0] } | { kind: 'empty'; idx: number };
+                  const cells: GridCell[] = [
+                    ...myRoute.map(poi => ({ kind: 'poi' as const, poi })),
+                    ...Array.from({ length: emptyCells }, (_, i) => ({ kind: 'empty' as const, idx: i })),
+                  ];
+                  const rows: GridCell[][] = [];
+                  let row: GridCell[] = [], rowW = 0;
+                  for (const cell of cells) {
+                    const w = cell.kind === 'poi' ? poiW(cell.poi) : 1;
+                    if (rowW + w > COLS) {
+                      while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
+                      rows.push(row); row = []; rowW = 0;
+                    }
+                    row.push(cell); rowW += w;
+                    if (rowW === COLS) { rows.push(row); row = []; rowW = 0; }
+                  }
+                  if (row.length) {
+                    while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
+                    rows.push(row);
+                  }
+                  const PassportCell = ({ poi, pw }: { poi: typeof myRoute[0]; pw: number }) => {
+                    const isStamped = stampedPOIs.includes(poi.id);
+                    const isJustStamped = justStampedId === poi.id;
+                    return (
+                      <div
+                        onClick={() => { if (!isStamped) { setStampModalSuccess(false); setQrModalPOIId(poi.id); } else navigateTo('USER_SEARCH', poi.id); }}
+                        style={{ flex: pw, aspectRatio: `${pw}/1` }}
+                        className={`${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
+                      >
+                        {poi.isFlash && (
+                          <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
+                            <Zap size={8} strokeWidth={2.5} /> Flash
+                          </span>
+                        )}
+                        {isStamped ? (
+                          <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
+                            <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
+                          </div>
+                        ) : (
+                          <button
+                            onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); }}
+                            className="absolute top-1.5 right-1.5 w-5 h-5 bg-black/20 text-white rounded-full flex items-center justify-center z-10"
+                          >
+                            <X size={10} strokeWidth={3} />
+                          </button>
+                        )}
+                        <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
+                          <PoiIcon id={poi.id} size={pw > 1 ? 32 : 28} strokeWidth={1.5} />
+                          <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
+                        </div>
+                      </div>
+                    );
+                  };
+                  return (
+                    <div className="flex flex-col gap-3">
+                      {rows.map((r, ri) => {
+                        const poiCells = r.filter(c => c.kind === 'poi');
+                        const isLoneFlash = poiCells.length === 1 && poiCells[0].kind === 'poi' && poiCells[0].poi.isFlash;
+                        if (isLoneFlash) {
+                          const cell = poiCells[0];
+                          if (cell.kind !== 'poi') return null;
+                          const pw = poiW(cell.poi);
+                          const pct = pw === COLS ? '100%' : pw === 2 ? 'calc(66.67% - 6px)' : 'calc(33.33% - 8px)';
+                          return (
+                            <div key={ri} className="flex justify-center">
+                              <div style={{ width: pct }}>
+                                <PassportCell poi={cell.poi} pw={pw} />
+                              </div>
                             </div>
+                          );
+                        }
+                        return (
+                          <div key={ri} className="flex gap-3">
+                            {r.map((cell, ci) => {
+                              if (cell.kind === 'empty') {
+                                return cell.idx < 0 ? (
+                                  <div key={`ph-${ri}-${ci}`} style={{ flex: 1, aspectRatio: '1/1' }} className="opacity-0 pointer-events-none" />
+                                ) : (
+                                  <button
+                                    key={`e-${ri}-${ci}`}
+                                    onClick={() => navigateTo('USER_SEARCH')}
+                                    style={{ flex: 1, aspectRatio: '1/1' }}
+                                    className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
+                                  >
+                                    <span className="text-gray-300 font-black text-2xl group-active:text-[#253884]">+</span>
+                                    <p className="text-[8px] font-bold text-gray-400 uppercase mt-1">Agregar</p>
+                                  </button>
+                                );
+                              }
+                              return <PassportCell key={cell.poi.id} poi={cell.poi} pw={poiW(cell.poi)} />;
+                            })}
                           </div>
                         );
+                      })}
+                    </div>
+                  );
+                })()}
+
+                {!hasSalePlanPlus && (
+                  <button
+                    onClick={() => navigateTo('USER_PLUS')}
+                    className="mt-5 w-full bg-gradient-to-r from-[#253884] to-indigo-500 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.97] transition-transform shadow-md"
+                  >
+                    <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                      <Sparkles size={18} strokeWidth={1.5} className="text-white" />
+                    </div>
+                    <div className="flex-1 text-left">
+                      <p className="text-white font-heading text-sm tracking-tight leading-tight">SalePlan<span className="text-yellow-300">+</span></p>
+                      <p className="text-blue-200 text-[9px] font-semibold">10 paradas · 2x XP · Itinerarios expertos</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-yellow-300 font-black text-sm">$3.99</p>
+                      <p className="text-blue-200 text-[9px] font-bold">/mes</p>
+                    </div>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* ── Cards 1-4: Itinerary passports or Plus promo ── */}
+            {hasSalePlanPlus ? CURATED_ITINERARIES.map(it => {
+              const itStops = POIS.filter(p => it.stops.includes(p.id));
+              return (
+                <div key={it.id} className="flex-none w-full snap-center px-5 pb-2">
+                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-5 relative overflow-hidden shadow-lg`}>
+                    {/* Month badge */}
+                    <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
+                      <p className="text-white text-[9px] font-black uppercase tracking-wider">{it.month}</p>
+                    </div>
+                    {/* Expert */}
+                    <div className="flex items-center gap-3 mb-4 pr-28">
+                      <img src={it.expert.avatar} className="w-11 h-11 rounded-full border-2 border-white/60 shrink-0 shadow-md" alt={it.expert.name} />
+                      <div className="min-w-0">
+                        <p className="text-white font-bold text-sm leading-tight truncate">{it.expert.name}</p>
+                        <p className="text-white/70 text-[10px] font-bold truncate">{it.expert.role}</p>
+                      </div>
+                    </div>
+                    {/* Title & description */}
+                    <div className="mb-3">
+                      <h3 className="text-white font-heading text-xl tracking-tight leading-tight">{it.title}</h3>
+                      <p className="text-white/80 text-xs font-medium mt-1 leading-relaxed">{it.description}</p>
+                    </div>
+                    {/* Reward bar */}
+                    <div className="bg-white/20 border border-white/20 rounded-xl px-3 py-2 mb-4 flex items-center justify-between">
+                      <span className="text-white/80 text-xs font-bold">Completar itinerario</span>
+                      <span className="text-yellow-300 font-black text-base">+{it.reward} pts</span>
+                    </div>
+                    {/* Stop grid */}
+                    <div className="grid grid-cols-3 gap-2 mb-4">
+                      {itStops.slice(0, 6).map(poi => (
+                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl p-2 text-center">
+                          <PoiIcon id={poi.id} size={16} strokeWidth={1.5} className="text-white mx-auto mb-1" />
+                          <p className="text-white text-[8px] font-bold line-clamp-2 leading-tight">{poi.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {/* CTA */}
+                    <button
+                      onClick={() => {
+                        const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, Math.max(0, totalSlots - savedPOIs.length));
+                        if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
+                        setActivePassportIdx(0);
+                        if (deckScrollRef.current) deckScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                      }}
+                      className="w-full py-3.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md"
+                    >
+                      Usar este Itinerario →
+                    </button>
+                  </div>
+                </div>
+              );
+            }) : (
+              /* Non-Plus: teaser card */
+              <div className="flex-none w-full snap-center px-5 pb-2">
+                <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
+                  <div className="absolute inset-0 opacity-10 pointer-events-none">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="absolute rounded-full bg-white" style={{ width: 4 + (i % 3) * 8, height: 4 + (i % 3) * 8, top: `${(i * 23) % 100}%`, left: `${(i * 37) % 100}%`, opacity: 0.3 }} />
+                    ))}
+                  </div>
+                  <Sparkles size={44} className="text-yellow-300 mb-4 relative z-10" />
+                  <h3 className="text-white font-heading text-2xl tracking-tight mb-2 relative z-10">4 Itinerarios<br />de Expertos</h3>
+                  <p className="text-blue-200 text-sm font-medium mb-2 leading-relaxed relative z-10 max-w-[240px] mx-auto">Nuevos cada mes. Curados por expertos en gastronomía, cultura, naturaleza e historia.</p>
+                  <p className="text-blue-300 text-xs font-bold uppercase tracking-wider mb-6 relative z-10">Mayo 2026</p>
+                  <button
+                    onClick={() => navigateTo('USER_PLUS')}
+                    className="relative z-10 w-full py-3.5 bg-yellow-400 text-yellow-900 rounded-2xl font-black text-sm active:scale-[0.97] transition-transform shadow-lg"
+                  >
+                    Desbloquear · SalePlan+ $3.99/mes
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Dot indicators */}
+          <div className="flex justify-center items-center gap-2 py-3">
+            {Array.from({ length: totalCards }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setActivePassportIdx(i);
+                  if (deckScrollRef.current) {
+                    deckScrollRef.current.scrollTo({ left: i * deckScrollRef.current.clientWidth, behavior: 'smooth' });
+                  }
+                }}
+                className={`rounded-full transition-all duration-300 ${i === activePassportIdx ? 'w-6 h-2 bg-[#253884]' : 'w-2 h-2 bg-gray-300'}`}
+              />
+            ))}
+          </div>
+
+          {/* Ruta de Hoy — only shown for Card 0 */}
+          {activePassportIdx === 0 && (
+            <div className="px-5 pb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
+                  Ruta de Hoy
+                  {myRoute.length > 0 && <span className="ml-2 text-blue-300 font-bold">{myRoute.length} parada{myRoute.length !== 1 ? 's' : ''}</span>}
+                </h3>
+                {myRoute.length > 0 && (
+                  <button
+                    onClick={() => {
+                      const routeText = myRoute.map(p => `• ${p.name}${poiSchedules[p.id] ? ` (${poiSchedules[p.id].day} ${poiSchedules[p.id].time})` : ''}`).join('\n');
+                      if (navigator.share) {
+                        navigator.share({ title: 'Mi Ruta SalePlan', text: `Mi ruta de hoy:\n${routeText}`, url: window.location.origin });
+                      } else {
+                        navigator.clipboard?.writeText(routeText).then(() => alert('Ruta copiada al portapapeles'));
                       }
+                    }}
+                    className="flex items-center gap-1.5 text-[10px] font-black text-[#253884] uppercase tracking-wider bg-[#253884]/10 px-3 py-1.5 rounded-full active:scale-[0.97] transition-transform"
+                  >
+                    <Share2 size={11} strokeWidth={2.5} /> Compartir
+                  </button>
+                )}
+              </div>
+              {myRoute.length === 0 && (
+                <div className="py-10 text-center">
+                  <img src={ICONS.NAV_MAP} className="w-10 h-10 mx-auto opacity-20 mb-3" alt="" />
+                  <p className="text-gray-400 font-bold text-sm">Aún no tienes paradas</p>
+                  <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
+                  <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-6 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar Lugares</button>
+                </div>
+              )}
+              {(() => {
+                const DAY_RANK: Record<string, number> = { 'Hoy': 0, 'Mañana': 1, 'Sáb 23 may': 2, 'Lun 25 may': 3 };
+                const TIME_RANK: Record<string, number> = { '08:00 – 12:00': 0, '12:00 – 17:00': 1, '17:00 – 22:00': 2 };
+                const sortedRoute = [...myRoute].sort((a, b) => {
+                  const sa = poiSchedules[a.id], sb = poiSchedules[b.id];
+                  if (!sa && !sb) return 0;
+                  if (!sa) return 1;
+                  if (!sb) return -1;
+                  const dayDiff = (DAY_RANK[sa.day] ?? 99) - (DAY_RANK[sb.day] ?? 99);
+                  if (dayDiff !== 0) return dayDiff;
+                  return (TIME_RANK[sa.time] ?? 99) - (TIME_RANK[sb.time] ?? 99);
+                });
+                return (
+                  <div className="space-y-3">
+                    {sortedRoute.map((poi, idx) => {
+                      const isStamped = stampedPOIs.includes(poi.id);
+                      const hasSchedule = !!poiSchedules[poi.id];
+                      const isDragging = dragIndex === idx;
+                      const isDragOver = dragOverIndex === idx;
                       return (
-                        <div key={ri} className="flex gap-3">
-                          {r.map((cell, ci) => {
-                            if (cell.kind === 'empty') {
-                              return cell.idx < 0 ? (
-                                <div key={`ph-${ri}-${ci}`} style={{ flex: 1, aspectRatio: '1/1' }} className="opacity-0 pointer-events-none" />
-                              ) : (
-                                <button
-                                  key={`e-${ri}-${ci}`}
-                                  onClick={() => navigateTo('USER_SEARCH')}
-                                  style={{ flex: 1, aspectRatio: '1/1' }}
-                                  className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
-                                >
-                                  <span className="text-gray-300 font-black text-2xl group-active:text-[#253884]">+</span>
-                                  <p className="text-[8px] font-bold text-gray-400 uppercase mt-1">Agregar</p>
-                                </button>
-                              );
-                            }
-                            return <PassportCell key={cell.poi.id} poi={cell.poi} pw={poiW(cell.poi)} />;
-                          })}
+                        <div
+                          key={poi.id}
+                          draggable={!hasSchedule}
+                          onDragStart={() => !hasSchedule && setDragIndex(idx)}
+                          onDragOver={e => { e.preventDefault(); setDragOverIndex(idx); }}
+                          onDrop={() => {
+                            if (dragIndex === null || dragIndex === idx) { setDragIndex(null); setDragOverIndex(null); return; }
+                            setSavedPOIs(prev => {
+                              const sorted = [...prev];
+                              const [moved] = sorted.splice(dragIndex, 1);
+                              sorted.splice(idx, 0, moved);
+                              return sorted;
+                            });
+                            setDragIndex(null); setDragOverIndex(null);
+                          }}
+                          onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
+                          onClick={() => navigateTo('USER_SEARCH', poi.id)}
+                          className={`flex items-center gap-3 bg-white rounded-2xl p-3 cursor-pointer active:scale-[0.98] transition-[transform,border-color,opacity] subtle-shadow border-2 ${isStamped ? 'border-[#253884]/20 bg-[#e6eaf8]/50' : isDragOver ? 'border-[#253884]' : 'border-transparent'} ${isDragging ? 'opacity-50 scale-[0.97]' : ''}`}
+                        >
+                          {!hasSchedule && (
+                            <div className="text-gray-300 shrink-0 cursor-grab active:cursor-grabbing">
+                              <GripVertical size={16} strokeWidth={2} />
+                            </div>
+                          )}
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
+                            <PoiIcon id={poi.id} size={18} strokeWidth={1.5} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-[#253884] text-sm leading-tight truncate">{poi.name}</p>
+                            {hasSchedule ? (
+                              <p className="text-[10px] font-bold text-green-600 uppercase tracking-wider mt-0.5">
+                                {poiSchedules[poi.id].day} · {poiSchedules[poi.id].time}
+                              </p>
+                            ) : (
+                              <p className="text-[10px] font-medium text-gray-400 mt-0.5">{poi.location}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {isStamped && (
+                              <div className="w-6 h-6 bg-[#253884] rounded-full flex items-center justify-center shadow">
+                                <img src={ICONS.LOGO} className="w-3.5 h-3.5 brightness-0 invert" alt="" />
+                              </div>
+                            )}
+                            <button
+                              onClick={e => {
+                                e.stopPropagation();
+                                if (!isStamped) { setStampModalSuccess(false); setQrModalPOIId(poi.id); }
+                              }}
+                              disabled={isStamped}
+                              className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-colors ${isStamped ? 'border-[#253884]/20 bg-[#e6eaf8] cursor-default' : 'border-gray-200 bg-gray-50 active:scale-[0.97]'}`}
+                            >
+                              {isStamped ? <Check size={13} strokeWidth={2.5} className="text-[#253884]" /> : <QrCode size={13} strokeWidth={1.5} className="text-gray-500" />}
+                            </button>
+                            {!isStamped && (
+                              <button
+                                onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); haptic([10, 20, 10]); }}
+                                className="w-8 h-8 rounded-xl flex items-center justify-center border border-red-100 bg-red-50 active:scale-[0.97] transition-transform"
+                              >
+                                <X size={13} strokeWidth={2.5} className="text-red-500" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 );
               })()}
-
-              {!hasSalePlanPlus && (
-                <button
-                  onClick={() => navigateTo('USER_PLUS')}
-                  className="mt-6 w-full bg-gradient-to-r from-[#253884] to-indigo-500 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.97] transition-transform shadow-md"
-                >
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
-                    <Sparkles size={20} strokeWidth={1.5} className="text-white" />
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="text-white font-heading text-base tracking-tight leading-tight">SalePlan<span className="text-yellow-300">+</span></p>
-                    <p className="text-blue-200 text-[10px] font-semibold">10 paradas · 2x XP · Itinerarios expertos</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-yellow-300 font-black text-sm">$3.99</p>
-                    <p className="text-blue-200 text-[9px] font-bold">/mes</p>
-                  </div>
-                </button>
-              )}
-
-              <div className="mt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
-                    Ruta de Hoy
-                    {myRoute.length > 0 && <span className="ml-2 text-blue-300 font-bold">{myRoute.length} parada{myRoute.length !== 1 ? 's' : ''}</span>}
-                  </h3>
-                  {myRoute.length > 0 && (
-                    <button
-                      onClick={() => {
-                        const routeText = myRoute.map(p => `• ${p.name}${poiSchedules[p.id] ? ` (${poiSchedules[p.id].day} ${poiSchedules[p.id].time})` : ''}`).join('\n');
-                        if (navigator.share) {
-                          navigator.share({ title: 'Mi Ruta SalePlan', text: `Mi ruta de hoy:\n${routeText}`, url: window.location.origin });
-                        } else {
-                          navigator.clipboard?.writeText(routeText).then(() => alert('Ruta copiada al portapapeles'));
-                        }
-                      }}
-                      className="flex items-center gap-1.5 text-[10px] font-black text-[#253884] uppercase tracking-wider bg-[#253884]/10 px-3 py-1.5 rounded-full active:scale-[0.97] transition-transform"
-                    >
-                      <Share2 size={11} strokeWidth={2.5} /> Compartir
-                    </button>
-                  )}
-                </div>
-                {myRoute.length === 0 && (
-                  <div className="py-10 text-center">
-                    <img src={ICONS.NAV_MAP} className="w-10 h-10 mx-auto opacity-20 mb-3" alt="" />
-                    <p className="text-gray-400 font-bold text-sm">Aún no tienes paradas</p>
-                    <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
-                    <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-6 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar Lugares</button>
-                  </div>
-                )}
-                {(() => {
-                  const DAY_RANK: Record<string, number> = { 'Hoy': 0, 'Mañana': 1, 'Sáb 23 may': 2, 'Lun 25 may': 3 };
-                  const TIME_RANK: Record<string, number> = { '08:00 – 12:00': 0, '12:00 – 17:00': 1, '17:00 – 22:00': 2 };
-                  const sortedRoute = [...myRoute].sort((a, b) => {
-                    const sa = poiSchedules[a.id], sb = poiSchedules[b.id];
-                    if (!sa && !sb) return 0;
-                    if (!sa) return 1;
-                    if (!sb) return -1;
-                    const dayDiff = (DAY_RANK[sa.day] ?? 99) - (DAY_RANK[sb.day] ?? 99);
-                    if (dayDiff !== 0) return dayDiff;
-                    return (TIME_RANK[sa.time] ?? 99) - (TIME_RANK[sb.time] ?? 99);
-                  });
-                  return (
-                    <div className="space-y-3">
-                      {sortedRoute.map((poi, idx) => {
-                        const isStamped = stampedPOIs.includes(poi.id);
-                        const hasSchedule = !!poiSchedules[poi.id];
-                        const isDragging = dragIndex === idx;
-                        const isDragOver = dragOverIndex === idx;
-                        return (
-                          <div
-                            key={poi.id}
-                            draggable={!hasSchedule}
-                            onDragStart={() => setDragIndex(idx)}
-                            onDragOver={e => { e.preventDefault(); setDragOverIndex(idx); }}
-                            onDrop={() => {
-                              if (dragIndex === null || dragOverIndex === null) return;
-                              setSavedPOIs(prev => {
-                                const sorted = [...prev];
-                                const fromId = sortedRoute[dragIndex].id;
-                                const toId = sortedRoute[dragOverIndex].id;
-                                const fi = sorted.indexOf(fromId), ti = sorted.indexOf(toId);
-                                sorted.splice(fi, 1);
-                                sorted.splice(ti, 0, fromId);
-                                return sorted;
-                              });
-                              setDragIndex(null); setDragOverIndex(null);
-                            }}
-                            onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
-                            onClick={() => navigateTo('USER_SEARCH', poi.id)}
-                            className={`relative rounded-2xl p-3 flex items-center gap-3 cursor-pointer transition-[transform,border-color,background-color] border active:scale-[0.98] ${isStamped ? 'bg-green-50 border-green-200 opacity-90' : isDragOver ? 'bg-blue-50 border-[#253884]' : 'bg-gray-50 border-gray-100'} ${isDragging ? 'opacity-50' : ''}`}
-                          >
-                            {!hasSchedule ? (
-                              <GripVertical size={14} strokeWidth={2} className="text-gray-300 shrink-0 cursor-grab" />
-                            ) : (
-                              <Lock size={14} strokeWidth={2} className="text-[#253884]/40 shrink-0" />
-                            )}
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
-                              <PoiIcon id={poi.id} size={20} strokeWidth={1.5} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-[#253884] text-sm truncate flex items-center gap-1">
-                                {poi.name}
-                                {poi.isFlash && (
-                                  <span className="bg-yellow-100 text-yellow-800 text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-1 inline-flex items-center gap-0.5">
-                                    <Zap size={7} strokeWidth={2.5} /> FLASH
-                                  </span>
-                                )}
-                              </h4>
-                              <p className="text-[9px] text-gray-500 font-bold uppercase tracking-wider truncate">{poi.category}</p>
-                              {(() => {
-                                const sched = poiSchedules[poi.id];
-                                if (sched) return (
-                                  <p className="text-[9px] font-bold text-[#253884] truncate mt-0.5 flex items-center gap-1">
-                                    <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
-                                    {sched.day} · {sched.time}
-                                  </p>
-                                );
-                                if (poi.isFlash && poi.date) return (
-                                  <p className="text-[9px] font-bold text-yellow-700 truncate mt-0.5 flex items-center gap-1">
-                                    <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
-                                    {poi.date}
-                                  </p>
-                                );
-                                return null;
-                              })()}
-                            </div>
-                            <div className="flex items-center gap-2 shrink-0">
-                              {!isStamped && (
-                                <button
-                                  onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); haptic([10, 20]); }}
-                                  className="w-7 h-7 rounded-full bg-red-50 text-red-400 flex items-center justify-center active:scale-[0.97] transition-transform border border-red-100"
-                                >
-                                  <X size={12} strokeWidth={2.5} />
-                                </button>
-                              )}
-                              <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
-                                {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {myRoute.length < totalSlots && (
-                        <button onClick={() => navigateTo('USER_SEARCH')} className="w-full bg-blue-50 border border-blue-100 border-dashed rounded-2xl p-4 text-center text-[#253884] font-bold text-xs active:scale-[0.97] transition-transform">
-                          + Añadir otra parada
-                        </button>
-                      )}
-                    </div>
-                  );
-                })()}
-              </div>
             </div>
-          </div>
+          )}
 
-          {/* QR Stamp Modal — Emil: animate from scale(0.95), not scale(0) */}
+                    {/* QR Stamp Modal — Emil: animate from scale(0.95), not scale(0) */}
           <AnimatePresence>
             {qrModalPOIId && (
               <>
@@ -1440,6 +1592,14 @@ export default function App() {
           <button onClick={() => setShowAvatarPicker(true)} className="absolute bottom-0 right-0 bg-[#253884] text-white w-10 h-10 rounded-full flex items-center justify-center subtle-shadow active:scale-[0.97] transition-transform">
             <Pencil size={16} strokeWidth={2} />
           </button>
+        </div>
+        <div className="flex items-center gap-2 mb-6">
+          {hasSalePlanPlus && (
+            <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[9px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 uppercase tracking-wider shadow-sm">
+              <Sparkles size={9} strokeWidth={2} /> Plus
+            </span>
+          )}
+          <span className="bg-[#e6eaf8] text-[#253884] text-[9px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">Nivel 2</span>
         </div>
 
         {/* Avatar picker overlay */}
@@ -2418,7 +2578,6 @@ export default function App() {
                 setHasSalePlanPlus(true);
                 setShowPlusAnimation(true);
                 haptic([20, 40, 20, 80]);
-                setTimeout(() => { setShowPlusAnimation(false); navigateTo('USER_PLUS_MANAGE'); }, 3200);
               }}
               className="w-full py-5 bg-gradient-to-r from-[#253884] to-indigo-600 text-white font-heading text-xl rounded-2xl shadow-lg active:scale-[0.97] transition-transform relative overflow-hidden"
             >
@@ -2469,6 +2628,15 @@ export default function App() {
                 <h2 className="text-white font-heading text-4xl tracking-tight mb-2">SalePlan<span className="text-yellow-300">+</span> Activo</h2>
                 <p className="text-blue-200 font-medium text-sm">Tu pasaporte ahora tiene 10 espacios.<br />Gana 2× XP en cada visita.</p>
               </motion.div>
+              <motion.button
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.8 }}
+                onClick={() => { setShowPlusAnimation(false); navigateTo('USER_WALLET'); }}
+                className="mt-8 w-full max-w-xs py-4 bg-white text-[#253884] font-bold rounded-2xl text-base active:scale-[0.97] transition-transform shadow-xl"
+              >
+                Ver mi Pasaporte →
+              </motion.button>
             </motion.div>
           </>
         )}
