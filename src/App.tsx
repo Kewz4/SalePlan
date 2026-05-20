@@ -301,7 +301,7 @@ export default function App() {
   const [showPlusAnimation, setShowPlusAnimation] = useState(false);
   const [stampModalSuccess, setStampModalSuccess] = useState(false);
   const [activePassportIdx, setActivePassportIdx] = useState(0);
-  const [deckW] = useState(() => typeof window !== 'undefined' ? Math.round(window.innerWidth * 0.78) : 293);
+  const [deckW] = useState(() => typeof window !== 'undefined' ? Math.round(window.innerWidth * 0.68) : 265);
   const [premiumEventPreviewId, setPremiumEventPreviewId] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
@@ -935,11 +935,7 @@ export default function App() {
                           </p>
                         )}
                       </div>
-                      {!isLocked && !savedPOIs.includes(event.id) && (
-                        <button onClick={e => { e.stopPropagation(); setSavedPOIs(prev => [...prev, event.id]); showToast('Evento agregado a tu ruta'); haptic(10); }} className="w-8 h-8 bg-yellow-100 text-yellow-700 rounded-xl flex items-center justify-center shrink-0 mr-1 active:scale-[0.9] transition-transform">
-                          <span className="font-black text-base leading-none">+</span>
-                        </button>
-                      )}
+
                       <div className={`font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0 ${isLocked ? 'bg-indigo-100 text-indigo-700' : 'bg-yellow-400 text-yellow-900'}`}>
                         {event.pts}
                       </div>
@@ -1047,21 +1043,13 @@ export default function App() {
           {/* Gradient header */}
           <div className="bg-[#e6eaf8] pt-12 pb-6 rounded-b-[2.5rem] shadow-sm">
             <h2 className="text-3xl font-heading text-[#253884] tracking-tight text-center">Mi Pasaporte</h2>
-            <div className="flex items-center justify-center gap-3 mt-2">
-              <span className="text-xs font-bold text-[#253884]/60">{stampedPOIs.length} sello{stampedPOIs.length !== 1 ? 's' : ''} &middot; {passportPoints} pts</span>
-              {typeof navigator !== 'undefined' && 'share' in navigator && (
-                <button onClick={() => (navigator as any).share({ title: 'Mi Ruta SalePlan', text: `Tengo ${savedPOIs.length} paradas y ${stampedPOIs.length} sellos en SalePlan!`, url: window.location.href }).catch(() => {})} className="flex items-center gap-1 text-[10px] font-black text-[#253884]/50 uppercase tracking-wider active:opacity-70 transition-opacity">
-                  <Share2 size={11} strokeWidth={2} /> Compartir
-                </button>
-              )}
-            </div>
+
           </div>
 
           {/* Card deck — Framer Motion drag swipe with peek */}
-          <div className="overflow-hidden w-full mt-4">
+          <div className="overflow-hidden w-full mt-4 px-4">
           <motion.div
             className="flex gap-3"
-            style={{ paddingLeft: Math.round((typeof window !== 'undefined' ? window.innerWidth : 375) * 0.05) }}
             drag="x"
             dragElastic={0.07}
             dragConstraints={{ left: -(totalCards - 1) * (deckW + 12), right: 0 }}
@@ -1224,7 +1212,7 @@ export default function App() {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
                 <div key={it.id} className="flex-none pb-2" style={{ minWidth: deckW }}>
-                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-4 relative overflow-hidden shadow-xl flex flex-col`} style={{ minHeight: '76dvh' }}>
+                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-4 relative overflow-hidden shadow-xl flex flex-col`} >
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
                       <p className="text-white text-[9px] font-black uppercase tracking-wider">{it.month}</p>
@@ -2341,26 +2329,26 @@ export default function App() {
                       <div
                         key={event.id}
                         onClick={() => isLocked ? setPremiumEventPreviewId(event.id) : setSelectedPOI(event.id)}
-                        className={`bg-white rounded-2xl p-4 border-2 relative overflow-hidden cursor-pointer active:scale-[0.97] transition-transform subtle-shadow flex flex-col min-h-[150px] ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
+                        className={`bg-white rounded-2xl p-4 border-2 cursor-pointer active:scale-[0.97] transition-transform subtle-shadow flex flex-col gap-2 ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
                       >
-                        {isLocked ? (
-                          <div className="absolute top-0 right-0 bg-gradient-to-r from-[#253884] to-indigo-600 text-white font-black text-[8px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight flex items-center gap-0.5">
-                            <Sparkles size={8} strokeWidth={2} /> Plus
+                        <div className="flex items-start justify-between gap-1">
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center border shrink-0 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
+                            {isLocked ? <Lock size={18} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={18} strokeWidth={1.5} />}
                           </div>
-                        ) : (
-                          <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight">
-                            {event.pts}
-                          </div>
-                        )}
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border mb-3 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
-                          {isLocked ? <Lock size={18} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={18} strokeWidth={1.5} />}
+                          {isLocked ? (
+                            <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white font-black text-[8px] uppercase px-1.5 py-0.5 rounded-full flex items-center gap-0.5 shrink-0">
+                              <Sparkles size={7} strokeWidth={2} /> Plus
+                            </span>
+                          ) : (
+                            <span className="bg-yellow-100 text-yellow-800 font-black text-[9px] uppercase px-1.5 py-1 rounded-lg text-right leading-tight shrink-0 max-w-[52%]">{event.pts}</span>
+                          )}
                         </div>
-                        <h4 className="font-bold text-[#253884] text-sm leading-snug mb-1.5 pr-2 flex-1">{event.name}</h4>
-                        <p className="font-bold text-[9px] text-gray-400 uppercase tracking-wider truncate">{event.location}</p>
+                        <h4 className="font-bold text-[#253884] text-sm leading-snug">{event.name}</h4>
+                        <p className="font-bold text-[9px] text-gray-400 uppercase tracking-wider">{event.location}</p>
                         {isLocked ? (
-                          <p className="font-bold text-[9px] text-indigo-500 mt-1">Desbloquear con Plus</p>
+                          <p className="font-bold text-[9px] text-indigo-500">Desbloquear con Plus</p>
                         ) : (
-                          <p className="font-bold text-[9px] text-yellow-700 mt-1">{event.date}</p>
+                          <p className="font-bold text-[9px] text-yellow-700">{event.date}</p>
                         )}
                       </div>
                     );
@@ -2368,14 +2356,6 @@ export default function App() {
                 </div>
               </>
             )}
-
-            {/* Sort toggle */}
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Ordenar:</span>
-              <button onClick={() => setSearchSort(s => s === 'default' ? 'pts' : 'default')} className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-colors ${searchSort === 'pts' ? 'bg-[#253884] text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
-                {searchSort === 'pts' ? 'Por Puntos' : 'Relevancia'}
-              </button>
-            </div>
 
             {/* Category pills */}
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1">
@@ -2393,7 +2373,6 @@ export default function App() {
                     className={`px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap shadow-sm border flex items-center gap-1 active:scale-[0.97] transition-[background-color,color,border-color] ${isActive ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-100'}`}
                   >
                     <CatIcon size={11} strokeWidth={2} /> {cat.name}
-                    <span className={`text-[9px] font-black ${isActive ? 'text-blue-200' : 'text-gray-400'}`}>{POIS.filter(p => !p.isFlash && p.category === cat.name).length}</span>
                   </button>
                 );
               })}
