@@ -301,7 +301,7 @@ export default function App() {
   const [showPlusAnimation, setShowPlusAnimation] = useState(false);
   const [stampModalSuccess, setStampModalSuccess] = useState(false);
   const [activePassportIdx, setActivePassportIdx] = useState(0);
-  const [deckW] = useState(() => typeof window !== 'undefined' ? Math.max(260, window.innerWidth - 72) : 303);
+  const [deckW] = useState(() => typeof window !== 'undefined' ? Math.round(window.innerWidth * 0.78) : 293);
   const [premiumEventPreviewId, setPremiumEventPreviewId] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
@@ -1058,9 +1058,10 @@ export default function App() {
           </div>
 
           {/* Card deck — Framer Motion drag swipe with peek */}
-          <div className="overflow-hidden w-full mt-4 px-5">
+          <div className="overflow-hidden w-full mt-4">
           <motion.div
             className="flex gap-3"
+            style={{ paddingLeft: Math.round((typeof window !== 'undefined' ? window.innerWidth : 375) * 0.05) }}
             drag="x"
             dragElastic={0.07}
             dragConstraints={{ left: -(totalCards - 1) * (deckW + 12), right: 0 }}
@@ -1223,13 +1224,13 @@ export default function App() {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
                 <div key={it.id} className="flex-none pb-2" style={{ minWidth: deckW }}>
-                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-5 relative overflow-hidden shadow-lg`}>
+                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-4 relative overflow-hidden shadow-xl flex flex-col`} style={{ minHeight: '76dvh' }}>
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
                       <p className="text-white text-[9px] font-black uppercase tracking-wider">{it.month}</p>
                     </div>
                     {/* Expert */}
-                    <div className="flex items-center gap-3 mb-4 pr-28">
+                    <div className="flex items-center gap-3 mb-3 pr-24">
                       <img src={it.expert.avatar} className="w-11 h-11 rounded-full border-2 border-white/60 shrink-0 shadow-md" alt={it.expert.name} />
                       <div className="min-w-0">
                         <p className="text-white font-bold text-sm leading-tight truncate">{it.expert.name}</p>
@@ -1238,7 +1239,7 @@ export default function App() {
                     </div>
                     {/* Title & description */}
                     <div className="mb-3">
-                      <h3 className="text-white font-heading text-xl tracking-tight leading-tight">{it.title}</h3>
+                      <h3 className="text-white font-heading text-2xl tracking-tight leading-tight">{it.title}</h3>
                       <p className="text-white/80 text-xs font-medium mt-1 leading-relaxed">{it.description}</p>
                     </div>
                     {/* Reward bar */}
@@ -1247,11 +1248,11 @@ export default function App() {
                       <span className="text-yellow-300 font-black text-base">+{it.reward} pts</span>
                     </div>
                     {/* Stop grid */}
-                    <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="grid grid-cols-2 gap-2 mb-4 mt-auto">
                       {itStops.slice(0, 6).map(poi => (
                         <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl p-2 text-center">
-                          <PoiIcon id={poi.id} size={16} strokeWidth={1.5} className="text-white mx-auto mb-1" />
-                          <p className="text-white text-[8px] font-bold line-clamp-2 leading-tight">{poi.name}</p>
+                          <PoiIcon id={poi.id} size={18} strokeWidth={1.5} className="text-white mx-auto mb-1" />
+                          <p className="text-white text-[10px] font-bold line-clamp-2 leading-tight">{poi.name}</p>
                         </div>
                       ))}
                     </div>
@@ -1262,7 +1263,7 @@ export default function App() {
                         if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
                         setActivePassportIdx(0);
                       }}
-                      className="w-full py-3.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md"
+                      className="w-full py-3.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-2"
                     >
                       Usar este Itinerario →
                     </button>
@@ -2340,7 +2341,7 @@ export default function App() {
                       <div
                         key={event.id}
                         onClick={() => isLocked ? setPremiumEventPreviewId(event.id) : setSelectedPOI(event.id)}
-                        className={`bg-white rounded-2xl p-3.5 border-2 relative overflow-hidden cursor-pointer active:scale-[0.97] transition-transform subtle-shadow ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
+                        className={`bg-white rounded-2xl p-4 border-2 relative overflow-hidden cursor-pointer active:scale-[0.97] transition-transform subtle-shadow flex flex-col min-h-[150px] ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
                       >
                         {isLocked ? (
                           <div className="absolute top-0 right-0 bg-gradient-to-r from-[#253884] to-indigo-600 text-white font-black text-[8px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight flex items-center gap-0.5">
@@ -2351,10 +2352,10 @@ export default function App() {
                             {event.pts}
                           </div>
                         )}
-                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border mb-2 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border mb-3 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
                           {isLocked ? <Lock size={18} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={18} strokeWidth={1.5} />}
                         </div>
-                        <h4 className="font-bold text-[#253884] text-xs leading-tight mb-1 pr-2">{event.name}</h4>
+                        <h4 className="font-bold text-[#253884] text-sm leading-snug mb-1.5 pr-2 flex-1">{event.name}</h4>
                         <p className="font-bold text-[9px] text-gray-400 uppercase tracking-wider truncate">{event.location}</p>
                         {isLocked ? (
                           <p className="font-bold text-[9px] text-indigo-500 mt-1">Desbloquear con Plus</p>
