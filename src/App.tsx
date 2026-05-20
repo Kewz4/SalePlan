@@ -5,7 +5,7 @@ import {
   Coffee, Palette, UtensilsCrossed, Leaf, BookOpen, Landmark, Mountain, Music,
   ShoppingBag, Flower2, Utensils, Disc3, Camera, Guitar, Pizza, IceCream, MapPin,
   Zap, Crown, Backpack, Trophy, Sprout, ScanLine, Share2, Check, Pencil, Sparkles,
-  QrCode
+  QrCode, Waves, TreePine, Compass
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import YetiLogin from './components/YetiLogin';
@@ -68,6 +68,31 @@ const POIS = [
     { id: 14, name: "Tienda de Discos",    category: "Tiendas Locales",  location: "Centro Histórico", description: "Vinilos clásicos, nuevos lanzamientos y joyas escondidas musicales.",                              color: "bg-zinc-50 text-zinc-800 border-zinc-200",      date: "Lun-Sáb, 11:00 - 20:00" },
     { id: 15, name: "Mercado Local",       category: "Turismo",          location: "Sur",              description: "Descubre la comida callejera, frutas exóticas y la vibra del verdadero comercio.",                 color: "bg-orange-50 text-orange-800 border-orange-200", date: "Diario, 7:00 - 16:00" }
   ],
+  { id: 16, name: "Catedral Metropolitana", category: "Cultura",         location: "Centro Histórico", description: "La imponente catedral neoclásica que domina el corazón del centro histórico de San Salvador.",                          color: "bg-purple-50 text-purple-800 border-purple-200", date: "Lun-Dom, 6:00 - 18:00" },
+  { id: 17, name: "Parque Cuscatlán",      category: "Naturaleza",       location: "San Salvador",     description: "El parque urbano más grande del país, ideal para paseos, ejercicio y cultura al aire libre.",                         color: "bg-green-50 text-green-800 border-green-200",   date: "Diario, 5:00 - 19:00" },
+  { id: 18, name: "Cerro Verde",           category: "Turismo",          location: "Santa Ana",        description: "Volcán rodeado de bosque nuboso y vistas impresionantes al Lago Coatepeque.",                                        color: "bg-teal-50 text-teal-800 border-teal-200",      date: "Diario, 8:00 - 17:00" },
+  { id: 19, name: "Lago de Coatepeque",    category: "Naturaleza",       location: "Santa Ana",        description: "Lago cráter de aguas azul turquesa perfecto para kayak, natación y amanecer de ensueño.",                            color: "bg-blue-50 text-blue-800 border-blue-200",      date: "Diario, 24h" },
+  { id: 20, name: "Suchitoto",             category: "Turismo",          location: "Cuscatlán",        description: "El pueblo colonial más hermoso del país con calles de adoquín y vista al lago Suchitlán.",                            color: "bg-orange-50 text-orange-800 border-orange-200", date: "Diario, 7:00 - 19:00" },
+  { id: 21, name: "Pupusería La Familiar", category: "Gastronomía",      location: "Soyapango",        description: "Las mejores pupusas de loroco y chicharrón hechas a mano, un clásico insuperable.",                                  color: "bg-red-50 text-red-800 border-red-200",         date: "Mar-Dom, 7:00 - 21:00" },
+  { id: 22, name: "Mercado Ex-Cuartel",    category: "Tiendas Locales",  location: "Centro Histórico", description: "Mercado artesanal con textiles, artesanías y joyería hecha por manos salvadoreñas.",                                  color: "bg-yellow-50 text-yellow-800 border-yellow-200", date: "Lun-Sáb, 8:00 - 18:00" },
+  { id: 23, name: "Café 1840",             category: "Café & Postres",   location: "Colonia Escalón",  description: "Cafetería de especialidad con granos de origen salvadoreño y terraza con vista a la ciudad.",                          color: "bg-amber-50 text-amber-800 border-amber-200",   date: "Lun-Dom, 7:00 - 20:00" },
+  { id: 24, name: "Galería Cima",          category: "Arte",             location: "San Benito",       description: "Galería de arte contemporáneo que exhibe a los artistas plásticos más importantes del país.",                          color: "bg-purple-50 text-purple-800 border-purple-200", date: "Mar-Sáb, 10:00 - 19:00" },
+  { id: 25, name: "Ruta de las Flores",    category: "Turismo",          location: "Sonsonate",        description: "Recorrido por pueblos coloniales rodeados de cafetales y flores de temporada.",                                       color: "bg-pink-50 text-pink-800 border-pink-200",      date: "Diario, 8:00 - 18:00" },
+  { id: 26, name: "Playa El Tunco",        category: "Turismo",          location: "La Libertad",      description: "La playa con las mejores olas para surf y el ambiente más vibrante de la costa pacífica.",                            color: "bg-cyan-50 text-cyan-800 border-cyan-200",      date: "Diario, 24h" },
+  { id: 27, name: "Ruinas de Tazumal",     category: "Cultura",          location: "Chalchuapa",       description: "Sitio arqueológico maya con pirámides milenarias y el museo más importante del país.",                                color: "bg-stone-50 text-stone-800 border-stone-200",   date: "Mar-Dom, 9:00 - 16:00" },
+  { id: 28, name: "Volcán Santa Ana",      category: "Naturaleza",       location: "Santa Ana",        description: "El volcán activo más alto de El Salvador con una laguna cráter de azufre color turquesa.",                            color: "bg-green-50 text-green-800 border-green-200",   date: "Sáb-Dom, 6:00 - 14:00" },
+  { id: 29, name: "Zona Rosa",             category: "Vida Nocturna",    location: "San Benito",       description: "El corazón de la vida nocturna y gastronómica premium de San Salvador.",                                              color: "bg-indigo-50 text-indigo-800 border-indigo-200", date: "Diario, 18:00 - 3:00" },
+  { id: 30, name: "Puerta del Diablo",     category: "Turismo",          location: "Panchimalco",      description: "Formación rocosa volcánica con vistas panorámicas de 180° sobre el Valle de Las Hamacas.",                            color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 7:00 - 17:00" },
+  { id: 31, name: "Coffee Shop 503",       category: "Café & Postres",   location: "Antiguo Cuscatlán", description: "Tercera ola del café salvadoreño con métodos artesanales y baristas campeones.",                                   color: "bg-amber-50 text-amber-800 border-amber-200",   date: "Lun-Sáb, 7:00 - 19:00" },
+  { id: 32, name: "Bar Vanguardia",        category: "Vida Nocturna",    location: "Colonia Escalón",  description: "Coctelerías de autor, música en vivo los viernes y la mejor carta de whiskies de la ciudad.",                         color: "bg-indigo-50 text-indigo-800 border-indigo-200", date: "Mié-Dom, 19:00 - 2:00" },
+  { id: 33, name: "Laguna El Jocotal",     category: "Naturaleza",       location: "San Miguel",       description: "Reserva de biosfera con más de 100 especies de aves migratorias y canoas para recorrerla.",                           color: "bg-teal-50 text-teal-800 border-teal-200",      date: "Diario, 6:00 - 17:00" },
+  { id: 34, name: "Centro Arte Zona Rosa", category: "Arte",             location: "Zona Rosa",        description: "Espacio cultural vivo con exposiciones temporales, talleres y shows de arte urbano.",                                 color: "bg-purple-50 text-purple-800 border-purple-200", date: "Mar-Dom, 10:00 - 20:00" },
+  { id: 35, name: "Pupusas Lorena",        category: "Gastronomía",      location: "Santa Tecla",      description: "Cuatro generaciones perfeccionando la receta original de pupusas de frijoles con queso.",                             color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 6:30 - 22:00" },
+  { id: 36, name: "Playa El Zonte",        category: "Turismo",          location: "La Libertad",      description: "La playa más tranquila y bohemia de El Salvador, primera comunidad circular en Bitcoin.",                             color: "bg-cyan-50 text-cyan-800 border-cyan-200",      date: "Diario, 24h" },
+  { id: 37, name: "Artesanías Nahuizalco", category: "Tiendas Locales",  location: "Sonsonate",        description: "Taller familiar de cestería y muebles de ratán, tradición artesanal pipil de generación en generación.",               color: "bg-yellow-50 text-yellow-800 border-yellow-200", date: "Lun-Sáb, 8:00 - 17:00" },
+  { id: 38, name: "Museo de Antropología", category: "Cultura",          location: "San Salvador",     description: "El museo nacional que alberga la historia precolombina y los tesoros arqueológicos del país.",                         color: "bg-stone-50 text-stone-800 border-stone-200",   date: "Mar-Dom, 9:00 - 17:00" },
+  { id: 39, name: "Los Planes de Renderos",category: "Gastronomía",      location: "Panchimalco",      description: "Zona de recreación con restaurantes de comida típica y vistas espectaculares de la capital.",                          color: "bg-orange-50 text-orange-800 border-orange-200", date: "Fin de Semana, 8:00 - 18:00" },
+  { id: 40, name: "Cocina de Don Beto",    category: "Gastronomía",      location: "San Miguel",       description: "Cocina típica oriental con los mejores mariscos, sopa de pata y chorizos de la región.",                              color: "bg-red-50 text-red-800 border-red-200",         date: "Lun-Dom, 8:00 - 21:00" },
   { id: 101, name: 'Atardecer Acústico', category: 'Evento Flash', location: 'Café Central',  description: 'Sube una selfie etiquetando a @SalePlan.sv y @CafeCentral en historias', pts: '2x Puntos (2 Sellos)', isFlash: true, date: 'Viernes 18, 18:00 - 20:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
   { id: 102, name: 'Noche de Museos',    category: 'Evento Flash', location: 'Museo de Arte', description: 'Asiste con 2 amigos que tengan la app',                                  pts: 'Entrada VIP Gratis + 1 Sello', isFlash: true, date: 'Sábado 19, 19:00 - 23:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
   { id: 103, name: 'Flash Burger',       category: 'Evento Flash', location: 'Burger Fest',  description: 'Compra el combo "Explorador" para validar',                              pts: '3x Puntos (3 Sellos)', isFlash: true, date: 'Hoy, 12:00 - 15:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" }
@@ -79,6 +104,11 @@ const POI_ICON_MAP: Record<number, LucideIcon> = {
   1: Coffee, 2: Palette, 3: UtensilsCrossed, 4: Leaf, 5: BookOpen,
   6: IceCream, 7: Landmark, 8: Mountain, 9: Music, 10: Pizza,
   11: ShoppingBag, 12: Flower2, 13: Utensils, 14: Disc3, 15: Store,
+  16: Landmark, 17: TreePine, 18: Mountain, 19: Waves, 20: Compass,
+  21: Utensils, 22: ShoppingBag, 23: Coffee, 24: Palette, 25: Flower2,
+  26: Waves, 27: Landmark, 28: Mountain, 29: Music, 30: Compass,
+  31: Coffee, 32: Music, 33: Waves, 34: Palette, 35: Utensils,
+  36: Waves, 37: ShoppingBag, 38: Landmark, 39: UtensilsCrossed, 40: UtensilsCrossed,
   101: Guitar, 102: Landmark, 103: UtensilsCrossed,
 };
 
@@ -88,6 +118,34 @@ function PoiIcon({ id, size = 24, strokeWidth = 1.5, className = '' }: {
   const Icon = POI_ICON_MAP[id] ?? MapPin;
   return <Icon size={size} strokeWidth={strokeWidth} className={className} />;
 }
+
+const CRM_CONTACTS = [
+  { name: 'Valentina Cruz',      avatar: AVATARS[0], time: 'Hace 2 horas',    badge: 'Frecuente', initial: null },
+  { name: 'Ricardo Morales',     avatar: AVATARS[3], time: 'Hace 4 horas',    badge: 'Nuevo',     initial: null },
+  { name: 'Luis Fernando',       avatar: AVATARS[1], time: 'Ayer, 18:42',     badge: null,        initial: null },
+  { name: 'María José Rivas',    avatar: null,        time: 'Ayer, 15:20',     badge: null,        initial: 'M' },
+  { name: 'Andrés Portillo',     avatar: AVATARS[2], time: 'Ayer, 12:10',     badge: 'Frecuente', initial: null },
+  { name: 'Sofía Hernández',     avatar: null,        time: 'Hace 2 días',     badge: null,        initial: 'S' },
+  { name: 'Carlos Ramos',        avatar: AVATARS[0], time: 'Hace 2 días',     badge: null,        initial: null },
+  { name: 'Daniela Fuentes',     avatar: AVATARS[2], time: 'Hace 3 días',     badge: 'Frecuente', initial: null },
+  { name: 'Pablo García',        avatar: null,        time: 'Hace 3 días',     badge: null,        initial: 'P' },
+  { name: 'Ana Lucía Mejía',     avatar: AVATARS[1], time: 'Hace 3 días',     badge: null,        initial: null },
+  { name: 'Jorge Alfaro',        avatar: null,        time: 'Hace 4 días',     badge: null,        initial: 'J' },
+  { name: 'Laura Castillo',      avatar: AVATARS[3], time: 'Hace 4 días',     badge: 'Nuevo',     initial: null },
+  { name: 'Miguel Ángel Torres', avatar: AVATARS[0], time: 'Hace 5 días',     badge: null,        initial: null },
+  { name: 'Isabella Ruiz',       avatar: null,        time: 'Hace 5 días',     badge: null,        initial: 'I' },
+  { name: 'Rodrigo Velásquez',   avatar: AVATARS[2], time: 'Hace 5 días',     badge: null,        initial: null },
+  { name: 'Fernanda López',      avatar: AVATARS[1], time: 'Hace 6 días',     badge: 'Frecuente', initial: null },
+  { name: 'Sebastián Chávez',    avatar: null,        time: 'Hace 6 días',     badge: null,        initial: 'S' },
+  { name: 'Natalia Martínez',    avatar: AVATARS[3], time: 'Hace 7 días',     badge: null,        initial: null },
+  { name: 'Eduardo Flores',      avatar: AVATARS[0], time: 'Hace 7 días',     badge: null,        initial: null },
+  { name: 'Carmen Díaz',         avatar: null,        time: 'Hace 8 días',     badge: null,        initial: 'C' },
+  { name: 'José Antonio Peña',   avatar: AVATARS[2], time: 'Hace 8 días',     badge: 'Frecuente', initial: null },
+  { name: 'Valeria Moreno',      avatar: AVATARS[1], time: 'Hace 9 días',     badge: null,        initial: null },
+  { name: 'Diego Ramírez',       avatar: null,        time: 'Hace 9 días',     badge: null,        initial: 'D' },
+  { name: 'Claudia Sánchez',     avatar: AVATARS[3], time: 'Hace 10 días',    badge: null,        initial: null },
+  { name: 'Arturo González',     avatar: AVATARS[0], time: 'Hace 10 días',    badge: 'Frecuente', initial: null },
+];
 
 // Motion stagger variants — Emil: stagger 30-80ms between items
 const listVariants = {
@@ -115,6 +173,8 @@ export default function App() {
   });
   const [commerceTab, setCommerceTab] = useState<'ESCANEO' | 'CRM' | 'CONFIG'>('ESCANEO');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [justStampedId, setJustStampedId] = useState<number | null>(null);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -543,28 +603,22 @@ export default function App() {
           </div>
 
           <div className="flex-1 overflow-y-auto no-scrollbar pb-10">
-            <motion.div
-              variants={listVariants}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-wrap gap-3 justify-center"
-            >
+            <div className="flex flex-wrap gap-3 justify-center">
               {ALL_CATEGORIES.map(cat => {
                 const isSelected = selectedCategories.includes(cat.id);
                 const CatIcon = CAT_ICON_MAP[cat.id] ?? MapPin;
                 return (
-                  <motion.button
+                  <button
                     key={cat.id}
-                    variants={itemVariants}
                     onClick={() => toggleCategory(cat.id)}
                     className={`relative overflow-hidden rounded-full px-5 py-3 font-bold transition-[background-color,border-color,transform,box-shadow] border-2 text-sm flex items-center gap-2 active:scale-[0.97] ${isSelected ? 'bg-[#253884] text-white border-[#253884] shadow-lg scale-105' : 'bg-gray-50 text-gray-500 border-gray-200'}`}
                   >
                     <CatIcon size={15} strokeWidth={2} />
                     {cat.name}
-                  </motion.button>
+                  </button>
                 );
               })}
-            </motion.div>
+            </div>
           </div>
 
           <div className="absolute bottom-8 left-6 right-6">
@@ -680,14 +734,15 @@ export default function App() {
                   const poi = myRoute[index];
                   if (poi) {
                     const isStamped = stampedPOIs.includes(poi.id);
+                    const isJustStamped = justStampedId === poi.id;
                     return (
                       <div
                         key={poi.id}
                         onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
-                        className={`aspect-square ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm`}
+                        className={`aspect-square ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
                       >
                         {isStamped && (
-                          <div className="absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100">
+                          <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
                             <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
                           </div>
                         )}
@@ -779,7 +834,13 @@ export default function App() {
                     </div>
 
                     <button
-                      onClick={() => { setStampedPOIs(prev => [...prev, qrModalPOIId!]); setQrModalPOIId(null); }}
+                      onClick={() => {
+                        const id = qrModalPOIId!;
+                        setStampedPOIs(prev => [...prev, id]);
+                        setJustStampedId(id);
+                        setQrModalPOIId(null);
+                        setTimeout(() => setJustStampedId(null), 1200);
+                      }}
                       className="w-full bg-[#253884] text-white py-4 rounded-xl font-bold uppercase tracking-wide subtle-shadow active:scale-[0.97] transition-transform"
                     >
                       [Demo] Simular Escaneo
@@ -1086,14 +1147,10 @@ export default function App() {
                     CSV
                   </button>
                 </div>
-                <div className="space-y-6">
-                  {[
-                    { name: 'Valentina Cruz',  avatar: AVATARS[0], time: 'Hace 2 horas', badge: true },
-                    { name: 'Luis Fernando',   avatar: AVATARS[1], time: 'Ayer a las 18:42', badge: false },
-                    { name: 'María José',      avatar: null,        time: 'Ayer a las 15:20', badge: false, initial: 'M' },
-                  ].map(contact => (
+                <div className="space-y-5">
+                  {CRM_CONTACTS.map(contact => (
                     <div key={contact.name} className="flex items-center gap-3 cursor-pointer p-2 -mx-2 rounded-xl active:scale-[0.98] transition-transform">
-                      <div className={`w-12 h-12 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-xl ${contact.badge ? 'border-[#253884]' : 'border-gray-100'} ${!contact.avatar ? 'bg-purple-50 text-purple-700 border-purple-200' : ''}`}>
+                      <div className={`w-12 h-12 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-xl ${contact.badge === 'Frecuente' ? 'border-[#253884]' : contact.badge === 'Nuevo' ? 'border-green-400' : 'border-gray-100'} ${!contact.avatar ? 'bg-purple-50 text-purple-700 border-purple-200' : ''}`}>
                         {contact.avatar ? <img src={contact.avatar} className="w-full h-full object-cover" alt="User" /> : contact.initial}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -1101,8 +1158,8 @@ export default function App() {
                         <p className="text-[10px] text-gray-500 font-bold uppercase truncate">{contact.time}</p>
                       </div>
                       {contact.badge && (
-                        <div className="text-[9px] bg-green-100 text-green-800 border-green-200 border font-bold px-2 py-1 rounded-lg uppercase flex items-center gap-1 shadow-sm">
-                          <Sparkles size={10} strokeWidth={2} /> Frecuente
+                        <div className={`text-[9px] font-bold px-2 py-1 rounded-lg uppercase flex items-center gap-1 shadow-sm border ${contact.badge === 'Frecuente' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-blue-100 text-blue-800 border-blue-200'}`}>
+                          <Sparkles size={10} strokeWidth={2} /> {contact.badge}
                         </div>
                       )}
                     </div>
@@ -1263,93 +1320,121 @@ export default function App() {
       );
     }
 
+    const query = searchQuery.toLowerCase().trim();
+    const regularPOIs = POIS.filter(p => !p.isFlash);
+    const filteredPOIs = query
+      ? regularPOIs.filter(p =>
+          p.name.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query) ||
+          p.location.toLowerCase().includes(query)
+        )
+      : regularPOIs;
+
     return (
       <Layout bgClass="bg-gray-50">
         <div className="flex-1 pb-24 flex flex-col">
-          <div className="bg-[#253884] px-6 pt-12 pb-8 rounded-b-[2.5rem] shadow-sm relative z-20 overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-            <h2 className="text-3xl font-heading text-white tracking-tight mb-6">Explorar</h2>
-            <div className="relative">
-              <input type="text" placeholder="Buscar lugares, categorías..." className="w-full px-5 py-4 bg-white/10 border-2 border-white/20 text-white rounded-2xl outline-none placeholder:text-blue-200 focus:bg-white/20 focus:border-white/40 transition-[background-color,border-color] font-medium" />
-              <img src={ICONS.SEARCH} className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 invert opacity-70" alt="" />
+          {/* Compact header — keeps flash events above fold */}
+          <div className="bg-[#253884] px-6 pt-10 pb-5 shadow-sm relative z-20 overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="flex items-center justify-between mb-4 relative z-10">
+              <h2 className="text-2xl font-heading text-white tracking-tight">Explorar</h2>
+              <span className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">{filteredPOIs.length} lugares</span>
+            </div>
+            <div className="relative z-10">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Buscar lugares, categorías..."
+                className="w-full px-5 py-3.5 bg-white/10 border-2 border-white/20 text-white rounded-2xl outline-none placeholder:text-blue-200 focus:bg-white/20 focus:border-white/40 transition-[background-color,border-color] font-medium text-sm"
+              />
+              <img src={ICONS.SEARCH} className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 invert opacity-70" alt="" />
             </div>
           </div>
 
-          <div className="p-6">
-            <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-4 flex items-center gap-2">
-              Eventos Flash <Zap size={18} strokeWidth={2.5} className="text-yellow-500" />
-            </h3>
-            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-6 snap-x">
-              {FLASH_EVENTS.map(event => (
-                <div key={event.id} className="snap-center shrink-0 w-72 bg-white subtle-shadow rounded-3xl p-5 border-2 border-yellow-200 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-black text-[10px] uppercase px-3 py-1 rounded-bl-xl z-10 tracking-widest">
-                    {event.pts}
-                  </div>
-                  <div className="flex items-start gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 shrink-0">
-                      <PoiIcon id={event.id} size={22} strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-[#253884] leading-tight text-sm pr-4 mt-1">{event.name}</h4>
-                      <p className="font-bold text-[10px] text-gray-400 uppercase tracking-widest mt-1">{event.location}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-3 bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                    <p className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">{event.date}</p>
-                    <div className="border-t border-gray-200 pt-2">
-                      <p className="text-[10px] font-bold text-[#253884] uppercase tracking-wider mb-1">Condiciones:</p>
-                      <p className="text-xs text-gray-600 font-medium leading-snug">{event.description}</p>
-                    </div>
-                  </div>
-                  <button onClick={() => setSelectedPOI(event.id)} className="w-full mt-4 bg-[#253884] text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wide subtle-shadow active:scale-[0.97] transition-transform">
-                    Ver Evento
-                  </button>
+          <div className="px-5 pt-5 pb-2">
+            {/* Flash events — visible on first glance, no search filter applied */}
+            {!query && (
+              <>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-base font-heading text-[#253884] tracking-tight flex items-center gap-1.5">
+                    Eventos Flash <Zap size={14} strokeWidth={2.5} className="text-yellow-500" />
+                  </h3>
+                  <span className="text-[10px] font-bold text-yellow-700 bg-yellow-50 border border-yellow-200 px-2 py-1 rounded-full uppercase tracking-wider">{FLASH_EVENTS.length} activos</span>
                 </div>
-              ))}
-            </div>
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  {FLASH_EVENTS.map(event => (
+                    <div
+                      key={event.id}
+                      onClick={() => setSelectedPOI(event.id)}
+                      className="bg-white rounded-2xl p-3.5 border-2 border-yellow-200 relative overflow-hidden cursor-pointer active:scale-[0.97] transition-transform subtle-shadow"
+                    >
+                      <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight">
+                        {event.pts}
+                      </div>
+                      <div className="w-9 h-9 rounded-xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 mb-2">
+                        <PoiIcon id={event.id} size={18} strokeWidth={1.5} />
+                      </div>
+                      <h4 className="font-bold text-[#253884] text-xs leading-tight mb-1 pr-2">{event.name}</h4>
+                      <p className="font-bold text-[9px] text-gray-400 uppercase tracking-wider truncate">{event.location}</p>
+                      <p className="font-bold text-[9px] text-yellow-700 mt-1">{event.date}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
 
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-4 mb-2 mt-2">
-              <button className="px-5 py-2 bg-[#253884] text-white rounded-full font-bold text-sm whitespace-nowrap shadow-sm active:scale-[0.97] transition-transform">Todos</button>
+            {/* Category pills */}
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1">
+              <button className="px-4 py-1.5 bg-[#253884] text-white rounded-full font-bold text-xs whitespace-nowrap shadow-sm active:scale-[0.97] transition-transform">Todos</button>
               {ALL_CATEGORIES.map(cat => {
                 const CatIcon = CAT_ICON_MAP[cat.id] ?? MapPin;
                 return (
-                  <button key={cat.id} className="px-4 py-2 bg-white text-gray-600 rounded-full font-bold text-sm whitespace-nowrap shadow-sm border border-gray-100 flex items-center gap-1.5 active:scale-[0.97] transition-transform">
-                    <CatIcon size={13} strokeWidth={2} /> {cat.name}
+                  <button key={cat.id} className="px-3 py-1.5 bg-white text-gray-600 rounded-full font-bold text-xs whitespace-nowrap shadow-sm border border-gray-100 flex items-center gap-1 active:scale-[0.97] transition-transform">
+                    <CatIcon size={11} strokeWidth={2} /> {cat.name}
                   </button>
                 );
               })}
             </div>
 
-            <motion.div
-              variants={listVariants}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-2 gap-4"
-            >
-              {POIS.map(poi => {
-                const isSaved = savedPOIs.includes(poi.id);
-                return (
-                  <motion.div
-                    key={poi.id}
-                    variants={itemVariants}
-                    onClick={() => setSelectedPOI(poi.id)}
-                    className="bg-white rounded-3xl p-4 subtle-shadow relative flex flex-col items-center text-center cursor-pointer active:scale-[0.97] transition-transform"
-                  >
-                    <button
-                      onClick={e => { e.stopPropagation(); setSavedPOIs(prev => isSaved ? prev.filter(id => id !== poi.id) : [...prev, poi.id]); }}
-                      className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm z-10 transition-[background-color,color] ${isSaved ? 'bg-[#253884] text-white' : 'bg-gray-100 text-gray-400'}`}
+            {/* POI grid */}
+            {filteredPOIs.length === 0 ? (
+              <div className="py-16 text-center">
+                <p className="text-gray-400 font-bold text-sm">No se encontraron resultados para</p>
+                <p className="text-[#253884] font-heading text-xl mt-1">"{searchQuery}"</p>
+              </div>
+            ) : (
+              <motion.div
+                variants={listVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-2 gap-3"
+              >
+                {filteredPOIs.map(poi => {
+                  const isSaved = savedPOIs.includes(poi.id);
+                  return (
+                    <motion.div
+                      key={poi.id}
+                      variants={itemVariants}
+                      onClick={() => setSelectedPOI(poi.id)}
+                      className="bg-white rounded-2xl p-3.5 subtle-shadow relative flex flex-col items-center text-center cursor-pointer active:scale-[0.97] transition-transform"
                     >
-                      {isSaved ? <Check size={14} strokeWidth={2.5} /> : '+'}
-                    </button>
-                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-3 border ${poi.color}`}>
-                      <PoiIcon id={poi.id} size={28} strokeWidth={1.5} />
-                    </div>
-                    <h3 className="font-bold text-[#253884] leading-tight mb-1">{poi.name}</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{poi.category}</p>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
+                      <button
+                        onClick={e => { e.stopPropagation(); setSavedPOIs(prev => isSaved ? prev.filter(id => id !== poi.id) : [...prev, poi.id]); }}
+                        className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm z-10 transition-[background-color,color] ${isSaved ? 'bg-[#253884] text-white' : 'bg-gray-100 text-gray-400'}`}
+                      >
+                        {isSaved ? <Check size={12} strokeWidth={2.5} /> : '+'}
+                      </button>
+                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-2.5 border ${poi.color}`}>
+                        <PoiIcon id={poi.id} size={26} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="font-bold text-[#253884] text-sm leading-tight mb-0.5">{poi.name}</h3>
+                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{poi.category}</p>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            )}
           </div>
         </div>
         <BottomNav active="search" />

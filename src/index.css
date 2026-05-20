@@ -60,6 +60,29 @@ body {
   transform: scale(0.97);
 }
 
+/* Stamp/seal animation — ink press feel: overshoot then settle */
+@keyframes stampIn {
+  0%   { opacity: 0; transform: scale(2.4) rotate(-10deg); }
+  38%  { opacity: 1; transform: scale(0.88) rotate(4deg); }
+  65%  { transform: scale(1.07) rotate(-2deg); }
+  82%  { transform: scale(0.97) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes stampRing {
+  0%   { box-shadow: 0 0 0 0 rgba(37, 56, 132, 0.40); }
+  65%  { box-shadow: 0 0 0 12px rgba(37, 56, 132, 0); }
+  100% { box-shadow: 0 0 0 12px rgba(37, 56, 132, 0); }
+}
+
+.animate-stamp-in {
+  animation: stampIn 0.45s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.animate-stamp-ring {
+  animation: stampRing 0.55s ease-out forwards;
+}
+
 /* Emil: prefers-reduced-motion — fewer animations, not zero */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
