@@ -1,12 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Sour+Gummy:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Sour+Gummy:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-blue-main: #253884;
   --color-black-main: #191308;
   --color-blue-light: #e6eaf8;
-  --font-sans: 'Roboto', Helvetica, Arial, sans-serif;
+  --font-sans: 'Outfit', Helvetica, Arial, sans-serif;
   --font-sour: 'Sour Gummy', sans-serif;
+}
+
+/* Emil: custom easing curves — built-ins are too weak */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 body {
@@ -22,17 +29,21 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Emil: specify exact properties — never transition: all */
 .subtle-shadow {
-  box-shadow: 0 4px 6px -1px rgba(25, 19, 8, 0.1), 0 2px 4px -1px rgba(25, 19, 8, 0.06);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(25, 19, 8, 0.08), 0 2px 4px -1px rgba(25, 19, 8, 0.04);
+  transition: box-shadow 200ms var(--ease-out), transform 160ms var(--ease-out);
 }
 
-.subtle-shadow:hover {
-  box-shadow: 0 8px 15px -3px rgba(25, 19, 8, 0.15), 0 4px 6px -2px rgba(25, 19, 8, 0.05);
+@media (hover: hover) and (pointer: fine) {
+  .subtle-shadow:hover {
+    box-shadow: 0 8px 15px -3px rgba(25, 19, 8, 0.12), 0 4px 6px -2px rgba(25, 19, 8, 0.04);
+  }
 }
 
 .card-shadow {
-  box-shadow: 0 8px 30px rgba(37, 56, 132, 0.08); border: 2px solid #e6eaf8;
+  box-shadow: 0 8px 30px rgba(37, 56, 132, 0.06);
+  border: 1.5px solid #e6eaf8;
 }
 
 .halftone-bg-light {
@@ -41,3 +52,19 @@ body {
   background-position: 0 0, 8px 8px;
 }
 
+/* Emil: buttons must feel responsive — scale-0.97 on press */
+.btn-press {
+  transition: transform 100ms var(--ease-out);
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Emil: prefers-reduced-motion — fewer animations, not zero */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
