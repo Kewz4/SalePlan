@@ -5,7 +5,7 @@ import {
   Coffee, Palette, UtensilsCrossed, Leaf, BookOpen, Landmark, Mountain, Music,
   ShoppingBag, Flower2, Utensils, Disc3, Camera, Guitar, Pizza, IceCream, MapPin,
   Zap, Crown, Backpack, Trophy, Sprout, ScanLine, Share2, Check, Pencil, Sparkles,
-  QrCode, Waves, TreePine, Compass
+  QrCode, Waves, TreePine, Compass, Calendar
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import YetiLogin from './components/YetiLogin';
@@ -119,7 +119,64 @@ function PoiIcon({ id, size = 24, strokeWidth = 1.5, className = '' }: {
   return <Icon size={size} strokeWidth={strokeWidth} className={className} />;
 }
 
-const getPoiImage = (id: number) => `https://picsum.photos/seed/saleplan${id}/800/450`;
+const POI_IMAGE_MAP: Record<number, string> = {
+  1:  'https://loremflickr.com/800/450/coffee,cafe?lock=1',
+  2:  'https://loremflickr.com/800/450/art,museum?lock=2',
+  3:  'https://loremflickr.com/800/450/burger,grill?lock=3',
+  4:  'https://loremflickr.com/800/450/botanical,garden?lock=4',
+  5:  'https://loremflickr.com/800/450/library,books?lock=5',
+  6:  'https://loremflickr.com/800/450/icecream,dessert?lock=6',
+  7:  'https://loremflickr.com/800/450/theater,stage?lock=7',
+  8:  'https://loremflickr.com/800/450/viewpoint,landscape?lock=8',
+  9:  'https://loremflickr.com/800/450/jazz,music?lock=9',
+  10: 'https://loremflickr.com/800/450/pizza,restaurant?lock=10',
+  11: 'https://loremflickr.com/800/450/vintage,fashion?lock=11',
+  12: 'https://loremflickr.com/800/450/japanese,garden?lock=12',
+  13: 'https://loremflickr.com/800/450/sushi,japanese?lock=13',
+  14: 'https://loremflickr.com/800/450/vinyl,records?lock=14',
+  15: 'https://loremflickr.com/800/450/market,food?lock=15',
+  16: 'https://loremflickr.com/800/450/cathedral,church?lock=16',
+  17: 'https://loremflickr.com/800/450/park,urban?lock=17',
+  18: 'https://loremflickr.com/800/450/volcano,forest?lock=18',
+  19: 'https://loremflickr.com/800/450/lake,crater?lock=19',
+  20: 'https://loremflickr.com/800/450/colonial,architecture?lock=20',
+  21: 'https://loremflickr.com/800/450/tortilla,latin?lock=21',
+  22: 'https://loremflickr.com/800/450/artisan,market?lock=22',
+  23: 'https://loremflickr.com/800/450/coffee,specialty?lock=23',
+  24: 'https://loremflickr.com/800/450/gallery,contemporary?lock=24',
+  25: 'https://loremflickr.com/800/450/flowers,colorful?lock=25',
+  26: 'https://loremflickr.com/800/450/surf,beach?lock=26',
+  27: 'https://loremflickr.com/800/450/ruins,pyramid?lock=27',
+  28: 'https://loremflickr.com/800/450/volcano,hiking?lock=28',
+  29: 'https://loremflickr.com/800/450/nightlife,cocktail?lock=29',
+  30: 'https://loremflickr.com/800/450/rocks,panoramic?lock=30',
+  31: 'https://loremflickr.com/800/450/barista,coffee?lock=31',
+  32: 'https://loremflickr.com/800/450/whisky,bar?lock=32',
+  33: 'https://loremflickr.com/800/450/lagoon,birds?lock=33',
+  34: 'https://loremflickr.com/800/450/urban,art?lock=34',
+  35: 'https://loremflickr.com/800/450/street,food?lock=35',
+  36: 'https://loremflickr.com/800/450/tropical,beach?lock=36',
+  37: 'https://loremflickr.com/800/450/weaving,artisan?lock=37',
+  38: 'https://loremflickr.com/800/450/museum,archaeology?lock=38',
+  39: 'https://loremflickr.com/800/450/hilltop,restaurant?lock=39',
+  40: 'https://loremflickr.com/800/450/seafood,mariscos?lock=40',
+  101:'https://loremflickr.com/800/450/concert,acoustic?lock=101',
+  102:'https://loremflickr.com/800/450/museum,night?lock=102',
+  103:'https://loremflickr.com/800/450/burger,festival?lock=103',
+};
+const getPoiImage = (id: number) => POI_IMAGE_MAP[id] ?? `https://loremflickr.com/800/450/travel?lock=${id}`;
+
+const VISIT_DAYS = [
+  { label: 'Hoy — mié 20 may',   icon: '📅', text: 'Hoy' },
+  { label: 'Mañana — jue 21 may', icon: '📅', text: 'Mañana' },
+  { label: 'Sáb 23 de mayo',      icon: '📅', text: 'Sáb 23 may' },
+  { label: 'Lun 25 de mayo',      icon: '📅', text: 'Lun 25 may' },
+];
+const VISIT_TIMES = [
+  { label: 'Mañana  08:00 – 12:00', text: '08:00 – 12:00' },
+  { label: 'Tarde   12:00 – 17:00', text: '12:00 – 17:00' },
+  { label: 'Noche   17:00 – 22:00', text: '17:00 – 22:00' },
+];
 
 const getFlashStamps = (pts?: string): number => {
   if (!pts) return 1;
@@ -185,6 +242,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [justStampedId, setJustStampedId] = useState<number | null>(null);
   const [justAddedPOI, setJustAddedPOI] = useState<number | null>(null);
+  const [poiSchedules, setPoiSchedules] = useState<Record<number, { day: string; time: string }>>({});
   const [carryOverStamps, setCarryOverStamps] = useState(0);
   const [showPassportComplete, setShowPassportComplete] = useState(false);
   const [passportPoints, setPassportPoints] = useState(0);
@@ -488,22 +546,28 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Hero — left-aligned per DESIGN_VARIANCE 8 */}
-      <div className="w-full pb-24 px-6 pt-10 flex flex-col">
+      {/* Hero */}
+      <div className="w-full pb-24 px-6 pt-10 flex flex-col items-center text-center">
+        <div className="relative w-32 h-32 mb-8 flex items-center justify-center">
+          <div className="absolute inset-0 bg-[#e6eaf8] rounded-full scale-110 opacity-50" />
+          <div className="absolute inset-0 bg-[#e6eaf8] rounded-full" />
+          <img src={ICONS.NAV_PASSPORT} className="w-20 h-20 relative z-10" alt="Passport" />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
-          className="mb-10"
+          className="mb-10 w-full"
         >
           <h1 className="text-5xl leading-[1.1] font-heading text-[#253884] tracking-tight mb-4">
             Tu Pasaporte<br />A La Ciudad
           </h1>
-          <p className="font-medium text-gray-500 mb-8 text-sm max-w-[300px] text-balance">
+          <p className="font-medium text-gray-500 mb-8 text-sm text-balance mx-auto max-w-[280px]">
             Explora lugares únicos, colecciona sellos digitales y gana recompensas exclusivas mientras descubres los mejores rincones de la ciudad.
           </p>
 
-          <div className="space-y-3 max-w-sm">
+          <div className="space-y-3 w-full max-w-sm mx-auto">
             <button onClick={() => navigateTo('REGISTER_CHOICE')} className="w-full py-5 bg-[#253884] text-white font-bold uppercase text-lg rounded-2xl shadow-xl active:scale-[0.97] transition-transform">
               Comenzar Ahora
             </button>
@@ -511,13 +575,7 @@ export default function App() {
           </div>
         </motion.div>
 
-        <div className="relative w-40 h-40 mb-12 self-center flex items-center justify-center">
-          <div className="absolute inset-0 bg-[#e6eaf8] rounded-full scale-110 opacity-50" />
-          <div className="absolute inset-0 bg-[#e6eaf8] rounded-full" />
-          <img src={ICONS.NAV_PASSPORT} className="w-24 h-24 relative z-10" alt="Passport" />
-        </div>
-
-        <h2 className="text-2xl font-heading text-[#191308] mb-6">¿Cómo Funciona?</h2>
+        <h2 className="text-2xl font-heading text-[#191308] mb-6 w-full">¿Cómo Funciona?</h2>
 
         <motion.div
           variants={listVariants}
@@ -775,45 +833,81 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                {myRoute.map(poi => {
-                  const isStamped = stampedPOIs.includes(poi.id);
-                  const isJustStamped = justStampedId === poi.id;
-                  const isFlash = poi.isFlash;
-                  return (
-                    <div
-                      key={poi.id}
-                      onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
-                      className={`${isFlash ? 'col-span-2 aspect-[2/1]' : 'aspect-square'} ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
-                    >
-                      {isFlash && (
-                        <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
-                          <Zap size={8} strokeWidth={2.5} /> Flash
-                        </span>
-                      )}
-                      {isStamped && (
-                        <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
-                          <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
-                        </div>
-                      )}
-                      <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200`}>
-                        <PoiIcon id={poi.id} size={isFlash ? 32 : 28} strokeWidth={1.5} />
+              {/* Passport grid — flex-row layout eliminates col-span centering bugs */}
+              {(() => {
+                type GridCell = { kind: 'poi'; poi: typeof myRoute[0] } | { kind: 'empty'; idx: number };
+                const cells: GridCell[] = [
+                  ...myRoute.map(poi => ({ kind: 'poi' as const, poi })),
+                  ...Array.from({ length: emptyCells }, (_, i) => ({ kind: 'empty' as const, idx: i })),
+                ];
+                const rows: GridCell[][] = [];
+                let row: GridCell[] = [], rowW = 0;
+                for (const cell of cells) {
+                  const w = cell.kind === 'poi' && cell.poi.isFlash ? 2 : 1;
+                  if (rowW + w > 3) {
+                    while (rowW < 3) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
+                    rows.push(row); row = []; rowW = 0;
+                  }
+                  row.push(cell); rowW += w;
+                  if (rowW === 3) { rows.push(row); row = []; rowW = 0; }
+                }
+                if (row.length) {
+                  while (rowW < 3) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
+                  rows.push(row);
+                }
+                return (
+                  <div className="flex flex-col gap-3">
+                    {rows.map((r, ri) => (
+                      <div key={ri} className="flex gap-3">
+                        {r.map((cell, ci) => {
+                          if (cell.kind === 'empty') {
+                            const isPlaceholder = cell.idx < 0;
+                            return isPlaceholder ? (
+                              <div key={`ph-${ri}-${ci}`} className="flex-1 aspect-square opacity-0 pointer-events-none" />
+                            ) : (
+                              <button
+                                key={`e-${ri}-${ci}`}
+                                onClick={() => navigateTo('USER_SEARCH')}
+                                className="flex-1 aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
+                              >
+                                <span className="text-gray-300 font-black text-2xl group-hover:text-[#253884] transition-colors duration-200">+</span>
+                                <p className="text-[8px] font-bold text-gray-400 group-hover:text-[#253884] uppercase mt-1 transition-colors duration-200">Agregar</p>
+                              </button>
+                            );
+                          }
+                          const { poi } = cell;
+                          const isStamped = stampedPOIs.includes(poi.id);
+                          const isJustStamped = justStampedId === poi.id;
+                          const isFlash = poi.isFlash;
+                          return (
+                            <div
+                              key={poi.id}
+                              onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
+                              style={{ aspectRatio: isFlash ? '2/1' : '1/1' }}
+                              className={`${isFlash ? 'flex-[2]' : 'flex-1'} ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
+                            >
+                              {isFlash && (
+                                <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
+                                  <Zap size={8} strokeWidth={2.5} /> Flash
+                                </span>
+                              )}
+                              {isStamped && (
+                                <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
+                                  <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
+                                </div>
+                              )}
+                              <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
+                                <PoiIcon id={poi.id} size={isFlash ? 32 : 28} strokeWidth={1.5} />
+                                <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                      <p className="text-[8px] font-bold text-[#253884] uppercase mt-2 text-center leading-tight truncate w-full px-1">{poi.name}</p>
-                    </div>
-                  );
-                })}
-                {Array.from({ length: emptyCells }).map((_, i) => (
-                  <button
-                    key={`empty-${i}`}
-                    onClick={() => navigateTo('USER_SEARCH')}
-                    className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
-                  >
-                    <span className="text-gray-300 font-black text-2xl group-hover:text-[#253884] transition-colors duration-200">+</span>
-                    <p className="text-[8px] font-bold text-gray-400 group-hover:text-[#253884] uppercase mt-1 transition-colors duration-200">Agregar</p>
-                  </button>
-                ))}
-              </div>
+                    ))}
+                  </div>
+                );
+              })()}
 
               <div className="mt-8">
                 <h3 className="text-xs font-bold text-[#253884] uppercase tracking-widest opacity-60 mb-4">Ruta de Hoy</h3>
@@ -839,12 +933,22 @@ export default function App() {
                             )}
                           </h4>
                           <p className="text-[9px] text-gray-500 font-bold uppercase tracking-wider truncate">{poi.category}</p>
-                          {poi.date && (
-                            <p className="text-[9px] font-bold text-[#253884] opacity-70 truncate mt-0.5 flex items-center gap-0.5">
-                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#253884] opacity-60 shrink-0" />
-                              {poi.date}
-                            </p>
-                          )}
+                          {(() => {
+                            const sched = poiSchedules[poi.id];
+                            if (sched) return (
+                              <p className="text-[9px] font-bold text-[#253884] truncate mt-0.5 flex items-center gap-1">
+                                <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
+                                {sched.day} · {sched.time}
+                              </p>
+                            );
+                            if (poi.isFlash && poi.date) return (
+                              <p className="text-[9px] font-bold text-yellow-700 truncate mt-0.5 flex items-center gap-1">
+                                <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
+                                {poi.date}
+                              </p>
+                            );
+                            return null;
+                          })()}
                         </div>
                         <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
                           {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
@@ -961,7 +1065,7 @@ export default function App() {
                       transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: 0.15 }}
                       className="w-24 h-24 bg-[#253884] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"
                     >
-                      <img src={ICONS.LOGO} className="w-14 h-14 invert" alt="Sello" />
+                      <img src={ICONS.LOGO} className="w-14 h-14 brightness-0 invert" alt="Sello" />
                     </motion.div>
 
                     <motion.div
@@ -1441,15 +1545,23 @@ export default function App() {
                 {/* Date/time planner — available for all events */}
                 <div className={`p-4 rounded-2xl border ${poi.isFlash ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`}>
                   <p className={`font-bold mb-3 flex items-center gap-1.5 text-sm ${poi.isFlash ? 'text-yellow-800' : 'text-[#253884]'}`}>
-                    {poi.isFlash ? <Zap size={14} strokeWidth={2.5} /> : <Crown size={14} strokeWidth={2} />}
+                    <Calendar size={14} strokeWidth={2} />
                     {poi.isFlash ? 'Planear Asistencia' : 'Planear mi Visita'}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
-                    <select className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}>
-                      <option>Hoy</option><option>Mañana</option><option>Este fin de semana</option><option>Próxima semana</option>
+                    <select
+                      value={poiSchedules[poi.id]?.day ?? VISIT_DAYS[0].text}
+                      onChange={e => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: e.target.value, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
+                      className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}
+                    >
+                      {VISIT_DAYS.map(d => <option key={d.text} value={d.text}>{d.label}</option>)}
                     </select>
-                    <select className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}>
-                      <option>Mañana (8–12h)</option><option>Tarde (12–17h)</option><option>Noche (17–22h)</option>
+                    <select
+                      value={poiSchedules[poi.id]?.time ?? VISIT_TIMES[0].text}
+                      onChange={e => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: e.target.value } }))}
+                      className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}
+                    >
+                      {VISIT_TIMES.map(t => <option key={t.text} value={t.text}>{t.label}</option>)}
                     </select>
                   </div>
                 </div>
