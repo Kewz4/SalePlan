@@ -95,7 +95,9 @@ const POIS = [
   { id: 40, name: "Cocina de Don Beto",    category: "Gastronomía",      location: "San Miguel",       description: "Cocina típica oriental con los mejores mariscos, sopa de pata y chorizos de la región.",                              color: "bg-red-50 text-red-800 border-red-200",         date: "Lun-Dom, 8:00 - 21:00" },
   { id: 101, name: 'Atardecer Acústico', category: 'Evento Flash', location: 'Café Central',  description: 'Sube una selfie etiquetando a @SalePlan.sv y @CafeCentral en historias', pts: '2x Puntos (2 Sellos)', isFlash: true, date: 'Viernes 18, 18:00 - 20:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
   { id: 102, name: 'Noche de Museos',    category: 'Evento Flash', location: 'Museo de Arte', description: 'Asiste con 2 amigos que tengan la app',                                  pts: 'Entrada VIP Gratis + 1 Sello', isFlash: true, date: 'Sábado 19, 19:00 - 23:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
-  { id: 103, name: 'Flash Burger',       category: 'Evento Flash', location: 'Burger Fest',  description: 'Compra el combo "Explorador" para validar',                              pts: '3x Puntos (3 Sellos)', isFlash: true, date: 'Hoy, 12:00 - 15:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" }
+  { id: 103, name: 'Flash Burger',       category: 'Evento Flash', location: 'Burger Fest',  description: 'Compra el combo "Explorador" para validar',                              pts: '3x Puntos (3 Sellos)', isFlash: true, date: 'Hoy, 12:00 - 15:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
+  { id: 104, name: 'Cena de Temporada',  category: 'Evento Flash', location: 'Restaurante Gaia', description: 'Menu degustacion exclusivo con maridaje de vinos nacionales',           pts: 'Reserva Prioritaria + 2 Sellos', isFlash: true, isPremium: true, date: 'Viernes 18, 20:00 - 23:00', color: "bg-indigo-50 text-indigo-800 border-indigo-200" },
+  { id: 105, name: 'Rooftop Sessions',   category: 'Evento Flash', location: 'Hotel Sheraton',   description: 'Noche de jazz en el rooftop con barra libre de cocteles de autor',    pts: 'Experiencia VIP + 3 Sellos',    isFlash: true, isPremium: true, date: 'Sabado 19, 21:00 - 1:00',    color: "bg-indigo-50 text-indigo-800 border-indigo-200" }
 ];
 
 const FLASH_EVENTS = POIS.filter(poi => poi.isFlash);
@@ -110,6 +112,7 @@ const POI_ICON_MAP: Record<number, LucideIcon> = {
   31: Coffee, 32: Music, 33: Waves, 34: Palette, 35: Utensils,
   36: Waves, 37: ShoppingBag, 38: Landmark, 39: UtensilsCrossed, 40: UtensilsCrossed,
   101: Guitar, 102: Landmark, 103: UtensilsCrossed,
+  104: UtensilsCrossed, 105: Music,
 };
 
 function PoiIcon({ id, size = 24, strokeWidth = 1.5, className = '' }: {
@@ -163,6 +166,8 @@ const POI_IMAGE_MAP: Record<number, string> = {
   101:'https://loremflickr.com/800/450/concert,acoustic?lock=101',
   102:'https://loremflickr.com/800/450/museum,night?lock=102',
   103:'https://loremflickr.com/800/450/burger,festival?lock=103',
+  104:'https://loremflickr.com/800/450/gourmet,restaurant?lock=104',
+  105:'https://loremflickr.com/800/450/rooftop,jazz?lock=105',
 };
 const getPoiImage = (id: number) => POI_IMAGE_MAP[id] ?? `https://loremflickr.com/800/450/travel?lock=${id}`;
 
@@ -595,22 +600,7 @@ export default function App() {
                   ))}
                 </div>
 
-                <div className="mt-10 rounded-3xl overflow-hidden shadow-md border border-[#253884]/10">
-                  <div className="bg-[#253884] px-6 pt-6 pb-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                    <img src={ICONS.LOGO} className="h-7 mb-3 brightness-0 invert opacity-80 relative z-10" alt="SalePlan" />
-                    <h4 className="text-xl font-heading text-white tracking-tight mb-1 relative z-10">¿Ya tienes cuenta?</h4>
-                    <p className="text-blue-200 text-xs font-medium relative z-10">Continúa explorando y ganando sellos.</p>
-                  </div>
-                  <div className="bg-white px-6 py-5">
-                    <button
-                      onClick={() => { setIsMenuOpen(false); navigateTo('LOGIN_CHOICE'); }}
-                      className="w-full py-4 bg-[#253884] text-white font-bold rounded-2xl text-sm tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-lg"
-                    >
-                      <LogIn size={16} strokeWidth={2} /> Iniciar Sesión
-                    </button>
-                  </div>
-                </div>
+
               </div>
 
               <div className="p-8 pt-0 relative z-10">
@@ -878,23 +868,31 @@ export default function App() {
                 {FLASH_EVENTS.map((event, idx) => {
                   const hoursLeft = [6, 3, 11][idx % 3];
                   const isUrgent = hoursLeft <= 4;
+                  const isLocked = event.isPremium && !hasSalePlanPlus;
                   return (
                     <div
                       key={event.id}
-                      onClick={() => navigateTo('USER_SEARCH', event.id)}
-                      className="bg-white rounded-2xl p-3.5 border-2 border-yellow-200 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow"
+                      onClick={() => isLocked ? navigateTo('USER_PLUS') : navigateTo('USER_SEARCH', event.id)}
+                      className={`bg-white rounded-2xl p-3.5 border-2 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
                     >
-                      <div className="w-11 h-11 rounded-xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 shrink-0">
-                        <PoiIcon id={event.id} size={20} strokeWidth={1.5} />
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
+                        {isLocked ? <Lock size={20} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={20} strokeWidth={1.5} />}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-[#253884] text-sm leading-tight truncate">{event.name}</h4>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate mt-0.5">{event.date}</p>
-                        <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${isUrgent ? 'text-red-500' : 'text-yellow-600'}`}>
-                          {isUrgent ? '🔥 ' : '⏰ '}Termina en {hoursLeft}h
-                        </p>
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <h4 className="font-bold text-[#253884] text-sm leading-tight truncate">{event.name}</h4>
+                          {isLocked && <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider shrink-0"><Sparkles size={7} strokeWidth={2} /> Plus</span>}
+                        </div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate">{event.date}</p>
+                        {isLocked ? (
+                          <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider mt-0.5">Exclusivo SalePlan+</p>
+                        ) : (
+                          <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${isUrgent ? 'text-red-500' : 'text-yellow-600'}`}>
+                            {isUrgent ? '🔥 ' : '⏰ '}Termina en {hoursLeft}h
+                          </p>
+                        )}
                       </div>
-                      <div className="bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0">
+                      <div className={`font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0 ${isLocked ? 'bg-indigo-100 text-indigo-700' : 'bg-yellow-400 text-yellow-900'}`}>
                         {event.pts}
                       </div>
                     </div>
@@ -1003,19 +1001,25 @@ export default function App() {
             <h2 className="text-3xl font-heading text-[#253884] tracking-tight text-center">Mi Pasaporte</h2>
           </div>
 
-          {/* Card deck — horizontal snap scroll */}
-          <div
-            ref={deckScrollRef}
-            onScroll={e => {
-              const el = e.currentTarget;
-              const idx = Math.round(el.scrollLeft / el.clientWidth);
-              if (idx !== activePassportIdx) setActivePassportIdx(idx);
+          {/* Card deck — Framer Motion drag swipe */}
+          <div className="overflow-hidden w-full mt-4">
+          <motion.div
+            className="flex"
+            drag="x"
+            dragElastic={0.12}
+            dragConstraints={{ left: -(totalCards - 1) * (typeof window !== 'undefined' ? window.innerWidth : 390), right: 0 }}
+            animate={{ x: -activePassportIdx * (typeof window !== 'undefined' ? window.innerWidth : 390) }}
+            transition={{ type: 'spring', stiffness: 300, damping: 35, mass: 0.8 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -50 && activePassportIdx < totalCards - 1) {
+                setActivePassportIdx(p => p + 1);
+              } else if (info.offset.x > 50 && activePassportIdx > 0) {
+                setActivePassportIdx(p => p - 1);
+              }
             }}
-            className="flex overflow-x-scroll no-scrollbar snap-x snap-mandatory mt-4 w-full"
-            style={{ touchAction: 'pan-x pinch-zoom', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
           >
             {/* ── Card 0: Personal passport ── */}
-            <div className="flex-none snap-center px-5 pb-2" style={{ width: '100%' }}>
+            <div className="flex-none px-5 pb-2" style={{ minWidth: '100vw' }}>
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header with name + badges */}
                 <div className="flex items-center gap-3 mb-5 pt-1">
@@ -1161,7 +1165,7 @@ export default function App() {
             {hasSalePlanPlus ? CURATED_ITINERARIES.map(it => {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
-                <div key={it.id} className="flex-none snap-center px-5 pb-2" style={{ width: '100%' }}>
+                <div key={it.id} className="flex-none px-5 pb-2" style={{ minWidth: '100vw' }}>
                   <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-5 relative overflow-hidden shadow-lg`}>
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
@@ -1200,7 +1204,6 @@ export default function App() {
                         const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, Math.max(0, totalSlots - savedPOIs.length));
                         if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
                         setActivePassportIdx(0);
-                        if (deckScrollRef.current) deckScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
                       }}
                       className="w-full py-3.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md"
                     >
@@ -1211,7 +1214,7 @@ export default function App() {
               );
             }) : (
               /* Non-Plus: teaser card */
-              <div className="flex-none snap-center px-5 pb-2" style={{ width: '100%' }}>
+              <div className="flex-none px-5 pb-2" style={{ minWidth: '100vw' }}>
                 <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
                   <div className="absolute inset-0 opacity-10 pointer-events-none">
                     {[...Array(8)].map((_, i) => (
@@ -1231,6 +1234,7 @@ export default function App() {
                 </div>
               </div>
             )}
+          </motion.div>
           </div>
 
           {/* Dot indicators */}
@@ -1238,12 +1242,7 @@ export default function App() {
             {Array.from({ length: totalCards }).map((_, i) => (
               <button
                 key={i}
-                onClick={() => {
-                  setActivePassportIdx(i);
-                  if (deckScrollRef.current) {
-                    deckScrollRef.current.scrollTo({ left: i * deckScrollRef.current.clientWidth, behavior: 'smooth' });
-                  }
-                }}
+                onClick={() => setActivePassportIdx(i)}
                 className={`rounded-full transition-all duration-300 ${i === activePassportIdx ? 'w-6 h-2 bg-[#253884]' : 'w-2 h-2 bg-gray-300'}`}
               />
             ))}
@@ -2275,23 +2274,36 @@ export default function App() {
                   <span className="text-[10px] font-bold text-yellow-700 bg-yellow-50 border border-yellow-200 px-2 py-1 rounded-full uppercase tracking-wider">{FLASH_EVENTS.length} activos</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  {FLASH_EVENTS.map(event => (
-                    <div
-                      key={event.id}
-                      onClick={() => setSelectedPOI(event.id)}
-                      className="bg-white rounded-2xl p-3.5 border-2 border-yellow-200 relative overflow-hidden cursor-pointer active:scale-[0.97] transition-transform subtle-shadow"
-                    >
-                      <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight">
-                        {event.pts}
+                  {FLASH_EVENTS.map(event => {
+                    const isLocked = event.isPremium && !hasSalePlanPlus;
+                    return (
+                      <div
+                        key={event.id}
+                        onClick={() => isLocked ? navigateTo('USER_PLUS') : setSelectedPOI(event.id)}
+                        className={`bg-white rounded-2xl p-3.5 border-2 relative overflow-hidden cursor-pointer active:scale-[0.97] transition-transform subtle-shadow ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
+                      >
+                        {isLocked ? (
+                          <div className="absolute top-0 right-0 bg-gradient-to-r from-[#253884] to-indigo-600 text-white font-black text-[8px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight flex items-center gap-0.5">
+                            <Sparkles size={8} strokeWidth={2} /> Plus
+                          </div>
+                        ) : (
+                          <div className="absolute top-0 right-0 bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-0.5 rounded-bl-xl z-10 tracking-widest leading-tight">
+                            {event.pts}
+                          </div>
+                        )}
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center border mb-2 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
+                          {isLocked ? <Lock size={18} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={18} strokeWidth={1.5} />}
+                        </div>
+                        <h4 className="font-bold text-[#253884] text-xs leading-tight mb-1 pr-2">{event.name}</h4>
+                        <p className="font-bold text-[9px] text-gray-400 uppercase tracking-wider truncate">{event.location}</p>
+                        {isLocked ? (
+                          <p className="font-bold text-[9px] text-indigo-500 mt-1">Desbloquear con Plus</p>
+                        ) : (
+                          <p className="font-bold text-[9px] text-yellow-700 mt-1">{event.date}</p>
+                        )}
                       </div>
-                      <div className="w-9 h-9 rounded-xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 mb-2">
-                        <PoiIcon id={event.id} size={18} strokeWidth={1.5} />
-                      </div>
-                      <h4 className="font-bold text-[#253884] text-xs leading-tight mb-1 pr-2">{event.name}</h4>
-                      <p className="font-bold text-[9px] text-gray-400 uppercase tracking-wider truncate">{event.location}</p>
-                      <p className="font-bold text-[9px] text-yellow-700 mt-1">{event.date}</p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </>
             )}
