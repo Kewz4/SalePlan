@@ -214,28 +214,28 @@ const CRM_CONTACTS = [
 ];
 
 const LEVELS = [
-  { n: 1,  name: 'Turista Novato',       xp: 0,    next: 200,   benefits: ['Emblema base'],                                           icon: Sprout,   grad: 'bg-gray-200 text-gray-700',       locked: false, done: true  },
-  { n: 2,  name: 'Mochilero Pro',         xp: 850,  next: 1000,  benefits: ['10% dcto. Museos', '2x1 en Café Central'],               icon: Crown,    grad: 'from-[#253884] to-blue-600',      locked: false, done: false, isCurrent: true },
-  { n: 3,  name: 'Explorador Maestro',    xp: 0,    next: 1500,  benefits: ['Entrada VIP Flash', 'Retos exclusivos'],                  icon: Trophy,   grad: 'from-amber-400 to-yellow-600',    locked: true  },
-  { n: 4,  name: 'Cazador de Sellos',     xp: 0,    next: 2000,  benefits: ['3x puntos en Flash', 'Emblema dorado'],                   icon: Backpack, grad: 'from-emerald-500 to-teal-600',   locked: true  },
-  { n: 5,  name: 'Viajero Local',         xp: 0,    next: 2800,  benefits: ['Free café mensual', '5% dcto. global'],                   icon: Compass,  grad: 'from-sky-500 to-blue-700',        locked: true  },
-  { n: 6,  name: 'Embajador Urbano',      xp: 0,    next: 3800,  benefits: ['Acceso a preventa Flash', 'Perfil destacado'],            icon: Sparkles, grad: 'from-violet-500 to-purple-700',   locked: true  },
-  { n: 7,  name: 'Coleccionista Élite',   xp: 0,    next: 5000,  benefits: ['Prioridad en retos', 'Notificaciones VIP'],               icon: Trophy,   grad: 'from-rose-500 to-pink-700',       locked: true  },
-  { n: 8,  name: 'Guardián del Barrio',   xp: 0,    next: 6500,  benefits: ['Reseñas verificadas', 'Puntos 2x fines de semana'],       icon: Crown,    grad: 'from-indigo-500 to-blue-900',     locked: true  },
-  { n: 9,  name: 'Leyenda Capitalina',    xp: 0,    next: 8500,  benefits: ['Eventos privados', 'Pack bienvenida anual'],              icon: Sparkles, grad: 'from-[#253884] to-indigo-900',    locked: true  },
-  { n: 10, name: 'Crónica Salvadoreña',   xp: 0,    next: 11000, benefits: ['Sello de honor', 'Mención en app'],                      icon: Trophy,   grad: 'from-amber-600 to-yellow-800',    locked: true  },
-  { n: 11, name: 'Explorador Nacional',   xp: 0,    next: 14000, benefits: ['Acceso beta nuevas zonas', 'Descuento viajes'],           icon: Mountain, grad: 'from-emerald-600 to-green-900',   locked: true  },
-  { n: 12, name: 'Pionero del Pasaporte', xp: 0,    next: 17500, benefits: ['Número de serie exclusivo', 'Pasaporte físico'],         icon: Backpack, grad: 'from-teal-500 to-cyan-800',       locked: true  },
-  { n: 13, name: 'Maestro Viajero',       xp: 0,    next: 22000, benefits: ['Mentoría a usuarios nuevos', 'Badge animado'],           icon: Compass,  grad: 'from-sky-600 to-blue-900',        locked: true  },
-  { n: 14, name: 'Héroe Urbano',          xp: 0,    next: 27500, benefits: ['Nombre en créditos', 'Acceso admin tours'],              icon: Crown,    grad: 'from-violet-600 to-purple-900',   locked: true  },
-  { n: 15, name: 'Ciudadano de Oro',      xp: 0,    next: 34000, benefits: ['Free sello mensual', 'Canal VIP Telegram'],              icon: Trophy,   grad: 'from-yellow-500 to-amber-700',    locked: true  },
-  { n: 16, name: 'Embajador Nacional',    xp: 0,    next: 42000, benefits: ['Presencia en eventos', 'Kit prensa SalePlan'],           icon: Sparkles, grad: 'from-rose-600 to-red-900',        locked: true  },
-  { n: 17, name: 'Gran Explorador',       xp: 0,    next: 52000, benefits: ['Descuento todos los aliados', '4x puntos Flash'],        icon: Mountain, grad: 'from-[#253884] to-purple-900',    locked: true  },
-  { n: 18, name: 'Cronista del País',     xp: 0,    next: 65000, benefits: ['Reportajes en blog', 'Tarjeta NFC exclusiva'],           icon: Backpack, grad: 'from-emerald-700 to-teal-900',    locked: true  },
-  { n: 19, name: 'Guía Certificado',      xp: 0,    next: 80000, benefits: ['Guías de viaje propios', 'Comisión por referidos'],      icon: Compass,  grad: 'from-sky-700 to-indigo-900',      locked: true  },
-  { n: 20, name: 'Leyenda SalePlan',      xp: 0,    next: 100000,benefits: ['Nombre en tabla de honor', 'Acceso vitalicio VIP'],      icon: Trophy,   grad: 'from-amber-700 to-yellow-900',    locked: true  },
-  { n: 21, name: 'Patriarca Explorador',  xp: 0,    next: 130000,benefits: ['Escultura digital', 'Creador de retos oficiales'],       icon: Crown,    grad: 'from-violet-700 to-purple-900',   locked: true  },
-  { n: 22, name: 'Dios de la Ciudad',     xp: 0,    next: 999999,benefits: ['Invitación a junta directiva', 'Todo gratis siempre'],   icon: Sparkles, grad: 'from-rose-700 to-pink-900',       locked: true  },
+  { n: 1,  name: 'Turista Novato',       xp: 0,    next: 200,   benefits: ['Sello de bienvenida SalePlan', 'Acceso completo al app'],                                    icon: Sprout,   grad: 'bg-gray-200 text-gray-700',       locked: false, done: true  },
+  { n: 2,  name: 'Mochilero Pro',         xp: 850,  next: 1000,  benefits: ['10% dcto. en Museo de Arte', 'Café gratis c/ compra $5+ en Café Central', 'Insignia Explorer'],  icon: Crown,    grad: 'from-[#253884] to-blue-600',      locked: false, done: false, isCurrent: true },
+  { n: 3,  name: 'Explorador Maestro',    xp: 0,    next: 1500,  benefits: ['Acceso VIP a Flash Events', '15% dcto. en Burger Fest', 'Prioridad en nuevos retos'],         icon: Trophy,   grad: 'from-amber-400 to-yellow-600',    locked: true  },
+  { n: 4,  name: 'Cazador de Sellos',     xp: 0,    next: 2000,  benefits: ['3x puntos en Flash', '20% dcto. en tiendas aliadas', 'Badge animado en perfil'],              icon: Backpack, grad: 'from-emerald-500 to-teal-600',   locked: true  },
+  { n: 5,  name: 'Viajero Local',         xp: 0,    next: 2800,  benefits: ['Café en Café 1840 mensual GRATIS', '5% cashback en aliados', 'Acceso mapa secreto'],          icon: Compass,  grad: 'from-sky-500 to-blue-700',        locked: true  },
+  { n: 6,  name: 'Embajador Urbano',      xp: 0,    next: 3800,  benefits: ['Preventa exclusiva Flash Events', 'Perfil destacado en buscador', '25% dcto. Zona Rosa'],     icon: Sparkles, grad: 'from-violet-500 to-purple-700',   locked: true  },
+  { n: 7,  name: 'Coleccionista Élite',   xp: 0,    next: 5000,  benefits: ['Skip filas en eventos aliados', 'Notificaciones 24h antes de Flash', 'Pack sorpresa mensual'], icon: Trophy,   grad: 'from-rose-500 to-pink-700',       locked: true  },
+  { n: 8,  name: 'Guardián del Barrio',   xp: 0,    next: 6500,  benefits: ['Reseñas con verificado badge', '2x puntos sáb-dom', 'Mesa VIP en restaurantes aliados'],      icon: Crown,    grad: 'from-indigo-500 to-blue-900',     locked: true  },
+  { n: 9,  name: 'Leyenda Capitalina',    xp: 0,    next: 8500,  benefits: ['Invitación a eventos privados SalePlan', 'Pack bienvenida anual ($50 valor)', '30% en aliados'], icon: Sparkles, grad: 'from-[#253884] to-indigo-900',    locked: true  },
+  { n: 10, name: 'Crónica Salvadoreña',   xp: 0,    next: 11000, benefits: ['Sello de honor permanente', 'Tarjeta de visita digital SalePlan', 'Free entry Noche Museos'], icon: Trophy,   grad: 'from-amber-600 to-yellow-800',    locked: true  },
+  { n: 11, name: 'Explorador Nacional',   xp: 0,    next: 14000, benefits: ['Acceso beta zonas nuevas', '15% dcto. paquetes turísticos aliados', 'Comisión 5% referidos'], icon: Mountain, grad: 'from-emerald-600 to-green-900',   locked: true  },
+  { n: 12, name: 'Pionero del Pasaporte', xp: 0,    next: 17500, benefits: ['Pasaporte físico coleccionable', 'Número de serie exclusivo', '40% dcto. en aliados top'],   icon: Backpack, grad: 'from-teal-500 to-cyan-800',       locked: true  },
+  { n: 13, name: 'Maestro Viajero',       xp: 0,    next: 22000, benefits: ['Mentoría a nuevos exploradores', 'Badge animado premium', 'Free noche en hotel aliado'],       icon: Compass,  grad: 'from-sky-600 to-blue-900',        locked: true  },
+  { n: 14, name: 'Héroe Urbano',          xp: 0,    next: 27500, benefits: ['Nombre en créditos de la app', 'Acceso curado de tours privados', '50% off aliados'],         icon: Crown,    grad: 'from-violet-600 to-purple-900',   locked: true  },
+  { n: 15, name: 'Ciudadano de Oro',      xp: 0,    next: 34000, benefits: ['1 sello gratis cada mes', 'Canal Telegram VIP con ofertas 48h antes', '10% cashback global'], icon: Trophy,   grad: 'from-yellow-500 to-amber-700',    locked: true  },
+  { n: 16, name: 'Embajador Nacional',    xp: 0,    next: 42000, benefits: ['Presencia en eventos nacionales', 'Kit de prensa SalePlan', 'Free vuelo doméstico (sorteo)'], icon: Sparkles, grad: 'from-rose-600 to-red-900',        locked: true  },
+  { n: 17, name: 'Gran Explorador',       xp: 0,    next: 52000, benefits: ['Descuento en TODOS los aliados', '4x puntos Flash permanente', 'Curación ruta semanal'],       icon: Mountain, grad: 'from-[#253884] to-purple-900',    locked: true  },
+  { n: 18, name: 'Cronista del País',     xp: 0,    next: 65000, benefits: ['Reportaje en blog oficial', 'Tarjeta NFC SalePlan exclusiva', 'Comisión 10% referidos'],       icon: Backpack, grad: 'from-emerald-700 to-teal-900',    locked: true  },
+  { n: 19, name: 'Guía Certificado',      xp: 0,    next: 80000, benefits: ['Crea guías de viaje propias en app', 'Línea directa soporte 24/7', 'Entrada VIP permanente'],  icon: Compass,  grad: 'from-sky-700 to-indigo-900',      locked: true  },
+  { n: 20, name: 'Leyenda SalePlan',      xp: 0,    next: 100000,benefits: ['Nombre en Tabla de Honor', 'Acceso vitalicio a todo VIP', 'Cena con fundadores SalePlan'],     icon: Trophy,   grad: 'from-amber-700 to-yellow-900',    locked: true  },
+  { n: 21, name: 'Patriarca Explorador',  xp: 0,    next: 130000,benefits: ['Estatua digital en mapa SalePlan', 'Crea retos oficiales verificados', 'Revenue sharing'],       icon: Crown,    grad: 'from-violet-700 to-purple-900',   locked: true  },
+  { n: 22, name: 'Dios de la Ciudad',     xp: 0,    next: 999999,benefits: ['Junta directiva advisory', 'TODO gratis de por vida', 'Tu foto en app de bienvenida'],         icon: Sparkles, grad: 'from-rose-700 to-pink-900',       locked: true  },
 ];
 
 // Motion stagger variants — Emil: stagger 30-80ms between items
@@ -276,6 +276,14 @@ export default function App() {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const levelsScrollRef = useRef<HTMLDivElement>(null);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [profileName, setProfileName] = useState('Explorador');
+  const [profileEmail, setProfileEmail] = useState('explorador@aventura.com');
+  const [profilePhone, setProfilePhone] = useState('');
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [removeConfirmId, setRemoveConfirmId] = useState<number | null>(null);
+  const [recentlyViewed, setRecentlyViewed] = useState<number[]>([]);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -322,9 +330,16 @@ export default function App() {
     }
   }, [currentScreen]);
 
+  const haptic = (pattern: number | number[] = 10) => {
+    if ('vibrate' in navigator) (navigator as any).vibrate(pattern);
+  };
+
   const navigateTo = (screen: Screen, poiId: number | null = null) => {
     if (screen !== currentScreen || poiId !== selectedPOI) {
       setPrevScreen(currentScreen);
+      if (poiId !== null) {
+        setRecentlyViewed(prev => [poiId, ...prev.filter(id => id !== poiId)].slice(0, 5));
+      }
       setSelectedPOI(poiId);
       setCurrentScreen(screen);
     }
@@ -433,11 +448,15 @@ export default function App() {
       <button onClick={() => navigateTo('USER_WALLET')} className="relative flex flex-col items-center justify-center w-14 h-14 active:scale-[0.97] transition-transform">
         <div className="relative">
           <img src={ICONS.NAV_PASSPORT} className={`w-6 h-6 transition-opacity duration-200 ${active === 'wallet' ? '' : 'opacity-40'}`} alt="Pasaporte" />
-          {carryOverStamps > 0 && (
+          {carryOverStamps > 0 ? (
             <span className="absolute -top-1.5 -right-1.5 bg-yellow-400 text-yellow-900 text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-sm border border-white">
               {carryOverStamps}
             </span>
-          )}
+          ) : stampedPOIs.length > 0 ? (
+            <span className="absolute -top-1.5 -right-1.5 bg-[#253884] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-sm border border-white">
+              {stampedPOIs.length}
+            </span>
+          ) : null}
         </div>
         {active === 'wallet' && <div className="absolute bottom-1 w-4 h-[3px] bg-[#253884] rounded-full" />}
       </button>
@@ -570,9 +589,9 @@ export default function App() {
                     <p className="text-xs text-blue-600/60 mb-6 font-medium">Ingresa para continuar explorando la ciudad.</p>
                     <button
                       onClick={() => { setIsMenuOpen(false); navigateTo('LOGIN_CHOICE'); }}
-                      className="w-full py-4 bg-[#253884] text-white font-bold rounded-2xl uppercase text-[10px] tracking-widest active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-lg"
+                      className="w-full py-4 bg-[#253884] text-white font-bold rounded-2xl text-sm tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-2 shadow-lg"
                     >
-                      <LogIn size={14} strokeWidth={2} /> Iniciar Sesión
+                      <LogIn size={16} strokeWidth={2} /> Iniciar Sesión
                     </button>
                   </div>
                 </div>
@@ -678,6 +697,10 @@ export default function App() {
           <div className="space-y-4">
             <input type="text" placeholder="Nombre o Apodo" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
             <input type="email" placeholder="Correo Electrónico" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
+            <div className="flex gap-2">
+              <div className="bg-gray-50 border-2 border-transparent rounded-xl px-4 flex items-center text-gray-500 font-bold text-sm shrink-0">+503</div>
+              <input type="tel" placeholder="Teléfono (opcional)" className="flex-1 px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
+            </div>
             <input type="password" placeholder="Contraseña Segura" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
 
             <div className="pt-6 border-t border-gray-100">
@@ -761,7 +784,13 @@ export default function App() {
             <div className="flex justify-between items-center mb-8 relative z-10">
               <div>
                 <p className="text-blue-200 text-xs font-semibold mb-1 uppercase tracking-wider">Hola,</p>
-                <h2 className="text-4xl font-heading text-white tracking-tight">Explorador</h2>
+                <h2 className="text-4xl font-heading text-white tracking-tight">{profileName}</h2>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex-1 max-w-[120px] bg-white/20 rounded-full h-1.5">
+                    <div className="bg-white h-1.5 rounded-full" style={{ width: '85%' }} />
+                  </div>
+                  <span className="text-[10px] font-bold text-blue-200">850 XP · Nv.2</span>
+                </div>
               </div>
               <button onClick={() => navigateTo('USER_PROFILE')} className="w-14 h-14 rounded-full border-2 border-white/20 bg-white/10 overflow-hidden shadow-sm active:scale-[0.97] transition-transform">
                 <img src={selectedAvatar} className="w-full h-full object-cover" alt="Perfil" />
@@ -783,26 +812,68 @@ export default function App() {
                 <button onClick={() => navigateTo('USER_SEARCH')} className="text-[10px] font-bold text-[#253884] uppercase tracking-widest opacity-60 active:opacity-100">Ver todos</button>
               </div>
               <div className="space-y-2.5">
-                {FLASH_EVENTS.map(event => (
-                  <div
-                    key={event.id}
-                    onClick={() => navigateTo('USER_SEARCH', event.id)}
-                    className="bg-white rounded-2xl p-3.5 border-2 border-yellow-200 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow"
-                  >
-                    <div className="w-11 h-11 rounded-xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 shrink-0">
-                      <PoiIcon id={event.id} size={20} strokeWidth={1.5} />
+                {FLASH_EVENTS.map((event, idx) => {
+                  const hoursLeft = [6, 3, 11][idx % 3];
+                  const isUrgent = hoursLeft <= 4;
+                  return (
+                    <div
+                      key={event.id}
+                      onClick={() => navigateTo('USER_SEARCH', event.id)}
+                      className="bg-white rounded-2xl p-3.5 border-2 border-yellow-200 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow"
+                    >
+                      <div className="w-11 h-11 rounded-xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 shrink-0">
+                        <PoiIcon id={event.id} size={20} strokeWidth={1.5} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-[#253884] text-sm leading-tight truncate">{event.name}</h4>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate mt-0.5">{event.date}</p>
+                        <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${isUrgent ? 'text-red-500' : 'text-yellow-600'}`}>
+                          {isUrgent ? '🔥 ' : '⏰ '}Termina en {hoursLeft}h
+                        </p>
+                      </div>
+                      <div className="bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0">
+                        {event.pts}
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-bold text-[#253884] text-sm leading-tight truncate">{event.name}</h4>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate mt-0.5">{event.date}</p>
-                    </div>
-                    <div className="bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0">
-                      {event.pts}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
+
+            {recentlyViewed.length > 0 && (
+              <div className="w-full">
+                <h3 className="text-base font-heading text-[#253884] tracking-tight mb-3 flex items-center gap-2">
+                  Vistos Recientemente <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">{recentlyViewed.length}</span>
+                </h3>
+                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                  {recentlyViewed.map(id => {
+                    const p = POIS.find(x => x.id === id);
+                    if (!p) return null;
+                    return (
+                      <button key={id} onClick={() => navigateTo('USER_SEARCH', id)} className="flex-none flex flex-col items-center gap-1.5 active:scale-[0.96] transition-transform">
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-sm bg-gray-100 relative">
+                          <img src={getPoiImage(id)} alt={p.name} className="w-full h-full object-cover" />
+                        </div>
+                        <p className="text-[10px] font-bold text-gray-500 max-w-[56px] text-center leading-tight line-clamp-2">{p.name}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {savedPOIs.length > 0 && (
+              <button onClick={() => navigateTo('USER_WALLET')} className="w-full bg-[#253884]/10 border border-[#253884]/20 rounded-2xl p-4 flex items-center justify-between active:scale-[0.97] transition-transform">
+                <div className="flex items-center gap-3">
+                  <img src={ICONS.NAV_PASSPORT} className="w-5 h-5 opacity-80" alt="" />
+                  <div>
+                    <p className="text-[#253884] font-bold text-sm">{savedPOIs.length} paradas en tu ruta</p>
+                    <p className="text-[10px] text-[#253884]/60 font-semibold">{stampedPOIs.length} sellos obtenidos</p>
+                  </div>
+                </div>
+                <ArrowRight size={16} strokeWidth={2} className="text-[#253884]/50" />
+              </button>
+            )}
 
             <div className="w-full">
               <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-4">Descubrimientos</h3>
@@ -819,12 +890,14 @@ export default function App() {
                     onClick={() => navigateTo('USER_SEARCH', poi.id)}
                     className="bg-white rounded-3xl subtle-shadow overflow-hidden cursor-pointer"
                   >
-                    <div className={`h-40 ${poi.color.split(' ')[0]} relative flex items-center justify-center`}>
-                      <div className={poi.color.split(' ')[1]}>
-                        <PoiIcon id={poi.id} size={60} strokeWidth={1} />
-                      </div>
+                    <div className="h-40 relative overflow-hidden bg-gray-100">
+                      <img src={getPoiImage(poi.id)} alt={poi.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-full px-3 py-1 font-bold text-xs flex items-center text-[#253884] subtle-shadow">
                         <img src={ICONS.STAR_FILLED} className="w-3 h-3 mr-1 invert" alt="" /> 4.8
+                      </div>
+                      <div className={`absolute bottom-3 left-3 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center border-2 border-white ${poi.color.split(' ')[1]}`}>
+                        <PoiIcon id={poi.id} size={18} strokeWidth={1.5} />
                       </div>
                     </div>
                     <div className="p-5">
@@ -990,7 +1063,35 @@ export default function App() {
               })()}
 
               <div className="mt-8">
-                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Ruta de Hoy</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
+                    Ruta de Hoy
+                    {myRoute.length > 0 && <span className="ml-2 text-blue-300 font-bold">{myRoute.length} parada{myRoute.length !== 1 ? 's' : ''}</span>}
+                  </h3>
+                  {myRoute.length > 0 && (
+                    <button
+                      onClick={() => {
+                        const routeText = myRoute.map(p => `• ${p.name}${poiSchedules[p.id] ? ` (${poiSchedules[p.id].day} ${poiSchedules[p.id].time})` : ''}`).join('\n');
+                        if (navigator.share) {
+                          navigator.share({ title: 'Mi Ruta SalePlan', text: `Mi ruta de hoy:\n${routeText}`, url: window.location.origin });
+                        } else {
+                          navigator.clipboard?.writeText(routeText).then(() => alert('Ruta copiada al portapapeles'));
+                        }
+                      }}
+                      className="flex items-center gap-1.5 text-[10px] font-black text-[#253884] uppercase tracking-wider bg-[#253884]/10 px-3 py-1.5 rounded-full active:scale-[0.97] transition-transform"
+                    >
+                      <Share2 size={11} strokeWidth={2.5} /> Compartir
+                    </button>
+                  )}
+                </div>
+                {myRoute.length === 0 && (
+                  <div className="py-10 text-center">
+                    <img src={ICONS.NAV_MAP} className="w-10 h-10 mx-auto opacity-20 mb-3" alt="" />
+                    <p className="text-gray-400 font-bold text-sm">Aún no tienes paradas</p>
+                    <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
+                    <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-6 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar Lugares</button>
+                  </div>
+                )}
                 {(() => {
                   const DAY_RANK: Record<string, number> = { 'Hoy': 0, 'Mañana': 1, 'Sáb 23 may': 2, 'Lun 25 may': 3 };
                   const TIME_RANK: Record<string, number> = { '08:00 – 12:00': 0, '12:00 – 17:00': 1, '17:00 – 22:00': 2 };
@@ -1136,12 +1237,19 @@ export default function App() {
                         setQrModalPOIId(null);
                         setPassportPoints(prev => prev + pts + (allStamped && isFull ? 50 : 0));
                         if (overflow > 0) setCarryOverStamps(prev => prev + overflow);
+                        haptic([15, 30, 15, 60]);
                         setTimeout(() => setJustStampedId(null), 1200);
                         if (allStamped && isFull) setTimeout(() => setShowPassportComplete(true), 900);
                       }}
                       className="w-full bg-[#253884] text-white py-4 rounded-xl font-bold uppercase tracking-wide subtle-shadow active:scale-[0.97] transition-transform"
                     >
                       [Demo] Simular Escaneo
+                    </button>
+                    <button
+                      onClick={() => { setQrModalPOIId(null); navigateTo('USER_REVIEWS'); }}
+                      className="w-full bg-gray-50 border border-gray-200 text-[#253884] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+                    >
+                      <img src={ICONS.STAR_FILLED} className="w-4 h-4 opacity-80" alt="" /> Dejar Reseña
                     </button>
                   </div>
                 </motion.div>
@@ -1249,16 +1357,54 @@ export default function App() {
   const renderUserProfile = () => (
     <Layout bgClass="bg-gray-50">
       <div className="flex-1 pb-24 p-6 pt-12 flex flex-col items-center">
-        <h2 className="text-4xl font-heading text-[#253884] mb-10 tracking-tight">Mi Perfil</h2>
+        <div className="flex items-center justify-between w-full mb-8">
+          <h2 className="text-4xl font-heading text-[#253884] tracking-tight">Mi Perfil</h2>
+          <button onClick={() => setEditingProfile(v => !v)} className={`px-4 py-2 rounded-xl font-bold text-sm active:scale-[0.97] transition-[background-color,color] ${editingProfile ? 'bg-[#253884] text-white' : 'bg-white text-[#253884] subtle-shadow'}`}>
+            {editingProfile ? 'Guardar' : <span className="flex items-center gap-1.5"><Pencil size={13} strokeWidth={2} /> Editar</span>}
+          </button>
+        </div>
 
         <div className="relative mb-6 z-10 w-32 h-32">
           <div className="w-full h-full rounded-full bg-white overflow-hidden subtle-shadow border-4 border-white">
             <img src={selectedAvatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
-          <button className="absolute bottom-0 right-0 bg-[#253884] text-white w-10 h-10 rounded-full flex items-center justify-center subtle-shadow active:scale-[0.97] transition-transform">
+          <button onClick={() => setShowAvatarPicker(true)} className="absolute bottom-0 right-0 bg-[#253884] text-white w-10 h-10 rounded-full flex items-center justify-center subtle-shadow active:scale-[0.97] transition-transform">
             <Pencil size={16} strokeWidth={2} />
           </button>
         </div>
+
+        {/* Avatar picker overlay */}
+        <AnimatePresence>
+          {showAvatarPicker && (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200] bg-black/50 flex items-end justify-center"
+              onClick={() => setShowAvatarPicker(false)}
+            >
+              <motion.div
+                initial={{ y: 120 }} animate={{ y: 0 }} exit={{ y: 120 }}
+                transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
+                className="bg-white w-full max-w-md rounded-t-3xl p-6 pb-safe"
+                onClick={e => e.stopPropagation()}
+              >
+                <p className="font-heading text-2xl text-[#253884] mb-1 text-center">Elige tu Avatar</p>
+                <p className="text-sm text-gray-400 font-medium text-center mb-6">Selecciona el que más te represente</p>
+                <div className="flex justify-center gap-5 mb-6">
+                  {AVATARS.map((avatar, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setSelectedAvatar(avatar); setShowAvatarPicker(false); haptic(15); }}
+                      className={`w-20 h-20 rounded-2xl overflow-hidden border-4 transition-[border-color,transform] active:scale-[0.95] ${selectedAvatar === avatar ? 'border-[#253884] scale-105 shadow-lg' : 'border-transparent opacity-60'}`}
+                    >
+                      <img src={avatar} alt={`Avatar ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setShowAvatarPicker(false)} className="w-full py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold active:scale-[0.97] transition-transform">Cancelar</button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="w-full space-y-4 mb-4">
           <h3 className="text-xl font-heading text-[#253884] tracking-tight px-2">Progreso de Niveles</h3>
@@ -1315,24 +1461,62 @@ export default function App() {
         <div className="w-full bg-white rounded-3xl p-6 font-bold space-y-4 subtle-shadow">
           <div className="border-b border-gray-100 pb-4">
             <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 tracking-wider">Nombre</label>
-            <p className="text-2xl font-heading text-[#253884]">Explorador</p>
+            {editingProfile ? (
+              <input
+                value={profileName}
+                onChange={e => setProfileName(e.target.value)}
+                className="w-full text-xl font-heading text-[#253884] border-2 border-[#253884]/30 focus:border-[#253884] rounded-xl px-3 py-2 outline-none transition-[border-color] bg-gray-50"
+              />
+            ) : (
+              <p className="text-2xl font-heading text-[#253884]">{profileName}</p>
+            )}
           </div>
           <div className="border-b border-gray-100 pb-4">
             <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 tracking-wider">Correo Electrónico</label>
-            <p className="text-base font-semibold text-gray-700">explorador@aventura.com</p>
+            {editingProfile ? (
+              <input
+                type="email"
+                value={profileEmail}
+                onChange={e => setProfileEmail(e.target.value)}
+                className="w-full text-base font-semibold text-gray-700 border-2 border-[#253884]/30 focus:border-[#253884] rounded-xl px-3 py-2 outline-none transition-[border-color] bg-gray-50"
+              />
+            ) : (
+              <p className="text-base font-semibold text-gray-700">{profileEmail}</p>
+            )}
           </div>
-          <div className="pt-4 grid grid-cols-2 gap-4">
-            <div className="bg-gray-50 rounded-xl p-4 text-center">
+          <div className="border-b border-gray-100 pb-4">
+            <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 tracking-wider">Teléfono</label>
+            {editingProfile ? (
+              <div className="flex gap-2">
+                <span className="bg-gray-50 border-2 border-[#253884]/30 rounded-xl px-3 py-2 text-sm text-gray-500 font-bold shrink-0">+503</span>
+                <input
+                  type="tel"
+                  value={profilePhone}
+                  onChange={e => setProfilePhone(e.target.value)}
+                  placeholder="xxxx-xxxx"
+                  className="flex-1 text-base font-semibold text-gray-700 border-2 border-[#253884]/30 focus:border-[#253884] rounded-xl px-3 py-2 outline-none transition-[border-color] bg-gray-50"
+                />
+              </div>
+            ) : (
+              <p className="text-base font-semibold text-gray-700">{profilePhone ? `+503 ${profilePhone}` : <span className="text-gray-400 font-medium text-sm">Sin número registrado</span>}</p>
+            )}
+          </div>
+          <div className="pt-2 grid grid-cols-3 gap-3">
+            <div className="bg-gray-50 rounded-xl p-3 text-center">
               <p className="text-2xl font-black text-[#253884]">12</p>
               <p className="text-[10px] uppercase font-bold text-gray-400 mt-1">Reseñas</p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <p className="text-2xl font-black text-[#253884]">2</p>
+            <div className="bg-gray-50 rounded-xl p-3 text-center">
+              <p className="text-2xl font-black text-[#253884]">{stampedPOIs.length}</p>
               <p className="text-[10px] uppercase font-bold text-gray-400 mt-1">Sellos</p>
             </div>
+            <div className="bg-gray-50 rounded-xl p-3 text-center">
+              <p className="text-2xl font-black text-[#253884]">{savedPOIs.length}</p>
+              <p className="text-[10px] uppercase font-bold text-gray-400 mt-1">En Ruta</p>
+            </div>
           </div>
-          <div className="pt-6">
-            <button onClick={() => navigateTo('ONBOARDING')} className="w-full py-4 bg-gray-50 text-red-600 rounded-xl font-bold text-sm tracking-wide border border-transparent hover:border-red-100 active:scale-[0.97] transition-transform">
+          <div className="pt-4">
+            <button onClick={() => navigateTo('ONBOARDING')} className="w-full py-4 bg-gray-50 text-red-600 rounded-xl font-bold text-sm tracking-wide border border-transparent active:scale-[0.97] transition-transform">
               Cerrar Sesión
             </button>
           </div>
@@ -1685,10 +1869,13 @@ export default function App() {
               <div className="flex justify-between items-start mb-2">
                 <h2 className="text-4xl font-heading text-[#253884] pr-4">{poi.name}</h2>
               </div>
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex flex-wrap items-center gap-2 mb-6">
                 <span className="px-3 py-1 bg-gray-100 text-xs font-bold text-gray-500 rounded-lg">{poi.category}</span>
                 <span className="text-sm font-semibold text-gray-400">·</span>
                 <span className="text-sm font-semibold text-gray-500">{poi.location}</span>
+                <span className="text-sm font-semibold text-gray-400">·</span>
+                <span className="px-2.5 py-1 bg-blue-50 text-xs font-bold text-[#253884] rounded-lg">~{[20, 30, 45, 60, 90][poi.id % 5]} min</span>
+                {savedPOIs.includes(poi.id) && <span className="px-2.5 py-1 bg-green-50 text-xs font-bold text-green-700 rounded-lg flex items-center gap-1"><Check size={10} strokeWidth={3} /> En tu ruta</span>}
               </div>
 
               <p className="text-gray-600 font-medium leading-relaxed mb-10">{poi.description}</p>
@@ -1733,6 +1920,30 @@ export default function App() {
                   </div>
                 </div>
               </div>
+
+              {/* Similar places */}
+              {(() => {
+                const similar = POIS.filter(p => !p.isFlash && p.id !== poi.id && p.category === poi.category).slice(0, 3);
+                if (similar.length === 0) return null;
+                return (
+                  <div className="mt-8">
+                    <h4 className="text-base font-heading text-[#253884] tracking-tight mb-3">Lugares Similares</h4>
+                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                      {similar.map(s => (
+                        <button key={s.id} onClick={() => { setRecentlyViewed(prev => [s.id, ...prev.filter(id => id !== s.id)].slice(0, 5)); setSelectedPOI(s.id); }} className="flex-none w-32 bg-gray-50 rounded-2xl overflow-hidden active:scale-[0.96] transition-transform text-left">
+                          <div className="h-20 relative bg-gray-100">
+                            <img src={getPoiImage(s.id)} alt={s.name} className="w-full h-full object-cover" loading="lazy" />
+                          </div>
+                          <div className="p-2.5">
+                            <p className="font-bold text-[#253884] text-xs leading-tight line-clamp-2">{s.name}</p>
+                            <p className="text-[10px] text-gray-400 font-medium mt-0.5">{s.location}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             <div className="fixed bottom-0 w-full max-w-md mx-auto p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe flex gap-3">
@@ -1746,6 +1957,7 @@ export default function App() {
                     }
                     setSavedPOIs(prev => [...prev, poi.id]);
                     setJustAddedPOI(poi.id);
+                    haptic(15);
                     setTimeout(() => setJustAddedPOI(null), 3000);
                   } else {
                     setSavedPOIs(prev => prev.filter(id => id !== poi.id));
@@ -1779,13 +1991,11 @@ export default function App() {
 
     const query = searchQuery.toLowerCase().trim();
     const regularPOIs = POIS.filter(p => !p.isFlash);
-    const filteredPOIs = query
-      ? regularPOIs.filter(p =>
-          p.name.toLowerCase().includes(query) ||
-          p.category.toLowerCase().includes(query) ||
-          p.location.toLowerCase().includes(query)
-        )
-      : regularPOIs;
+    const filteredPOIs = regularPOIs.filter(p => {
+      const matchesQuery = !query || p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query) || p.location.toLowerCase().includes(query);
+      const matchesCat = !selectedCategory || p.category === selectedCategory || p.category.toLowerCase().includes(selectedCategory.toLowerCase());
+      return matchesQuery && matchesCat;
+    });
 
     return (
       <Layout bgClass="bg-gray-50">
@@ -1794,18 +2004,26 @@ export default function App() {
           <div className="bg-[#253884] px-6 pt-10 pb-5 shadow-sm relative z-20 overflow-hidden">
             <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <div className="flex items-center justify-between mb-4 relative z-10">
-              <h2 className="text-2xl font-heading text-white tracking-tight">Explorar</h2>
+              <h2 className="text-2xl font-heading text-white tracking-tight">
+                {selectedCategory ? selectedCategory : 'Explorar'}
+              </h2>
               <span className="text-[10px] font-bold text-blue-200 uppercase tracking-widest">{filteredPOIs.length} lugares</span>
             </div>
             <div className="relative z-10">
               <input
                 type="text"
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={e => { setSearchQuery(e.target.value); setSelectedCategory(null); }}
                 placeholder="Buscar lugares, categorías..."
-                className="w-full px-5 py-3.5 bg-white/10 border-2 border-white/20 text-white rounded-2xl outline-none placeholder:text-blue-200 focus:bg-white/20 focus:border-white/40 transition-[background-color,border-color] font-medium text-sm"
+                className="w-full px-5 py-3.5 pr-10 bg-white/10 border-2 border-white/20 text-white rounded-2xl outline-none placeholder:text-blue-200 focus:bg-white/20 focus:border-white/40 transition-[background-color,border-color] font-medium text-sm"
               />
-              <img src={ICONS.SEARCH} className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 invert opacity-70" alt="" />
+              {searchQuery ? (
+                <button onClick={() => { setSearchQuery(''); setSelectedCategory(null); }} className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-white/70 hover:text-white">
+                  <X size={16} strokeWidth={2} />
+                </button>
+              ) : (
+                <img src={ICONS.SEARCH} className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 invert opacity-70" alt="" />
+              )}
             </div>
           </div>
 
@@ -1843,11 +2061,19 @@ export default function App() {
 
             {/* Category pills */}
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-3 mb-1">
-              <button className="px-4 py-1.5 bg-[#253884] text-white rounded-full font-bold text-xs whitespace-nowrap shadow-sm active:scale-[0.97] transition-transform">Todos</button>
+              <button
+                onClick={() => { setSelectedCategory(null); setSearchQuery(''); }}
+                className={`px-4 py-1.5 rounded-full font-bold text-xs whitespace-nowrap shadow-sm active:scale-[0.97] transition-[background-color,color] ${!selectedCategory ? 'bg-[#253884] text-white' : 'bg-white text-gray-500 border border-gray-100'}`}
+              >Todos</button>
               {ALL_CATEGORIES.map(cat => {
                 const CatIcon = CAT_ICON_MAP[cat.id] ?? MapPin;
+                const isActive = selectedCategory === cat.name;
                 return (
-                  <button key={cat.id} className="px-3 py-1.5 bg-white text-gray-600 rounded-full font-bold text-xs whitespace-nowrap shadow-sm border border-gray-100 flex items-center gap-1 active:scale-[0.97] transition-transform">
+                  <button
+                    key={cat.id}
+                    onClick={() => { setSelectedCategory(isActive ? null : cat.name); setSearchQuery(''); }}
+                    className={`px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap shadow-sm border flex items-center gap-1 active:scale-[0.97] transition-[background-color,color,border-color] ${isActive ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-100'}`}
+                  >
                     <CatIcon size={11} strokeWidth={2} /> {cat.name}
                   </button>
                 );
@@ -1869,24 +2095,31 @@ export default function App() {
               >
                 {filteredPOIs.map(poi => {
                   const isSaved = savedPOIs.includes(poi.id);
+                  const isStamped = stampedPOIs.includes(poi.id);
+                  const visitMins = [20, 30, 45, 60, 90][poi.id % 5];
                   return (
                     <motion.div
                       key={poi.id}
                       variants={itemVariants}
-                      onClick={() => setSelectedPOI(poi.id)}
+                      onClick={() => { setRecentlyViewed(prev => [poi.id, ...prev.filter(id => id !== poi.id)].slice(0, 5)); setSelectedPOI(poi.id); }}
                       className="bg-white rounded-2xl p-3.5 subtle-shadow relative flex flex-col items-center text-center cursor-pointer active:scale-[0.97] transition-transform"
                     >
+                      {isStamped && (
+                        <div className="absolute top-0 left-0 right-0 bottom-0 rounded-2xl bg-[#253884]/5 pointer-events-none z-10 flex items-center justify-center">
+                          <span className="text-[10px] font-black text-[#253884] bg-white/90 px-2 py-0.5 rounded-full border border-[#253884]/20">✓ Sellado</span>
+                        </div>
+                      )}
                       <button
                         onClick={e => {
                           e.stopPropagation();
                           if (!isSaved) {
-                            // Navigate to detail for schedule selection
+                            setRecentlyViewed(prev => [poi.id, ...prev.filter(id => id !== poi.id)].slice(0, 5));
                             setSelectedPOI(poi.id);
                           } else {
-                            setSavedPOIs(prev => prev.filter(id => id !== poi.id));
+                            setRemoveConfirmId(poi.id);
                           }
                         }}
-                        className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm z-10 transition-[background-color,color] ${isSaved ? 'bg-[#253884] text-white' : 'bg-gray-100 text-gray-400'}`}
+                        className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm z-20 transition-[background-color,color] ${isSaved ? 'bg-[#253884] text-white' : 'bg-gray-100 text-gray-400'}`}
                       >
                         {isSaved ? <Check size={12} strokeWidth={2.5} /> : '+'}
                       </button>
@@ -1897,6 +2130,9 @@ export default function App() {
                           className="absolute inset-0 w-full h-full object-cover"
                           loading="lazy"
                         />
+                        <div className="absolute bottom-1.5 left-1.5 bg-black/50 text-white rounded-full px-1.5 py-0.5 text-[8px] font-bold">
+                          ~{visitMins}m
+                        </div>
                         <div className={`absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-white shadow-md flex items-center justify-center border border-white/80 ${poi.color.split(' ')[1]}`}>
                           <PoiIcon id={poi.id} size={13} strokeWidth={1.8} />
                         </div>
@@ -1911,6 +2147,29 @@ export default function App() {
           </div>
         </div>
         <BottomNav active="search" />
+        <AnimatePresence>
+          {removeConfirmId !== null && (
+            <motion.div
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[300] bg-black/40 flex items-end justify-center"
+              onClick={() => setRemoveConfirmId(null)}
+            >
+              <motion.div
+                initial={{ y: 80 }} animate={{ y: 0 }} exit={{ y: 80 }}
+                transition={{ ease: [0.32, 0.72, 0, 1], duration: 0.35 }}
+                className="bg-white w-full max-w-md rounded-t-3xl p-6 pb-safe"
+                onClick={e => e.stopPropagation()}
+              >
+                <p className="font-heading text-2xl text-[#253884] mb-1">¿Eliminar parada?</p>
+                <p className="text-sm text-gray-500 font-medium mb-6">{POIS.find(p => p.id === removeConfirmId)?.name} será removido de tu ruta.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setRemoveConfirmId(null)} className="flex-1 py-3.5 bg-gray-100 text-gray-600 rounded-2xl font-bold active:scale-[0.97] transition-transform">Cancelar</button>
+                  <button onClick={() => { setSavedPOIs(prev => prev.filter(id => id !== removeConfirmId)); setRemoveConfirmId(null); haptic([10, 30, 10]); }} className="flex-1 py-3.5 bg-red-500 text-white rounded-2xl font-bold active:scale-[0.97] transition-transform">Eliminar</button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Layout>
     );
   };
