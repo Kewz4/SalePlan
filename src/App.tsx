@@ -175,6 +175,7 @@ export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [justStampedId, setJustStampedId] = useState<number | null>(null);
+  const [justAddedPOI, setJustAddedPOI] = useState<number | null>(null);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -401,10 +402,10 @@ export default function App() {
               className="fixed inset-0 z-[90] bg-[#253884]/40 backdrop-blur-sm"
             />
             <motion.div
-              initial={{ opacity: 0, x: '100%', borderRadius: '100% 0 0 100%' }}
-              animate={{ opacity: 1, x: 0, borderRadius: '0% 0 0 0%' }}
-              exit={{ opacity: 0, x: '100%', borderRadius: '100% 0 0 100%' }}
-              transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
               className="fixed inset-0 left-12 sm:left-24 z-[100] bg-white flex flex-col overflow-hidden shadow-[-20px_0_40px_rgba(0,0,0,0.1)]"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#253884]/5 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
@@ -497,10 +498,10 @@ export default function App() {
           </div>
         </motion.div>
 
-        <div className="relative w-40 h-40 mb-12 self-end -mr-2">
+        <div className="relative w-40 h-40 mb-12 self-center flex items-center justify-center">
           <div className="absolute inset-0 bg-[#e6eaf8] rounded-full scale-110 opacity-50" />
           <div className="absolute inset-0 bg-[#e6eaf8] rounded-full" />
-          <img src={ICONS.NAV_PASSPORT} className="w-24 h-24 relative z-10 ml-8 mt-8" alt="Passport" />
+          <img src={ICONS.NAV_PASSPORT} className="w-24 h-24 relative z-10" alt="Passport" />
         </div>
 
         <h2 className="text-2xl font-heading text-[#191308] mb-6">¿Cómo Funciona?</h2>
@@ -636,7 +637,7 @@ export default function App() {
   };
 
   const renderUserHome = () => {
-    const suggestedPOIs = POIS.filter(poi => !savedPOIs.includes(poi.id)).slice(0, 3);
+    const suggestedPOIs = POIS.filter(poi => !savedPOIs.includes(poi.id) && !poi.isFlash).slice(0, 3);
 
     return (
       <Layout bgClass="bg-gray-50">
@@ -659,6 +660,36 @@ export default function App() {
           </div>
 
           <div className="flex-1 px-6 pt-8 pb-10 space-y-8 relative z-10 w-full">
+            {/* Flash events — pinned to top of home feed */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-xl font-heading text-[#253884] tracking-tight flex items-center gap-2">
+                  Flash de Hoy <Zap size={15} strokeWidth={2.5} className="text-yellow-500" />
+                </h3>
+                <button onClick={() => navigateTo('USER_SEARCH')} className="text-[10px] font-bold text-[#253884] uppercase tracking-widest opacity-60 active:opacity-100">Ver todos</button>
+              </div>
+              <div className="space-y-2.5">
+                {FLASH_EVENTS.map(event => (
+                  <div
+                    key={event.id}
+                    onClick={() => navigateTo('USER_SEARCH', event.id)}
+                    className="bg-white rounded-2xl p-3.5 border-2 border-yellow-200 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow"
+                  >
+                    <div className="w-11 h-11 rounded-xl bg-yellow-50 text-yellow-700 flex items-center justify-center border border-yellow-100 shrink-0">
+                      <PoiIcon id={event.id} size={20} strokeWidth={1.5} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-[#253884] text-sm leading-tight truncate">{event.name}</h4>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate mt-0.5">{event.date}</p>
+                    </div>
+                    <div className="bg-yellow-400 text-yellow-900 font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0">
+                      {event.pts}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="w-full">
               <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-4">Descubrimientos</h3>
               <motion.div
@@ -707,6 +738,8 @@ export default function App() {
   const renderUserWallet = () => {
     const myRoute = POIS.filter(poi => savedPOIs.includes(poi.id));
     const totalSlots = 6;
+    const occupiedCells = myRoute.reduce((sum, poi) => sum + (poi.isFlash ? 2 : 1), 0);
+    const emptyCells = Math.max(0, totalSlots - occupiedCells);
 
     return (
       <Layout bgClass="bg-gray-50">
@@ -730,40 +763,43 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-3 gap-3">
-                {Array.from({ length: totalSlots }).map((_, index) => {
-                  const poi = myRoute[index];
-                  if (poi) {
-                    const isStamped = stampedPOIs.includes(poi.id);
-                    const isJustStamped = justStampedId === poi.id;
-                    return (
-                      <div
-                        key={poi.id}
-                        onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
-                        className={`aspect-square ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
-                      >
-                        {isStamped && (
-                          <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
-                            <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
-                          </div>
-                        )}
-                        <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200`}>
-                          <PoiIcon id={poi.id} size={28} strokeWidth={1.5} />
-                        </div>
-                        <p className="text-[8px] font-bold text-[#253884] uppercase mt-2 text-center leading-tight truncate w-full">{poi.name}</p>
-                      </div>
-                    );
-                  }
+                {myRoute.map(poi => {
+                  const isStamped = stampedPOIs.includes(poi.id);
+                  const isJustStamped = justStampedId === poi.id;
+                  const isFlash = poi.isFlash;
                   return (
-                    <button
-                      key={`empty-${index}`}
-                      onClick={() => navigateTo('USER_SEARCH')}
-                      className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
+                    <div
+                      key={poi.id}
+                      onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
+                      className={`${isFlash ? 'col-span-2 aspect-[2/1]' : 'aspect-square'} ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
                     >
-                      <span className="text-gray-300 font-black text-2xl group-hover:text-[#253884] transition-colors duration-200">+</span>
-                      <p className="text-[8px] font-bold text-gray-400 group-hover:text-[#253884] uppercase mt-1 transition-colors duration-200">Agregar</p>
-                    </button>
+                      {isFlash && (
+                        <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
+                          <Zap size={8} strokeWidth={2.5} /> Flash
+                        </span>
+                      )}
+                      {isStamped && (
+                        <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
+                          <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
+                        </div>
+                      )}
+                      <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200`}>
+                        <PoiIcon id={poi.id} size={isFlash ? 32 : 28} strokeWidth={1.5} />
+                      </div>
+                      <p className="text-[8px] font-bold text-[#253884] uppercase mt-2 text-center leading-tight truncate w-full px-1">{poi.name}</p>
+                    </div>
                   );
                 })}
+                {Array.from({ length: emptyCells }).map((_, i) => (
+                  <button
+                    key={`empty-${i}`}
+                    onClick={() => navigateTo('USER_SEARCH')}
+                    className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
+                  >
+                    <span className="text-gray-300 font-black text-2xl group-hover:text-[#253884] transition-colors duration-200">+</span>
+                    <p className="text-[8px] font-bold text-gray-400 group-hover:text-[#253884] uppercase mt-1 transition-colors duration-200">Agregar</p>
+                  </button>
+                ))}
               </div>
 
               <div className="mt-8">
@@ -1267,22 +1303,22 @@ export default function App() {
               <p className="text-gray-600 font-medium leading-relaxed mb-10">{poi.description}</p>
 
               <div className="space-y-4">
-                {poi.isFlash && (
-                  <div className="bg-yellow-50 p-4 rounded-2xl border border-yellow-200">
-                    <p className="font-bold text-yellow-800 mb-2 flex items-center gap-1.5">
-                      <Zap size={14} strokeWidth={2.5} /> Selecciona tu Asistencia
-                    </p>
-                    <p className="text-xs text-yellow-700 mb-4 font-medium">Este evento tiene horarios definidos o varios días.</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <select className="bg-white border-2 border-yellow-200 rounded-xl px-3 py-2 text-xs font-bold text-yellow-900 outline-none">
-                        <option>Hoy</option><option>Mañana</option><option>Viernes 18</option>
-                      </select>
-                      <select className="bg-white border-2 border-yellow-200 rounded-xl px-3 py-2 text-xs font-bold text-yellow-900 outline-none">
-                        <option>18:00 hrs</option><option>19:00 hrs</option><option>20:00 hrs</option>
-                      </select>
-                    </div>
+                {/* Date/time planner — available for all events */}
+                <div className={`p-4 rounded-2xl border ${poi.isFlash ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`}>
+                  <p className={`font-bold mb-3 flex items-center gap-1.5 text-sm ${poi.isFlash ? 'text-yellow-800' : 'text-[#253884]'}`}>
+                    {poi.isFlash ? <Zap size={14} strokeWidth={2.5} /> : <Crown size={14} strokeWidth={2} />}
+                    {poi.isFlash ? 'Planear Asistencia' : 'Planear mi Visita'}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <select className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}>
+                      <option>Hoy</option><option>Mañana</option><option>Este fin de semana</option><option>Próxima semana</option>
+                    </select>
+                    <select className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}>
+                      <option>Mañana (8–12h)</option><option>Tarde (12–17h)</option><option>Noche (17–22h)</option>
+                    </select>
                   </div>
-                )}
+                </div>
+
                 <div className="bg-gray-50 p-4 rounded-2xl flex items-center gap-4">
                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-yellow-600">
                     <Crown size={22} strokeWidth={1.5} />
@@ -1297,10 +1333,22 @@ export default function App() {
 
             <div className="fixed bottom-0 w-full max-w-md mx-auto p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe flex gap-3">
               <button
-                onClick={() => setSavedPOIs(prev => isSaved ? prev.filter(id => id !== poi.id) : [...prev, poi.id])}
+                onClick={() => {
+                  if (!isSaved) {
+                    setSavedPOIs(prev => [...prev, poi.id]);
+                    setJustAddedPOI(poi.id);
+                    setTimeout(() => setJustAddedPOI(null), 3000);
+                  } else {
+                    setSavedPOIs(prev => prev.filter(id => id !== poi.id));
+                  }
+                }}
                 className={`flex-1 py-4 font-bold text-lg rounded-2xl shadow-sm transition-[background-color,color] active:scale-[0.97] ${isSaved ? 'bg-gray-100 text-gray-500' : 'bg-[#253884] text-white'}`}
               >
-                {isSaved ? 'En Mi Ruta' : 'Agregar a Ruta'}
+                {isSaved ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Check size={18} strokeWidth={2.5} /> En Mi Ruta
+                  </span>
+                ) : 'Agregar a Ruta'}
               </button>
               <button
                 onClick={() => {
@@ -1420,7 +1468,16 @@ export default function App() {
                       className="bg-white rounded-2xl p-3.5 subtle-shadow relative flex flex-col items-center text-center cursor-pointer active:scale-[0.97] transition-transform"
                     >
                       <button
-                        onClick={e => { e.stopPropagation(); setSavedPOIs(prev => isSaved ? prev.filter(id => id !== poi.id) : [...prev, poi.id]); }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          if (!isSaved) {
+                            setSavedPOIs(prev => [...prev, poi.id]);
+                            setJustAddedPOI(poi.id);
+                            setTimeout(() => setJustAddedPOI(null), 3000);
+                          } else {
+                            setSavedPOIs(prev => prev.filter(id => id !== poi.id));
+                          }
+                        }}
                         className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center font-bold text-sm z-10 transition-[background-color,color] ${isSaved ? 'bg-[#253884] text-white' : 'bg-gray-100 text-gray-400'}`}
                       >
                         {isSaved ? <Check size={12} strokeWidth={2.5} /> : '+'}
@@ -1437,6 +1494,25 @@ export default function App() {
             )}
           </div>
         </div>
+        <AnimatePresence>
+          {justAddedPOI !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
+              transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+              className="fixed bottom-24 left-0 right-0 max-w-md mx-auto flex justify-center z-50 px-6 pointer-events-none"
+            >
+              <button
+                onClick={() => { setJustAddedPOI(null); navigateTo('USER_WALLET'); }}
+                className="pointer-events-auto bg-[#253884] text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-xl active:scale-[0.97] transition-transform"
+              >
+                <img src={ICONS.NAV_PASSPORT} className="w-4 h-4 invert" alt="" />
+                Ver mi Pasaporte
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <BottomNav active="search" />
       </Layout>
     );
