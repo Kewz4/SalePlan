@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Menu, X, ArrowRight, Book, Mail, HelpCircle, UserPlus, LogIn, Store, ChevronLeft,
   Coffee, Palette, UtensilsCrossed, Leaf, BookOpen, Landmark, Mountain, Music,
   ShoppingBag, Flower2, Utensils, Disc3, Camera, Guitar, Pizza, IceCream, MapPin,
   Zap, Crown, Backpack, Trophy, Sprout, ScanLine, Share2, Check, Pencil, Sparkles,
-  QrCode, Waves, TreePine, Compass, Calendar
+  QrCode, Waves, TreePine, Compass, Calendar, GripVertical, Lock
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import YetiLogin from './components/YetiLogin';
@@ -213,6 +213,31 @@ const CRM_CONTACTS = [
   { name: 'Arturo González',     avatar: AVATARS[0], time: 'Hace 10 días',    badge: 'Frecuente', initial: null },
 ];
 
+const LEVELS = [
+  { n: 1,  name: 'Turista Novato',       xp: 0,    next: 200,   benefits: ['Emblema base'],                                           icon: Sprout,   grad: 'bg-gray-200 text-gray-700',       locked: false, done: true  },
+  { n: 2,  name: 'Mochilero Pro',         xp: 850,  next: 1000,  benefits: ['10% dcto. Museos', '2x1 en Café Central'],               icon: Crown,    grad: 'from-[#253884] to-blue-600',      locked: false, done: false, isCurrent: true },
+  { n: 3,  name: 'Explorador Maestro',    xp: 0,    next: 1500,  benefits: ['Entrada VIP Flash', 'Retos exclusivos'],                  icon: Trophy,   grad: 'from-amber-400 to-yellow-600',    locked: true  },
+  { n: 4,  name: 'Cazador de Sellos',     xp: 0,    next: 2000,  benefits: ['3x puntos en Flash', 'Emblema dorado'],                   icon: Backpack, grad: 'from-emerald-500 to-teal-600',   locked: true  },
+  { n: 5,  name: 'Viajero Local',         xp: 0,    next: 2800,  benefits: ['Free café mensual', '5% dcto. global'],                   icon: Compass,  grad: 'from-sky-500 to-blue-700',        locked: true  },
+  { n: 6,  name: 'Embajador Urbano',      xp: 0,    next: 3800,  benefits: ['Acceso a preventa Flash', 'Perfil destacado'],            icon: Sparkles, grad: 'from-violet-500 to-purple-700',   locked: true  },
+  { n: 7,  name: 'Coleccionista Élite',   xp: 0,    next: 5000,  benefits: ['Prioridad en retos', 'Notificaciones VIP'],               icon: Trophy,   grad: 'from-rose-500 to-pink-700',       locked: true  },
+  { n: 8,  name: 'Guardián del Barrio',   xp: 0,    next: 6500,  benefits: ['Reseñas verificadas', 'Puntos 2x fines de semana'],       icon: Crown,    grad: 'from-indigo-500 to-blue-900',     locked: true  },
+  { n: 9,  name: 'Leyenda Capitalina',    xp: 0,    next: 8500,  benefits: ['Eventos privados', 'Pack bienvenida anual'],              icon: Sparkles, grad: 'from-[#253884] to-indigo-900',    locked: true  },
+  { n: 10, name: 'Crónica Salvadoreña',   xp: 0,    next: 11000, benefits: ['Sello de honor', 'Mención en app'],                      icon: Trophy,   grad: 'from-amber-600 to-yellow-800',    locked: true  },
+  { n: 11, name: 'Explorador Nacional',   xp: 0,    next: 14000, benefits: ['Acceso beta nuevas zonas', 'Descuento viajes'],           icon: Mountain, grad: 'from-emerald-600 to-green-900',   locked: true  },
+  { n: 12, name: 'Pionero del Pasaporte', xp: 0,    next: 17500, benefits: ['Número de serie exclusivo', 'Pasaporte físico'],         icon: Backpack, grad: 'from-teal-500 to-cyan-800',       locked: true  },
+  { n: 13, name: 'Maestro Viajero',       xp: 0,    next: 22000, benefits: ['Mentoría a usuarios nuevos', 'Badge animado'],           icon: Compass,  grad: 'from-sky-600 to-blue-900',        locked: true  },
+  { n: 14, name: 'Héroe Urbano',          xp: 0,    next: 27500, benefits: ['Nombre en créditos', 'Acceso admin tours'],              icon: Crown,    grad: 'from-violet-600 to-purple-900',   locked: true  },
+  { n: 15, name: 'Ciudadano de Oro',      xp: 0,    next: 34000, benefits: ['Free sello mensual', 'Canal VIP Telegram'],              icon: Trophy,   grad: 'from-yellow-500 to-amber-700',    locked: true  },
+  { n: 16, name: 'Embajador Nacional',    xp: 0,    next: 42000, benefits: ['Presencia en eventos', 'Kit prensa SalePlan'],           icon: Sparkles, grad: 'from-rose-600 to-red-900',        locked: true  },
+  { n: 17, name: 'Gran Explorador',       xp: 0,    next: 52000, benefits: ['Descuento todos los aliados', '4x puntos Flash'],        icon: Mountain, grad: 'from-[#253884] to-purple-900',    locked: true  },
+  { n: 18, name: 'Cronista del País',     xp: 0,    next: 65000, benefits: ['Reportajes en blog', 'Tarjeta NFC exclusiva'],           icon: Backpack, grad: 'from-emerald-700 to-teal-900',    locked: true  },
+  { n: 19, name: 'Guía Certificado',      xp: 0,    next: 80000, benefits: ['Guías de viaje propios', 'Comisión por referidos'],      icon: Compass,  grad: 'from-sky-700 to-indigo-900',      locked: true  },
+  { n: 20, name: 'Leyenda SalePlan',      xp: 0,    next: 100000,benefits: ['Nombre en tabla de honor', 'Acceso vitalicio VIP'],      icon: Trophy,   grad: 'from-amber-700 to-yellow-900',    locked: true  },
+  { n: 21, name: 'Patriarca Explorador',  xp: 0,    next: 130000,benefits: ['Escultura digital', 'Creador de retos oficiales'],       icon: Crown,    grad: 'from-violet-700 to-purple-900',   locked: true  },
+  { n: 22, name: 'Dios de la Ciudad',     xp: 0,    next: 999999,benefits: ['Invitación a junta directiva', 'Todo gratis siempre'],   icon: Sparkles, grad: 'from-rose-700 to-pink-900',       locked: true  },
+];
+
 // Motion stagger variants — Emil: stagger 30-80ms between items
 const listVariants = {
   hidden: {},
@@ -247,6 +272,10 @@ export default function App() {
   const [showPassportComplete, setShowPassportComplete] = useState(false);
   const [passportPoints, setPassportPoints] = useState(0);
   const [passportNumber, setPassportNumber] = useState(1);
+  const [requireScheduleFor, setRequireScheduleFor] = useState<number | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const levelsScrollRef = useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -286,6 +315,13 @@ export default function App() {
     if (window.location.hash !== `#/${hash}`) window.location.hash = `#/${hash}`;
   }, [currentScreen, selectedPOI]);
 
+  React.useEffect(() => {
+    if (currentScreen === 'USER_PROFILE' && levelsScrollRef.current) {
+      const currentCard = levelsScrollRef.current.querySelector('[data-level="2"]');
+      currentCard?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }, [currentScreen]);
+
   const navigateTo = (screen: Screen, poiId: number | null = null) => {
     if (screen !== currentScreen || poiId !== selectedPOI) {
       setPrevScreen(currentScreen);
@@ -324,7 +360,7 @@ export default function App() {
           className="bg-white w-full max-w-sm rounded-[2.5rem] overflow-hidden flex flex-col relative max-h-[90vh]"
         >
           <div className="p-8 pb-2">
-            <h3 className="text-2xl font-heading text-[#253884] mb-1 leading-tight text-center">Instala la App</h3>
+            <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-1 leading-tight text-center">Instala la App</h3>
             <p className="text-gray-400 text-[10px] font-medium mb-4 text-center">Mejora tu experiencia agregando SalePlan a tu inicio.</p>
           </div>
 
@@ -530,7 +566,7 @@ export default function App() {
 
                 <div className="mt-12 bg-blue-50 p-6 rounded-3xl border border-blue-100 relative overflow-hidden shadow-sm">
                   <div className="relative z-10">
-                    <h4 className="text-xl font-heading mb-1 text-[#253884]">¿Ya tienes cuenta?</h4>
+                    <h4 className="text-xl font-heading mb-1 text-[#253884] tracking-tight">¿Ya tienes cuenta?</h4>
                     <p className="text-xs text-blue-600/60 mb-6 font-medium">Ingresa para continuar explorando la ciudad.</p>
                     <button
                       onClick={() => { setIsMenuOpen(false); navigateTo('LOGIN_CHOICE'); }}
@@ -578,11 +614,11 @@ export default function App() {
             <button onClick={() => navigateTo('REGISTER_CHOICE')} className="w-full py-5 bg-[#253884] text-white font-bold uppercase text-lg rounded-2xl shadow-xl active:scale-[0.97] transition-transform">
               Comenzar Ahora
             </button>
-            <p className="text-xs text-gray-400 px-2 text-balance">Únete a cientos de exploradores y comercios locales.</p>
+            <p className="text-xs text-gray-400 px-2 text-center">Únete a cientos de exploradores y comercios locales.</p>
           </div>
         </motion.div>
 
-        <h2 className="text-2xl font-heading text-[#191308] mb-6 w-full">¿Cómo Funciona?</h2>
+        <h2 className="text-2xl font-heading text-[#191308] mb-6 w-full tracking-tight">¿Cómo Funciona?</h2>
 
         <motion.div
           variants={listVariants}
@@ -618,7 +654,7 @@ export default function App() {
         </button>
 
         <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full relative z-10">
-          <h1 className="text-4xl font-heading text-center mb-10 text-[#253884]">Bienvenido</h1>
+          <h1 className="text-4xl font-heading text-center mb-10 text-[#253884] tracking-tight">Bienvenido</h1>
           <YetiLogin onLogin={() => handleLoggedAction('USER_ONBOARDING_PREFS')} />
           <div className="mt-8 text-center text-sm font-semibold">
             <span className="text-gray-400 block mb-1">¿Aún no tienes cuenta?</span>
@@ -636,7 +672,7 @@ export default function App() {
           <ChevronLeft size={20} strokeWidth={2} />
         </button>
 
-        <h1 className="text-4xl font-heading mb-6 text-center text-[#253884]">Crear Perfil</h1>
+        <h1 className="text-4xl font-heading mb-6 text-center text-[#253884] tracking-tight">Crear Perfil</h1>
 
         <div className="bg-white p-8 rounded-3xl subtle-shadow w-full card-shadow">
           <div className="space-y-4">
@@ -792,7 +828,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="p-5">
-                      <h4 className="text-2xl font-heading mb-1 text-[#253884]">{poi.name}</h4>
+                      <h4 className="text-2xl font-heading mb-1 text-[#253884] tracking-tight">{poi.name}</h4>
                       <p className="text-xs text-gray-500 font-medium mb-4 flex items-center gap-1">
                         <img src={ICONS.NAV_MAP} className="w-3 h-3 opacity-50" alt="" />
                         {poi.location}
@@ -816,7 +852,8 @@ export default function App() {
   const renderUserWallet = () => {
     const myRoute = POIS.filter(poi => savedPOIs.includes(poi.id));
     const totalSlots = 6;
-    const occupiedCells = myRoute.reduce((sum, poi) => sum + (poi.isFlash ? 2 : 1), 0);
+    const poiW = (p: typeof myRoute[0]) => p.isFlash ? Math.min(3, getFlashStamps(p.pts)) : 1;
+    const occupiedCells = myRoute.reduce((sum, poi) => sum + poiW(poi), 0);
     const emptyCells = Math.max(0, totalSlots - occupiedCells);
 
     return (
@@ -850,7 +887,7 @@ export default function App() {
                 const rows: GridCell[][] = [];
                 let row: GridCell[] = [], rowW = 0;
                 for (const cell of cells) {
-                  const w = cell.kind === 'poi' && cell.poi.isFlash ? 2 : 1;
+                  const w = cell.kind === 'poi' ? poiW(cell.poi) : 1;
                   if (rowW + w > 3) {
                     while (rowW < 3) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
                     rows.push(row); row = []; rowW = 0;
@@ -864,7 +901,41 @@ export default function App() {
                 }
                 return (
                   <div className="flex flex-col gap-3">
-                    {rows.map((r, ri) => (
+                    {rows.map((r, ri) => {
+                      const poiCells = r.filter(c => c.kind === 'poi');
+                      const isLoneFlash = poiCells.length === 1 && poiCells[0].kind === 'poi' && poiCells[0].poi.isFlash;
+                      if (isLoneFlash) {
+                        const cell = poiCells[0];
+                        if (cell.kind !== 'poi') return null;
+                        const { poi } = cell;
+                        const pw = poiW(poi);
+                        const isStamped = stampedPOIs.includes(poi.id);
+                        const isJustStamped = justStampedId === poi.id;
+                        const widthStyle = pw === 3 ? '100%' : pw === 2 ? 'calc(66.67% - 6px)' : 'calc(33.33% - 8px)';
+                        return (
+                          <div key={ri} className="flex justify-center gap-3">
+                            <div
+                              onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
+                              style={{ width: widthStyle, aspectRatio: `${pw}/1` }}
+                              className={`${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
+                            >
+                              <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
+                                <Zap size={8} strokeWidth={2.5} /> Flash
+                              </span>
+                              {isStamped && (
+                                <div className={`absolute top-2 right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md z-10 border border-blue-100 ${isJustStamped ? 'animate-stamp-in' : ''}`}>
+                                  <img src={ICONS.LOGO} alt="Stamped" className="w-4 h-4" />
+                                </div>
+                              )}
+                              <div className={`${isStamped ? '' : 'opacity-40'} transition-opacity duration-200 flex flex-col items-center`}>
+                                <PoiIcon id={poi.id} size={32} strokeWidth={1.5} />
+                                <p className="text-[8px] font-bold text-[#253884] uppercase mt-1.5 text-center leading-tight line-clamp-2 w-full px-1">{poi.name}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
                       <div key={ri} className="flex gap-3">
                         {r.map((cell, ci) => {
                           if (cell.kind === 'empty') {
@@ -886,12 +957,13 @@ export default function App() {
                           const isStamped = stampedPOIs.includes(poi.id);
                           const isJustStamped = justStampedId === poi.id;
                           const isFlash = poi.isFlash;
+                          const pw = poiW(poi);
                           return (
                             <div
                               key={poi.id}
                               onClick={() => { if (!isStamped) setQrModalPOIId(poi.id); else navigateTo('USER_SEARCH', poi.id); }}
-                              style={{ aspectRatio: isFlash ? '2/1' : '1/1' }}
-                              className={`${isFlash ? 'flex-[2]' : 'flex-1'} ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
+                              style={{ aspectRatio: isFlash ? `${pw}/1` : '1/1' }}
+                              className={`${isFlash ? `flex-[${pw}]` : 'flex-1'} ${poi.color} rounded-2xl flex flex-col items-center justify-center p-2 relative overflow-hidden border border-blue-200 cursor-pointer active:scale-[0.97] transition-transform shadow-sm ${isJustStamped ? 'animate-stamp-ring' : ''}`}
                             >
                               {isFlash && (
                                 <span className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md z-10 flex items-center gap-0.5">
@@ -911,64 +983,105 @@ export default function App() {
                           );
                         })}
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 );
               })()}
 
               <div className="mt-8">
-                <h3 className="text-xs font-bold text-[#253884] uppercase tracking-widest opacity-60 mb-4">Ruta de Hoy</h3>
-                <div className="space-y-3">
-                  {myRoute.map((poi, idx) => {
-                    const isStamped = stampedPOIs.includes(poi.id);
-                    return (
-                      <div
-                        key={poi.id}
-                        onClick={() => navigateTo('USER_SEARCH', poi.id)}
-                        className={`relative rounded-2xl p-3 flex items-center gap-4 cursor-pointer transition-transform border active:scale-[0.98] ${isStamped ? 'bg-green-50 border-green-200 opacity-90' : 'bg-gray-50 border-gray-100'}`}
-                      >
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
-                          <PoiIcon id={poi.id} size={20} strokeWidth={1.5} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-[#253884] text-sm truncate flex items-center gap-1">
-                            {poi.name}
-                            {poi.isFlash && (
-                              <span className="bg-yellow-100 text-yellow-800 text-[9px] px-1.5 py-0.5 rounded-full ml-1 inline-flex items-center gap-0.5">
-                                <Zap size={7} strokeWidth={2.5} /> FLASH
-                              </span>
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Ruta de Hoy</h3>
+                {(() => {
+                  const DAY_RANK: Record<string, number> = { 'Hoy': 0, 'Mañana': 1, 'Sáb 23 may': 2, 'Lun 25 may': 3 };
+                  const TIME_RANK: Record<string, number> = { '08:00 – 12:00': 0, '12:00 – 17:00': 1, '17:00 – 22:00': 2 };
+                  const sortedRoute = [...myRoute].sort((a, b) => {
+                    const sa = poiSchedules[a.id], sb = poiSchedules[b.id];
+                    if (!sa && !sb) return 0;
+                    if (!sa) return 1;
+                    if (!sb) return -1;
+                    const dayDiff = (DAY_RANK[sa.day] ?? 99) - (DAY_RANK[sb.day] ?? 99);
+                    if (dayDiff !== 0) return dayDiff;
+                    return (TIME_RANK[sa.time] ?? 99) - (TIME_RANK[sb.time] ?? 99);
+                  });
+                  return (
+                    <div className="space-y-3">
+                      {sortedRoute.map((poi, idx) => {
+                        const isStamped = stampedPOIs.includes(poi.id);
+                        const hasSchedule = !!poiSchedules[poi.id];
+                        const isDragging = dragIndex === idx;
+                        const isDragOver = dragOverIndex === idx;
+                        return (
+                          <div
+                            key={poi.id}
+                            draggable={!hasSchedule}
+                            onDragStart={() => setDragIndex(idx)}
+                            onDragOver={e => { e.preventDefault(); setDragOverIndex(idx); }}
+                            onDrop={() => {
+                              if (dragIndex === null || dragOverIndex === null) return;
+                              setSavedPOIs(prev => {
+                                const sorted = [...prev];
+                                const fromId = sortedRoute[dragIndex].id;
+                                const toId = sortedRoute[dragOverIndex].id;
+                                const fi = sorted.indexOf(fromId), ti = sorted.indexOf(toId);
+                                sorted.splice(fi, 1);
+                                sorted.splice(ti, 0, fromId);
+                                return sorted;
+                              });
+                              setDragIndex(null); setDragOverIndex(null);
+                            }}
+                            onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
+                            onClick={() => navigateTo('USER_SEARCH', poi.id)}
+                            className={`relative rounded-2xl p-3 flex items-center gap-3 cursor-pointer transition-[transform,border-color,background-color] border active:scale-[0.98] ${isStamped ? 'bg-green-50 border-green-200 opacity-90' : isDragOver ? 'bg-blue-50 border-[#253884]' : 'bg-gray-50 border-gray-100'} ${isDragging ? 'opacity-50' : ''}`}
+                          >
+                            {!hasSchedule ? (
+                              <GripVertical size={14} strokeWidth={2} className="text-gray-300 shrink-0 cursor-grab" />
+                            ) : (
+                              <Lock size={14} strokeWidth={2} className="text-[#253884]/40 shrink-0" />
                             )}
-                          </h4>
-                          <p className="text-[9px] text-gray-500 font-bold uppercase tracking-wider truncate">{poi.category}</p>
-                          {(() => {
-                            const sched = poiSchedules[poi.id];
-                            if (sched) return (
-                              <p className="text-[9px] font-bold text-[#253884] truncate mt-0.5 flex items-center gap-1">
-                                <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
-                                {sched.day} · {sched.time}
-                              </p>
-                            );
-                            if (poi.isFlash && poi.date) return (
-                              <p className="text-[9px] font-bold text-yellow-700 truncate mt-0.5 flex items-center gap-1">
-                                <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
-                                {poi.date}
-                              </p>
-                            );
-                            return null;
-                          })()}
-                        </div>
-                        <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
-                          {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {myRoute.length < totalSlots && (
-                    <button onClick={() => navigateTo('USER_SEARCH')} className="w-full bg-blue-50 border border-blue-100 border-dashed rounded-2xl p-4 text-center text-[#253884] font-bold text-xs active:scale-[0.97] transition-transform">
-                      + Añadir otra parada
-                    </button>
-                  )}
-                </div>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
+                              <PoiIcon id={poi.id} size={20} strokeWidth={1.5} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-[#253884] text-sm truncate flex items-center gap-1">
+                                {poi.name}
+                                {poi.isFlash && (
+                                  <span className="bg-yellow-100 text-yellow-800 text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-1 inline-flex items-center gap-0.5">
+                                    <Zap size={7} strokeWidth={2.5} /> FLASH
+                                  </span>
+                                )}
+                              </h4>
+                              <p className="text-[9px] text-gray-500 font-bold uppercase tracking-wider truncate">{poi.category}</p>
+                              {(() => {
+                                const sched = poiSchedules[poi.id];
+                                if (sched) return (
+                                  <p className="text-[9px] font-bold text-[#253884] truncate mt-0.5 flex items-center gap-1">
+                                    <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
+                                    {sched.day} · {sched.time}
+                                  </p>
+                                );
+                                if (poi.isFlash && poi.date) return (
+                                  <p className="text-[9px] font-bold text-yellow-700 truncate mt-0.5 flex items-center gap-1">
+                                    <Calendar size={9} strokeWidth={2.5} className="shrink-0" />
+                                    {poi.date}
+                                  </p>
+                                );
+                                return null;
+                              })()}
+                            </div>
+                            <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
+                              {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
+                            </div>
+                          </div>
+                        );
+                      })}
+                      {myRoute.length < totalSlots && (
+                        <button onClick={() => navigateTo('USER_SEARCH')} className="w-full bg-blue-50 border border-blue-100 border-dashed rounded-2xl p-4 text-center text-[#253884] font-bold text-xs active:scale-[0.97] transition-transform">
+                          + Añadir otra parada
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -1008,8 +1121,9 @@ export default function App() {
 
                         const myRoute = POIS.filter(p => savedPOIs.includes(p.id));
                         const totalSlots = 6;
-                        const occupiedCells = myRoute.reduce((sum, p) => sum + (p.isFlash ? 2 : 1), 0);
-                        const stampedCells = myRoute.reduce((sum, p) => stampedPOIs.includes(p.id) ? sum + (p.isFlash ? 2 : 1) : sum, 0);
+                        const qrPoiW = (p: typeof myRoute[0]) => p.isFlash ? Math.min(3, getFlashStamps(p.pts)) : 1;
+                        const occupiedCells = myRoute.reduce((sum, p) => sum + qrPoiW(p), 0);
+                        const stampedCells = myRoute.reduce((sum, p) => stampedPOIs.includes(p.id) ? sum + qrPoiW(p) : sum, 0);
                         const remainingUnstamped = occupiedCells - stampedCells;
                         const overflow = Math.max(0, poiStamps - remainingUnstamped);
 
@@ -1148,59 +1262,46 @@ export default function App() {
 
         <div className="w-full space-y-4 mb-4">
           <h3 className="text-xl font-heading text-[#253884] tracking-tight px-2">Progreso de Niveles</h3>
-          <div className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4">
-            <div className="snap-center shrink-0 w-[85%] bg-gray-200 rounded-3xl p-5 subtle-shadow text-gray-500 relative overflow-hidden grayscale">
-              <div className="absolute -right-4 -bottom-4 opacity-10 text-blue-400">
-                <Sprout size={80} strokeWidth={1} />
-              </div>
-              <p className="text-[10px] font-bold tracking-widest uppercase mb-1">Nivel 1</p>
-              <p className="text-2xl font-heading mb-1 text-gray-700">Turista Novato</p>
-              <p className="text-xs mb-4 font-medium">Completado</p>
-              <div className="bg-white/50 p-3 rounded-xl border border-white/20">
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2">Beneficios:</p>
-                <ul className="text-xs space-y-1 font-medium">
-                  <li>• Emblema base</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="snap-center shrink-0 w-[85%] bg-gradient-to-br from-[#253884] to-blue-600 rounded-3xl p-5 subtle-shadow text-white relative overflow-hidden ring-4 ring-blue-300">
-              <div className="absolute -right-4 -bottom-4 opacity-20 text-yellow-300">
-                <Crown size={80} strokeWidth={1} />
-              </div>
-              <p className="text-[10px] font-bold tracking-widest uppercase mb-1 text-blue-200">Nivel 2 (Actual)</p>
-              <p className="text-3xl font-heading mb-1">Mochilero Pro</p>
-              <p className="text-xs text-blue-100 mb-4 font-medium">850 XP / 1000 XP</p>
-              <div className="w-full bg-black/20 rounded-full h-2 mb-2">
-                <div className="bg-white h-2 rounded-full" style={{ width: '85%' }} />
-              </div>
-              <p className="text-[10px] font-bold text-white uppercase tracking-wider mb-4 opacity-80">
-                Faltan 150 pts para <span className="text-yellow-300">Explorador Maestro</span>
-              </p>
-              <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm border border-white/20">
-                <p className="text-[10px] font-bold uppercase tracking-wider mb-2">Beneficios Actuales:</p>
-                <ul className="text-xs space-y-1 font-medium">
-                  <li>• 10% dcto. en Museos</li>
-                  <li>• 2x1 en Café Central</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="snap-center shrink-0 w-[85%] bg-gradient-to-br from-amber-400 to-yellow-600 rounded-3xl p-5 subtle-shadow text-white relative overflow-hidden opacity-90">
-              <div className="absolute -right-4 -bottom-4 opacity-20 text-white">
-                <Trophy size={80} strokeWidth={1} />
-              </div>
-              <p className="text-[10px] font-bold tracking-widest text-amber-100 uppercase mb-1">Nivel 3</p>
-              <p className="text-2xl font-heading mb-1">Explorador Maestro</p>
-              <p className="text-xs text-amber-100 mb-4 font-medium">Bloqueado</p>
-              <div className="bg-black/10 p-3 rounded-xl border border-white/20">
-                <p className="text-[10px] font-bold uppercase text-yellow-100 tracking-wider mb-2">Beneficios a Desbloquear:</p>
-                <ul className="text-xs space-y-1 font-medium text-white/90">
-                  <li>• Entrada VIP a Eventos Flash</li>
-                  <li>• Acceso a retos exclusivos</li>
-                </ul>
-              </div>
-            </div>
+          <div ref={levelsScrollRef} className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4">
+            {LEVELS.map(lvl => {
+              const LvlIcon = lvl.icon;
+              const isCurrent = !!lvl.isCurrent;
+              const isDone = !!lvl.done;
+              return (
+                <div
+                  key={lvl.n}
+                  data-level={lvl.n}
+                  className={`snap-center shrink-0 w-[80%] rounded-3xl p-5 subtle-shadow relative overflow-hidden ${
+                    isCurrent ? `bg-gradient-to-br ${lvl.grad} text-white ring-4 ring-blue-300` :
+                    isDone    ? 'bg-gray-200 text-gray-600 grayscale' :
+                                `bg-gradient-to-br ${lvl.grad} text-white opacity-60`
+                  }`}
+                >
+                  <div className="absolute -right-4 -bottom-4 opacity-20">
+                    <LvlIcon size={80} strokeWidth={1} />
+                  </div>
+                  <p className={`text-[10px] font-bold tracking-widest uppercase mb-1 ${isCurrent ? 'text-blue-200' : isDone ? '' : 'text-white/60'}`}>
+                    Nivel {lvl.n}{isCurrent ? ' (Actual)' : isDone ? ' · Completado' : ' · Bloqueado'}
+                  </p>
+                  <p className="text-2xl font-heading tracking-tight mb-1">{lvl.name}</p>
+                  {isCurrent && (
+                    <>
+                      <p className="text-xs text-blue-100 mb-3 font-medium">{lvl.xp} XP / {lvl.next} XP</p>
+                      <div className="w-full bg-black/20 rounded-full h-1.5 mb-3">
+                        <div className="bg-white h-1.5 rounded-full" style={{ width: `${Math.min(100, (lvl.xp / lvl.next) * 100)}%` }} />
+                      </div>
+                    </>
+                  )}
+                  {!isCurrent && !isDone && <p className="text-xs text-white/60 mb-3 font-medium">Requiere {lvl.next.toLocaleString()} XP</p>}
+                  <div className={`p-3 rounded-xl border ${isCurrent ? 'bg-white/20 border-white/20' : isDone ? 'bg-white/30 border-white/10' : 'bg-black/10 border-white/10'}`}>
+                    <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5">Beneficios:</p>
+                    <ul className="text-xs space-y-0.5 font-medium">
+                      {lvl.benefits.map(b => <li key={b}>• {b}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <button onClick={() => navigateTo('USER_REVIEWS')} className="w-full bg-white px-5 py-4 rounded-2xl subtle-shadow font-bold text-[#253884] flex items-center justify-between active:scale-[0.97] transition-transform">
@@ -1254,7 +1355,7 @@ export default function App() {
             <motion.div key={i} variants={itemVariants} className="bg-white p-5 rounded-3xl subtle-shadow">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h4 className="text-2xl font-heading text-[#253884]">Café El Molino {i}</h4>
+                  <h4 className="text-2xl font-heading text-[#253884] tracking-tight">Café El Molino {i}</h4>
                   <p className="text-[10px] font-semibold text-gray-400 mt-1 uppercase tracking-wider">Hace {i} días</p>
                 </div>
               </div>
@@ -1282,26 +1383,30 @@ export default function App() {
 
         <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
           <div className="mb-10 text-center flex flex-col items-center">
-            <div className="flex items-center gap-2 mb-4">
-              <img src={ICONS.LOGO} alt="SalePlan" className="h-10 filter brightness-0 invert" />
-              <span className="font-heading text-3xl text-white tracking-tighter pt-1">SalePlan</span>
+            <div className="flex items-center gap-3 mb-6">
+              <img src={ICONS.LOGO} alt="SalePlan" className="h-14 filter brightness-0 invert" />
+              <span className="font-heading text-4xl text-white tracking-tight pt-1">SalePlan</span>
             </div>
-            <h1 className="text-4xl font-heading text-white tracking-tight">Portal Negocio</h1>
-            <p className="font-bold text-blue-200 text-xs uppercase mt-3 tracking-widest">Acceso Exclusivo</p>
+            <h1 className="text-3xl font-heading text-white tracking-tight">Portal Negocio</h1>
+            <p className="font-bold text-blue-300 text-xs uppercase mt-2 tracking-[0.15em]">Para negocios aliados</p>
           </div>
 
-          <div className="space-y-6 bg-white p-8 rounded-3xl subtle-shadow text-[#253884]">
+          <div className="space-y-5 bg-white p-8 rounded-3xl subtle-shadow text-[#253884]">
             <div>
               <label className="font-bold text-[10px] uppercase mb-2 block text-gray-500 tracking-wider">ID Comercio</label>
-              <input type="text" className="w-full bg-gray-50 border-2 border-transparent px-4 pt-4 pb-3 font-semibold text-base focus:outline-none focus:border-[#253884] focus:bg-white rounded-xl transition-[border-color,background-color]" placeholder="COM-0001" />
+              <input type="text" className="w-full bg-gray-50 border-2 border-transparent px-4 py-4 font-semibold text-base focus:outline-none focus:border-[#253884] focus:bg-white rounded-xl transition-[border-color,background-color]" placeholder="COM-0001" />
             </div>
             <div>
               <label className="font-bold text-[10px] uppercase mb-2 block text-gray-500 tracking-wider">Código de Seguridad</label>
-              <input type="password" className="w-full bg-gray-50 border-2 border-transparent px-4 pt-4 pb-3 font-semibold text-base focus:outline-none focus:border-[#253884] focus:bg-white rounded-xl transition-[border-color,background-color]" placeholder="••••••" />
+              <input type="password" className="w-full bg-gray-50 border-2 border-transparent px-4 py-4 font-semibold text-base focus:outline-none focus:border-[#253884] focus:bg-white rounded-xl transition-[border-color,background-color]" placeholder="••••••" />
             </div>
-            <button onClick={() => navigateTo('COMMERCE_DASHBOARD')} className="w-full py-4 mt-6 bg-[#253884] text-white font-bold text-lg uppercase tracking-wide rounded-xl subtle-shadow active:scale-[0.97] transition-transform">
+            <button onClick={() => navigateTo('COMMERCE_DASHBOARD')} className="w-full py-4 mt-2 bg-[#253884] text-white font-bold text-lg uppercase tracking-wide rounded-xl subtle-shadow active:scale-[0.97] transition-transform">
               Acceder
             </button>
+            <p className="text-center text-gray-400 text-xs font-medium pt-2">
+              ¿Aún no eres aliado?{' '}
+              <button onClick={() => navigateTo('AFFILIATE')} className="text-[#253884] font-bold hover:underline">Contáctanos</button>
+            </p>
           </div>
         </div>
       </div>
@@ -1311,92 +1416,111 @@ export default function App() {
   const renderCommerceDashboard = () => (
     <Layout bgClass="bg-gray-50">
       <div className="flex-1 flex flex-col w-full h-full pb-10">
-        <div className="bg-[#253884] p-6 pb-12 relative z-20 shadow-md">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-          <div className="flex justify-between items-center mb-8 relative z-10">
-            <div>
-              <h2 className="text-4xl font-heading text-white tracking-tight">Café Central</h2>
-              <p className="font-bold text-[10px] uppercase text-blue-200 mt-1 tracking-widest">Dashboard Activo</p>
+        {/* Header card */}
+        <div className="bg-gradient-to-br from-[#253884] to-blue-800 p-6 pt-12 relative z-20 shadow-md">
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20">
+                <Store size={24} strokeWidth={1.5} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-heading text-white tracking-tight">Café Central</h2>
+                <p className="font-bold text-[10px] uppercase text-blue-300 mt-0.5 tracking-[0.15em]">Dashboard Activo</p>
+              </div>
             </div>
-            <button onClick={() => navigateTo('ONBOARDING')} className="px-4 py-2 border border-white/20 bg-white/10 rounded-xl font-bold text-xs text-white active:scale-[0.97] transition-transform uppercase">
+            <button onClick={() => navigateTo('ONBOARDING')} className="px-4 py-2 border border-white/20 bg-white/10 rounded-xl font-bold text-xs text-white active:scale-[0.97] transition-transform uppercase tracking-wide">
               Salir
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 relative z-10">
-            <div className="bg-white/10 border border-white/10 text-white p-5 rounded-2xl backdrop-blur">
-              <p className="font-bold text-[10px] uppercase tracking-wider text-blue-200">Escaneos Hoy</p>
-              <p className="font-black text-4xl mt-1">142</p>
+          {/* Stats grid */}
+          <div className="grid grid-cols-3 gap-3 relative z-10 mb-4">
+            <div className="bg-white/10 border border-white/10 text-white p-3 rounded-2xl backdrop-blur text-center">
+              <p className="font-black text-2xl">142</p>
+              <p className="font-bold text-[9px] uppercase tracking-wider text-blue-300 mt-0.5">Escaneos Hoy</p>
             </div>
-            <div className="bg-white/10 border border-white/10 text-white p-5 rounded-2xl backdrop-blur">
-              <p className="font-bold text-[10px] uppercase tracking-wider text-blue-200">Rating Global</p>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="font-black text-4xl">4.8</p>
-                <img src={ICONS.STAR_FILLED} className="w-5 h-5 -mt-1 opacity-80" alt="" />
+            <div className="bg-white/10 border border-white/10 text-white p-3 rounded-2xl backdrop-blur text-center">
+              <p className="font-black text-2xl">18</p>
+              <p className="font-bold text-[9px] uppercase tracking-wider text-blue-300 mt-0.5">Nuevos</p>
+            </div>
+            <div className="bg-white/10 border border-white/10 text-white p-3 rounded-2xl backdrop-blur text-center">
+              <div className="flex items-center justify-center gap-1">
+                <p className="font-black text-2xl">4.8</p>
+                <img src={ICONS.STAR_FILLED} className="w-4 h-4 opacity-80" alt="" />
               </div>
+              <p className="font-bold text-[9px] uppercase tracking-wider text-blue-300 mt-0.5">Rating</p>
             </div>
           </div>
 
-          <div className="flex gap-2 mt-6 relative z-10 p-1 bg-white/10 rounded-xl">
-            {(['ESCANEO', 'CRM', 'CONFIG'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => setCommerceTab(tab)}
-                className={`flex-1 py-2 font-bold text-xs uppercase tracking-wider rounded-lg transition-colors duration-200 active:scale-[0.97] ${commerceTab === tab ? 'bg-white text-[#253884]' : 'text-blue-100'}`}
-              >
-                {tab === 'ESCANEO' ? 'Retos' : tab === 'CRM' ? 'CRM' : 'Ajustes'}
-              </button>
-            ))}
+          {/* Impacto */}
+          <div className="relative z-10 bg-white/10 border border-white/10 rounded-2xl px-4 py-3 mb-5 flex items-center justify-between">
+            <div>
+              <p className="font-bold text-[10px] uppercase text-blue-300 tracking-wider">Impacto Estimado</p>
+              <p className="font-black text-lg text-white">S/. 3,240 este mes</p>
+            </div>
+            {/* Mini sparkline */}
+            <div className="flex items-end gap-0.5 h-8">
+              {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+                <div key={i} className="w-2 bg-white/50 rounded-sm" style={{ height: `${h}%` }} />
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 p-6 space-y-6 relative z-10 w-full mt-2">
+        {/* Tabs — underline style inside white content area */}
+        <div className="bg-white border-b border-gray-100 px-6 flex gap-0 relative z-10 shadow-sm">
+          {(['ESCANEO', 'CRM', 'CONFIG'] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setCommerceTab(tab)}
+              className={`py-4 px-4 font-bold text-xs uppercase tracking-wider transition-[border-color,color] duration-200 border-b-2 active:scale-[0.97] ${commerceTab === tab ? 'border-[#253884] text-[#253884]' : 'border-transparent text-gray-400'}`}
+            >
+              {tab === 'ESCANEO' ? 'Retos' : tab === 'CRM' ? 'Clientes' : 'Negocio'}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex-1 p-6 space-y-6 relative z-10 w-full">
           {commerceTab === 'ESCANEO' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-6">
-              <button onClick={() => alert('Abriendo cámara para Escanear Pasaporte QR...')} className="w-full py-4 bg-[#253884] text-white rounded-2xl shadow-lg font-bold text-lg uppercase tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-3">
-                <ScanLine size={22} strokeWidth={2} /> <span>Escanear QR</span>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-5">
+              <button onClick={() => alert('Abriendo cámara para Escanear Pasaporte QR...')} className="w-full py-5 bg-[#253884] text-white rounded-2xl card-shadow font-bold text-lg uppercase tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-3">
+                <ScanLine size={24} strokeWidth={2} /> <span>Escanear QR de Pasaporte</span>
               </button>
 
-              <h3 className="text-2xl font-heading text-[#253884] tracking-tight mb-2 pt-2">Mis Retos Activos</h3>
+              <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] pt-2">Retos Activos</h3>
               <div className="bg-white p-5 rounded-3xl subtle-shadow flex gap-4 cursor-pointer border border-gray-100 active:scale-[0.98] transition-transform">
-                <div className="w-16 h-16 bg-[#e6eaf8] rounded-2xl flex items-center justify-center font-black text-[#253884] text-2xl">
-                  <QrCode size={28} strokeWidth={1.5} />
+                <div className="w-16 h-16 bg-[#e6eaf8] rounded-2xl flex items-center justify-center shrink-0">
+                  <QrCode size={28} strokeWidth={1.5} className="text-[#253884]" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-xl font-heading text-[#253884] leading-tight">Degustación de Verano</h4>
-                  <p className="font-bold text-[10px] uppercase text-green-700 bg-green-50 inline-block px-2 py-1 rounded-md mt-2">Activa hasta 12/Agt</p>
-                  <div className="mt-4">
-                    <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="text-[10px] bg-gray-50 text-[#253884] px-4 py-2 rounded-lg font-bold uppercase tracking-wide active:scale-[0.97] transition-transform">Editar Reto</button>
+                  <h4 className="text-xl font-heading text-[#253884] tracking-tight leading-tight">Degustación de Verano</h4>
+                  <p className="font-bold text-[10px] uppercase text-green-700 bg-green-50 inline-block px-2 py-1 rounded-md mt-2 tracking-wider">Activa hasta 12/Agt</p>
+                  <div className="mt-3">
+                    <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="text-[10px] bg-gray-50 text-[#253884] px-4 py-2 rounded-lg font-bold uppercase tracking-wide active:scale-[0.97] transition-transform border border-gray-100">Editar Reto</button>
                   </div>
                 </div>
               </div>
 
-              <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="w-full py-10 border-2 border-dashed border-[#253884]/30 bg-white rounded-3xl text-center active:scale-[0.97] transition-transform">
-                <span className="text-3xl font-black text-[#253884] mb-2 block opacity-50">+</span>
-                <span className="font-bold text-sm uppercase text-[#253884] tracking-wider">Crear Nuevo Reto</span>
+              <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="w-full py-8 border-2 border-dashed border-[#253884]/20 bg-white rounded-3xl text-center active:scale-[0.97] transition-transform">
+                <span className="text-3xl font-black text-[#253884] mb-2 block opacity-40">+</span>
+                <span className="font-bold text-sm uppercase text-[#253884] tracking-wider opacity-70">Nuevo Reto</span>
               </button>
             </motion.div>
           )}
 
           {commerceTab === 'CRM' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-6">
-              <div className="flex justify-between items-center border-b border-gray-100 pb-2">
-                <h3 className="text-2xl font-heading text-[#253884] tracking-tight pt-2">Contactos & AI</h3>
-              </div>
-
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-5">
               <div className="relative">
-                <input type="text" placeholder="Buscar por nombre, teléfono o ID..." className="w-full px-5 py-4 bg-white border border-gray-200 text-gray-800 rounded-2xl outline-none placeholder:text-gray-400 focus:border-[#253884] transition-[border-color] font-medium subtle-shadow" />
+                <input type="text" placeholder="Buscar contacto..." className="w-full px-5 py-4 bg-white border border-gray-200 text-gray-800 rounded-2xl outline-none placeholder:text-gray-400 focus:border-[#253884] transition-[border-color] font-medium subtle-shadow" />
                 <img src={ICONS.SEARCH} className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40" alt="" />
               </div>
 
-              <div className="bg-[#253884] rounded-3xl subtle-shadow p-5 mt-4 text-white overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles size={18} strokeWidth={1.5} />
-                  <h4 className="font-bold text-lg font-heading tracking-wide">Predicciones SalePlan</h4>
+              <div className="bg-[#253884] rounded-3xl card-shadow p-5 text-white overflow-hidden">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles size={16} strokeWidth={1.5} />
+                  <h4 className="font-heading text-lg tracking-tight">Predicciones SalePlan AI</h4>
                 </div>
-                <p className="text-xs text-blue-200 mb-4 bg-black/10 p-3 rounded-xl border border-white/10">Identificamos usuarios con alta probabilidad de visitar tu comercio hoy según rutas.</p>
-
+                <p className="text-xs text-blue-200 mb-4 bg-black/10 p-3 rounded-xl border border-white/10 font-medium">Alta probabilidad de visita hoy según rutas activas.</p>
                 <div className="space-y-3">
                   {[{ name: 'Valentina Cruz', avatar: AVATARS[0], prob: '94%' }, { name: 'Ricardo Morales', avatar: AVATARS[3], prob: '87%' }].map(user => (
                     <div key={user.name} className="flex items-center gap-3 bg-white/10 p-3 rounded-2xl border border-white/10 cursor-pointer active:scale-[0.98] transition-transform">
@@ -1405,36 +1529,34 @@ export default function App() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-white leading-tight truncate">{user.name}</p>
-                        <p className="text-[9px] text-blue-200 font-bold uppercase truncate mt-1">{user.prob} de Probabilidad</p>
+                        <p className="text-[9px] text-blue-200 font-bold uppercase truncate mt-0.5">{user.prob} probabilidad</p>
                       </div>
-                      <div className="shrink-0">
-                        <button className="bg-white text-[#253884] text-[10px] font-bold px-3 py-1.5 rounded-lg active:scale-[0.97] transition-transform">Invitar</button>
-                      </div>
+                      <button className="bg-white text-[#253884] text-[10px] font-bold px-3 py-1.5 rounded-lg active:scale-[0.97] transition-transform shrink-0">Invitar</button>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="bg-white rounded-3xl subtle-shadow p-5 border border-gray-100">
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+                <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
                   <h4 className="font-bold text-[#253884]">Directorio Activo</h4>
                   <button onClick={() => alert('Descargando lista de contactos en CSV...')} className="text-[9px] bg-green-50 text-green-700 font-bold px-3 py-1.5 rounded-lg border border-green-200 uppercase tracking-widest active:scale-[0.97] transition-transform">
-                    CSV
+                    Exportar CSV
                   </button>
                 </div>
-                <div className="space-y-5">
+                <div className="space-y-4">
                   {CRM_CONTACTS.map(contact => (
                     <div key={contact.name} className="flex items-center gap-3 cursor-pointer p-2 -mx-2 rounded-xl active:scale-[0.98] transition-transform">
-                      <div className={`w-12 h-12 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-xl ${contact.badge === 'Frecuente' ? 'border-[#253884]' : contact.badge === 'Nuevo' ? 'border-green-400' : 'border-gray-100'} ${!contact.avatar ? 'bg-purple-50 text-purple-700 border-purple-200' : ''}`}>
+                      <div className={`w-11 h-11 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-lg ${contact.badge === 'Frecuente' ? 'border-[#253884]' : contact.badge === 'Nuevo' ? 'border-green-400' : 'border-gray-100'} ${!contact.avatar ? 'bg-purple-50 text-purple-700 border-purple-200' : ''}`}>
                         {contact.avatar ? <img src={contact.avatar} className="w-full h-full object-cover" alt="User" /> : contact.initial}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-[#253884] leading-tight truncate">{contact.name}</p>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase truncate">{contact.time}</p>
+                        <p className="text-[10px] text-gray-500 font-bold uppercase truncate tracking-wide">{contact.time}</p>
                       </div>
                       {contact.badge && (
                         <div className={`text-[9px] font-bold px-2 py-1 rounded-lg uppercase flex items-center gap-1 shadow-sm border ${contact.badge === 'Frecuente' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-blue-100 text-blue-800 border-blue-200'}`}>
-                          <Sparkles size={10} strokeWidth={2} /> {contact.badge}
+                          <Sparkles size={9} strokeWidth={2} /> {contact.badge}
                         </div>
                       )}
                     </div>
@@ -1446,13 +1568,36 @@ export default function App() {
 
           {commerceTab === 'CONFIG' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-4">
-              <div className="bg-white rounded-3xl p-6 subtle-shadow border border-gray-100 mb-6">
-                <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-2">Nombre Comercial</p>
-                <p className="text-xl font-heading text-[#253884] border-b border-gray-100 pb-4 mb-4">Café Central</p>
-                <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-2">Administrador</p>
-                <p className="text-xl font-heading text-[#253884]">Juan Pérez</p>
+              <div className="bg-white rounded-3xl p-6 subtle-shadow card-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Perfil del Negocio</h3>
+                <div className="space-y-4">
+                  <div className="border-b border-gray-100 pb-4">
+                    <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-1">Nombre Comercial</p>
+                    <p className="text-xl font-heading text-[#253884] tracking-tight">Café Central</p>
+                  </div>
+                  <div className="border-b border-gray-100 pb-4">
+                    <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-1">Administrador</p>
+                    <p className="text-xl font-heading text-[#253884] tracking-tight">Juan Pérez</p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-1">ID Comercio</p>
+                    <p className="font-bold text-[#253884] font-mono">COM-0001</p>
+                  </div>
+                </div>
               </div>
-              <button className="w-full bg-white text-red-600 font-bold rounded-2xl py-4 subtle-shadow border border-red-100 active:scale-[0.97] transition-transform uppercase tracking-wide">
+
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-3">Plan Actual</h3>
+                <div className="bg-gradient-to-br from-[#253884] to-blue-700 rounded-2xl p-4 text-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-heading text-xl tracking-tight">Plan Pro</p>
+                    <span className="bg-yellow-400 text-yellow-900 text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider">Activo</span>
+                  </div>
+                  <p className="text-blue-200 text-xs font-medium">Retos ilimitados · CRM · Predicciones AI</p>
+                </div>
+              </div>
+
+              <button onClick={() => navigateTo('ONBOARDING')} className="w-full bg-white text-red-600 font-bold rounded-2xl py-4 subtle-shadow border border-red-100 active:scale-[0.97] transition-transform uppercase tracking-wide">
                 Cerrar Sesión Negocio
               </button>
             </motion.div>
@@ -1550,8 +1695,8 @@ export default function App() {
 
               <div className="space-y-4">
                 {/* Date/time planner — available for all events */}
-                <div className={`p-4 rounded-2xl border ${poi.isFlash ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`}>
-                  <p className={`font-bold mb-3 flex items-center gap-1.5 text-sm ${poi.isFlash ? 'text-yellow-800' : 'text-[#253884]'}`}>
+                <div className={`p-4 rounded-2xl border transition-[border-color,background-color] ${requireScheduleFor === poi.id ? 'bg-red-50 border-red-400 animate-pulse' : poi.isFlash ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`}>
+                  <p className={`font-bold mb-3 flex items-center gap-1.5 text-sm ${requireScheduleFor === poi.id ? 'text-red-700' : poi.isFlash ? 'text-yellow-800' : 'text-[#253884]'}`}>
                     <Calendar size={14} strokeWidth={2} />
                     {poi.isFlash ? 'Planear Asistencia' : 'Planear mi Visita'}
                   </p>
@@ -1571,6 +1716,11 @@ export default function App() {
                       {VISIT_TIMES.map(t => <option key={t.text} value={t.text}>{t.label}</option>)}
                     </select>
                   </div>
+                  {requireScheduleFor === poi.id && (
+                    <p className="text-xs font-bold text-red-500 mt-2 animate-pulse">
+                      Selecciona un horario antes de agregar
+                    </p>
+                  )}
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-2xl flex items-center gap-4">
@@ -1589,6 +1739,11 @@ export default function App() {
               <button
                 onClick={() => {
                   if (!isSaved) {
+                    if (!poiSchedules[poi.id]) {
+                      setRequireScheduleFor(poi.id);
+                      setTimeout(() => setRequireScheduleFor(null), 1500);
+                      return;
+                    }
                     setSavedPOIs(prev => [...prev, poi.id]);
                     setJustAddedPOI(poi.id);
                     setTimeout(() => setJustAddedPOI(null), 3000);
@@ -1725,9 +1880,8 @@ export default function App() {
                         onClick={e => {
                           e.stopPropagation();
                           if (!isSaved) {
-                            setSavedPOIs(prev => [...prev, poi.id]);
-                            setJustAddedPOI(poi.id);
-                            setTimeout(() => setJustAddedPOI(null), 3000);
+                            // Navigate to detail for schedule selection
+                            setSelectedPOI(poi.id);
                           } else {
                             setSavedPOIs(prev => prev.filter(id => id !== poi.id));
                           }
