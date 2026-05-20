@@ -1236,11 +1236,11 @@ export default function App() {
                       <span className="text-yellow-300 font-black text-sm">+{it.reward} pts</span>
                     </div>
                     {/* Stop grid */}
-                    <div className="grid grid-cols-3 gap-1 mb-3 mt-2">
+                    <div className="grid grid-cols-2 gap-1.5 mb-3 mt-2">
                       {itStops.slice(0, 6).map(poi => (
-                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl h-[52px] flex flex-col items-center justify-center p-1 gap-0.5">
-                          <PoiIcon id={poi.id} size={13} strokeWidth={1.5} className="text-white shrink-0" />
-                          <p className="text-white text-[8px] font-bold leading-tight text-center line-clamp-2">{poi.name}</p>
+                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl h-[48px] flex flex-row items-center gap-2 px-2">
+                          <PoiIcon id={poi.id} size={14} strokeWidth={1.5} className="text-white shrink-0" />
+                          <p className="text-white text-[9px] font-bold leading-tight line-clamp-2">{poi.name}</p>
                         </div>
                       ))}
                     </div>
