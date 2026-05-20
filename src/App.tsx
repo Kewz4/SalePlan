@@ -301,7 +301,7 @@ export default function App() {
   const [showPlusAnimation, setShowPlusAnimation] = useState(false);
   const [stampModalSuccess, setStampModalSuccess] = useState(false);
   const [activePassportIdx, setActivePassportIdx] = useState(0);
-  const [deckW] = useState(() => typeof window !== 'undefined' ? Math.round(window.innerWidth * 0.68) : 265);
+  const [deckW] = useState(() => typeof window !== 'undefined' ? window.innerWidth - 32 : 265);
   const [premiumEventPreviewId, setPremiumEventPreviewId] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
@@ -922,11 +922,11 @@ export default function App() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 mb-0.5">
-                          <h4 className="font-bold text-[#253884] text-sm leading-tight truncate">{event.name}</h4>
+                          <h4 className="font-bold text-[#253884] text-sm leading-tight">{event.name}</h4>
                           {isLocked && <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider shrink-0"><Sparkles size={7} strokeWidth={2} /> Plus</span>}
                           {!isLocked && event.date.toLowerCase().includes('hoy') && <span className="bg-red-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">HOY</span>}
                         </div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate">{event.date}</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{event.date}</p>
                         {isLocked ? (
                           <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider mt-0.5">Exclusivo SalePlan+</p>
                         ) : (
@@ -1221,8 +1221,8 @@ export default function App() {
                     <div className="flex items-center gap-3 mb-3 pr-24">
                       <img src={it.expert.avatar} className="w-11 h-11 rounded-full border-2 border-white/60 shrink-0 shadow-md" alt={it.expert.name} />
                       <div className="min-w-0">
-                        <p className="text-white font-bold text-sm leading-tight truncate">{it.expert.name}</p>
-                        <p className="text-white/70 text-[10px] font-bold truncate">{it.expert.role}</p>
+                        <p className="text-white font-bold text-sm leading-tight">{it.expert.name}</p>
+                        <p className="text-white/70 text-[10px] font-bold">{it.expert.role}</p>
                       </div>
                     </div>
                     {/* Title & description */}
@@ -1236,11 +1236,11 @@ export default function App() {
                       <span className="text-yellow-300 font-black text-base">+{it.reward} pts</span>
                     </div>
                     {/* Stop grid */}
-                    <div className="grid grid-cols-2 gap-2 mb-4 mt-auto">
+                    <div className="grid grid-cols-3 gap-1.5 mb-4 mt-auto">
                       {itStops.slice(0, 6).map(poi => (
-                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl p-2 text-center">
-                          <PoiIcon id={poi.id} size={18} strokeWidth={1.5} className="text-white mx-auto mb-1" />
-                          <p className="text-white text-[10px] font-bold line-clamp-2 leading-tight">{poi.name}</p>
+                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl aspect-square flex flex-col items-center justify-center p-1.5 gap-1">
+                          <PoiIcon id={poi.id} size={16} strokeWidth={1.5} className="text-white shrink-0" />
+                          <p className="text-white text-[9px] font-bold leading-tight text-center">{poi.name}</p>
                         </div>
                       ))}
                     </div>
