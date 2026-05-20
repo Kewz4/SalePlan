@@ -119,6 +119,15 @@ function PoiIcon({ id, size = 24, strokeWidth = 1.5, className = '' }: {
   return <Icon size={size} strokeWidth={strokeWidth} className={className} />;
 }
 
+const getPoiImage = (id: number) => `https://picsum.photos/seed/saleplan${id}/800/450`;
+
+const getFlashStamps = (pts?: string): number => {
+  if (!pts) return 1;
+  if (pts.includes('3 Sellos')) return 3;
+  if (pts.includes('2 Sellos')) return 2;
+  return 1;
+};
+
 const CRM_CONTACTS = [
   { name: 'Valentina Cruz',      avatar: AVATARS[0], time: 'Hace 2 horas',    badge: 'Frecuente', initial: null },
   { name: 'Ricardo Morales',     avatar: AVATARS[3], time: 'Hace 4 horas',    badge: 'Nuevo',     initial: null },
@@ -176,6 +185,10 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [justStampedId, setJustStampedId] = useState<number | null>(null);
   const [justAddedPOI, setJustAddedPOI] = useState<number | null>(null);
+  const [carryOverStamps, setCarryOverStamps] = useState(0);
+  const [showPassportComplete, setShowPassportComplete] = useState(false);
+  const [passportPoints, setPassportPoints] = useState(0);
+  const [passportNumber, setPassportNumber] = useState(1);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -826,6 +839,12 @@ export default function App() {
                             )}
                           </h4>
                           <p className="text-[9px] text-gray-500 font-bold uppercase tracking-wider truncate">{poi.category}</p>
+                          {poi.date && (
+                            <p className="text-[9px] font-bold text-[#253884] opacity-70 truncate mt-0.5 flex items-center gap-0.5">
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#253884] opacity-60 shrink-0" />
+                              {poi.date}
+                            </p>
+                          )}
                         </div>
                         <div className={`w-6 h-6 rounded-full font-black text-[10px] flex items-center justify-center shrink-0 ${isStamped ? 'bg-green-600 text-white' : 'bg-[#253884] text-white'}`}>
                           {isStamped ? <Check size={12} strokeWidth={3} /> : idx + 1}
@@ -872,15 +891,124 @@ export default function App() {
                     <button
                       onClick={() => {
                         const id = qrModalPOIId!;
-                        setStampedPOIs(prev => [...prev, id]);
+                        const poi = POIS.find(p => p.id === id)!;
+                        const poiStamps = poi.isFlash ? getFlashStamps(poi.pts) : 1;
+                        const pts = poi.isFlash ? poiStamps * 15 : 10;
+
+                        const myRoute = POIS.filter(p => savedPOIs.includes(p.id));
+                        const totalSlots = 6;
+                        const occupiedCells = myRoute.reduce((sum, p) => sum + (p.isFlash ? 2 : 1), 0);
+                        const stampedCells = myRoute.reduce((sum, p) => stampedPOIs.includes(p.id) ? sum + (p.isFlash ? 2 : 1) : sum, 0);
+                        const remainingUnstamped = occupiedCells - stampedCells;
+                        const overflow = Math.max(0, poiStamps - remainingUnstamped);
+
+                        const newStamped = [...stampedPOIs, id];
+                        const allStamped = myRoute.every(p => newStamped.includes(p.id));
+                        const isFull = occupiedCells >= totalSlots;
+
+                        setStampedPOIs(newStamped);
                         setJustStampedId(id);
                         setQrModalPOIId(null);
+                        setPassportPoints(prev => prev + pts + (allStamped && isFull ? 50 : 0));
+                        if (overflow > 0) setCarryOverStamps(prev => prev + overflow);
                         setTimeout(() => setJustStampedId(null), 1200);
+                        if (allStamped && isFull) setTimeout(() => setShowPassportComplete(true), 900);
                       }}
                       className="w-full bg-[#253884] text-white py-4 rounded-xl font-bold uppercase tracking-wide subtle-shadow active:scale-[0.97] transition-transform"
                     >
                       [Demo] Simular Escaneo
                     </button>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Passport Completion Overlay */}
+          <AnimatePresence>
+            {showPassportComplete && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="fixed inset-0 bg-black/75 z-[100] backdrop-blur-sm"
+                  onClick={() => {}}
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, y: 32 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 16 }}
+                  transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: 0.05 }}
+                  className="fixed inset-0 z-[101] flex items-center justify-center p-6 pointer-events-none"
+                >
+                  <div className="bg-white rounded-[2.5rem] p-8 max-w-sm w-full text-center relative overflow-hidden pointer-events-auto">
+                    {/* Confetti particles */}
+                    {[...Array(16)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 0, x: 0, scale: 0 }}
+                        animate={{ opacity: [0, 1, 0], y: [-20, -80 - (i % 4) * 20], x: [(i % 2 === 0 ? 1 : -1) * (20 + (i % 5) * 10)], scale: [0, 1, 0] }}
+                        transition={{ duration: 1.0 + i * 0.04, delay: 0.2 + i * 0.05, ease: 'easeOut', repeat: Infinity, repeatDelay: 2 }}
+                        className="absolute top-1/3 left-1/2 w-2 h-2 rounded-sm pointer-events-none"
+                        style={{ background: ['#FFD700', '#FFA500', '#253884', '#60A5FA', '#F87171', '#34D399'][i % 6] }}
+                      />
+                    ))}
+
+                    {/* Stamp */}
+                    <motion.div
+                      initial={{ scale: 2.4, opacity: 0, rotate: -10 }}
+                      animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                      transition={{ duration: 0.45, ease: [0.23, 1, 0.32, 1], delay: 0.15 }}
+                      className="w-24 h-24 bg-[#253884] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"
+                    >
+                      <img src={ICONS.LOGO} className="w-14 h-14 invert" alt="Sello" />
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.35, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+                    >
+                      <p className="text-xs font-black text-yellow-500 uppercase tracking-[0.2em] mb-2">¡Felicidades!</p>
+                      <h2 className="text-3xl font-heading text-[#253884] mb-1 tracking-tight">Pasaporte #{passportNumber}</h2>
+                      <p className="text-gray-400 font-bold text-sm mb-6 uppercase tracking-wider">Completado</p>
+
+                      <div className="bg-[#e6eaf8] rounded-2xl p-4 mb-3">
+                        <p className="text-4xl font-heading text-[#253884] tracking-tight">+{passportPoints}</p>
+                        <p className="text-[10px] font-black text-[#253884] opacity-60 uppercase tracking-[0.15em] mt-0.5">Puntos Ganados</p>
+                      </div>
+
+                      {carryOverStamps > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.55 }}
+                          className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-3 mb-4 flex items-center gap-3"
+                        >
+                          <Zap size={18} className="text-yellow-600 shrink-0" strokeWidth={2.5} />
+                          <p className="text-xs font-bold text-yellow-800 text-left leading-snug">
+                            +{carryOverStamps} sello{carryOverStamps > 1 ? 's' : ''} guardado{carryOverStamps > 1 ? 's' : ''} para tu siguiente pasaporte
+                          </p>
+                        </motion.div>
+                      )}
+                    </motion.div>
+
+                    <motion.button
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5, duration: 0.3 }}
+                      onClick={() => {
+                        setShowPassportComplete(false);
+                        setSavedPOIs([]);
+                        setStampedPOIs([]);
+                        setPassportNumber(prev => prev + 1);
+                        setPassportPoints(0);
+                        setCarryOverStamps(0);
+                      }}
+                      className="w-full bg-[#253884] text-white py-4 rounded-2xl font-bold text-base active:scale-[0.97] transition-transform shadow-lg mt-1"
+                    >
+                      Abrir Pasaporte #{passportNumber + 1} →
+                    </motion.button>
                   </div>
                 </motion.div>
               </>
@@ -1281,12 +1409,19 @@ export default function App() {
       return (
         <Layout bgClass="bg-white">
           <div className="flex-1 overflow-y-auto no-scrollbar pb-24 relative">
-            <div className={`h-64 ${poi.color.split(' ')[0]} relative w-full rounded-b-[2.5rem] flex items-center justify-center p-6 shadow-sm`}>
-              <button onClick={() => window.history.back()} className="absolute top-6 left-6 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm active:scale-[0.97] transition-transform">
+            <div className={`h-64 ${poi.color.split(' ')[0]} relative w-full rounded-b-[2.5rem] overflow-hidden shadow-sm`}>
+              <img
+                src={getPoiImage(poi.id)}
+                alt={poi.name}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className={`absolute inset-0 ${poi.color.split(' ')[0]} opacity-60`} />
+              <button onClick={() => window.history.back()} className="absolute top-6 left-6 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-sm active:scale-[0.97] transition-transform z-10">
                 <ChevronLeft size={20} strokeWidth={2} className="text-[#253884]" />
               </button>
-              <div className={poi.color.split(' ')[1]}>
-                <PoiIcon id={poi.id} size={80} strokeWidth={0.9} />
+              <div className={`absolute bottom-6 left-6 ${poi.color.split(' ')[1]} z-10`}>
+                <PoiIcon id={poi.id} size={48} strokeWidth={0.9} />
               </div>
             </div>
 
@@ -1482,8 +1617,17 @@ export default function App() {
                       >
                         {isSaved ? <Check size={12} strokeWidth={2.5} /> : '+'}
                       </button>
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-2.5 border ${poi.color}`}>
-                        <PoiIcon id={poi.id} size={26} strokeWidth={1.5} />
+                      <div className={`w-full h-24 rounded-xl overflow-hidden mb-2.5 relative ${poi.color.split(' ')[0]}`}>
+                        <img
+                          src={getPoiImage(poi.id)}
+                          alt={poi.name}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                        <div className={`absolute inset-0 ${poi.color.split(' ')[0]} opacity-50`} />
+                        <div className={`absolute bottom-1.5 right-1.5 ${poi.color.split(' ')[1]}`}>
+                          <PoiIcon id={poi.id} size={16} strokeWidth={1.5} />
+                        </div>
                       </div>
                       <h3 className="font-bold text-[#253884] text-sm leading-tight mb-0.5">{poi.name}</h3>
                       <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{poi.category}</p>
@@ -1494,25 +1638,6 @@ export default function App() {
             )}
           </div>
         </div>
-        <AnimatePresence>
-          {justAddedPOI !== null && (
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 24 }}
-              transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
-              className="fixed bottom-24 left-0 right-0 max-w-md mx-auto flex justify-center z-50 px-6 pointer-events-none"
-            >
-              <button
-                onClick={() => { setJustAddedPOI(null); navigateTo('USER_WALLET'); }}
-                className="pointer-events-auto bg-[#253884] text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-xl active:scale-[0.97] transition-transform"
-              >
-                <img src={ICONS.NAV_PASSPORT} className="w-4 h-4 invert" alt="" />
-                Ver mi Pasaporte
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
         <BottomNav active="search" />
       </Layout>
     );
@@ -1644,6 +1769,25 @@ export default function App() {
     <div className="w-full min-h-[100dvh] bg-gray-200">
       {renderCurrentScreen()}
       <PwaGuideModal />
+      <AnimatePresence>
+        {justAddedPOI !== null && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+            className="fixed bottom-24 left-0 right-0 flex justify-center z-[200] pointer-events-none"
+          >
+            <button
+              onClick={() => { setJustAddedPOI(null); navigateTo('USER_WALLET'); }}
+              className="pointer-events-auto bg-[#253884] text-white px-6 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-xl active:scale-[0.97] transition-transform"
+            >
+              <img src={ICONS.NAV_PASSPORT} className="w-4 h-4 invert" alt="" />
+              Ver mi Pasaporte
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
