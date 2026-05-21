@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Menu, X, ArrowRight, Book, Mail, HelpCircle, UserPlus, LogIn, Store, ChevronLeft,
+  Menu, X, ArrowRight, Book, Mail, HelpCircle, UserPlus, LogIn, Store, ChevronLeft, ChevronRight,
   Coffee, Palette, UtensilsCrossed, Leaf, BookOpen, Landmark, Mountain, Music,
   ShoppingBag, Flower2, Utensils, Disc3, Camera, Guitar, Pizza, IceCream, MapPin,
   Zap, Crown, Backpack, Trophy, Sprout, ScanLine, Share2, Check, Pencil, Sparkles,
@@ -375,9 +375,12 @@ export default function App() {
   const logoTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deckScrollEndRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deckTouchRef = useRef({ x: 0, t: 0 });
   const [showScheduleFor, setShowScheduleFor] = useState<number | null>(null);
+  const poiPickerRef = useRef({ day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text });
   const [itinerarySetupId, setItinerarySetupId] = useState<number | null>(null);
-  const [itinerarySchedules, setItinerarySchedules] = useState<Record<number, { day: string; time: string }>>({});
+  const itinerarySchedulesRef = useRef<Record<number, { day: string; time: string }>>({});
+  const [itineraryStopView, setItineraryStopView] = useState<{ poiId: number; itId: number } | null>(null);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -1114,10 +1117,24 @@ export default function App() {
 
           </div>
 
-          {/* Card deck — native CSS snap scroll (smooth, same as levels) */}
+          {/* Card deck — CSS snap + JS velocity assist */}
           <div
             ref={deckScrollRef}
-            className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4 mt-4" style={{ touchAction: "pan-x" }}
+            className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4 mt-4"
+            style={{ touchAction: "manipulation" }}
+            onTouchStart={e => { deckTouchRef.current = { x: e.touches[0].clientX, t: Date.now() }; }}
+            onTouchEnd={e => {
+              const dx = e.changedTouches[0].clientX - deckTouchRef.current.x;
+              const dt = Date.now() - deckTouchRef.current.t;
+              const vel = Math.abs(dx) / Math.max(dt, 1);
+              if (vel > 0.2 || Math.abs(dx) > 48) {
+                const next = dx < 0
+                  ? Math.min(activePassportIdx + 1, totalCards - 1)
+                  : Math.max(activePassportIdx - 1, 0);
+                setActivePassportIdx(next);
+                (deckScrollRef.current?.children[next] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+              }
+            }}
             onScroll={() => {
               if (!deckScrollRef.current) return;
               const el = deckScrollRef.current;
@@ -1126,7 +1143,7 @@ export default function App() {
                 const maxScroll = el.scrollWidth - el.clientWidth;
                 const idx = maxScroll > 0 ? Math.round((el.scrollLeft / maxScroll) * (totalCards - 1)) : 0;
                 if (idx !== activePassportIdx) setActivePassportIdx(idx);
-              }, 120);
+              }, 150);
             }}
           >
             {/* ── Card 0: Personal passport ── */}
@@ -1298,10 +1315,15 @@ export default function App() {
                       <span className="text-white/80 text-[10px] font-bold">Completar itinerario</span>
                       <span className="text-yellow-300 font-black text-sm">+{it.reward} pts</span>
                     </div>
-                    {/* Stop grid — tap to view POI detail */}
+                    {/* Stop grid — tap to open immersive stop view */}
                     <div className="grid grid-cols-2 gap-1.5 mb-3 mt-2">
                       {itStops.slice(0, 6).map(poi => (
-                        <button key={poi.id} onClick={() => navigateTo('USER_SEARCH', poi.id)} className="bg-white/20 border border-white/10 rounded-xl h-[48px] flex flex-row items-center gap-2 px-2 active:scale-[0.95] transition-transform text-left">
+                        <button
+                          key={poi.id}
+                          style={{ touchAction: 'manipulation' }}
+                          onClick={() => setItineraryStopView({ poiId: poi.id, itId: it.id })}
+                          className="bg-white/20 border border-white/10 rounded-xl h-[48px] flex flex-row items-center gap-2 px-2 active:scale-[0.95] transition-transform text-left"
+                        >
                           <PoiIcon id={poi.id} size={14} strokeWidth={1.5} className="text-white shrink-0" />
                           <p className="text-white text-[9px] font-bold leading-tight line-clamp-2">{poi.name}</p>
                         </button>
@@ -1314,7 +1336,7 @@ export default function App() {
                         it.stops.forEach((id, i) => {
                           init[id] = { day: VISIT_DAYS[0].text, time: VISIT_TIMES[i % VISIT_TIMES.length].text };
                         });
-                        setItinerarySchedules(init);
+                        itinerarySchedulesRef.current = init;
                         setItinerarySetupId(it.id);
                       }}
                       className="w-full py-2.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-1"
@@ -1529,15 +1551,15 @@ export default function App() {
                             <div className="flex-1 border-r border-gray-100">
                               <WheelPicker
                                 items={VISIT_DAYS}
-                                value={itinerarySchedules[poi.id]?.day ?? VISIT_DAYS[0].text}
-                                onChange={v => setItinerarySchedules(prev => ({ ...prev, [poi.id]: { day: v, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
+                                value={itinerarySchedulesRef.current[poi.id]?.day ?? VISIT_DAYS[0].text}
+                                onChange={v => { itinerarySchedulesRef.current[poi.id] = { day: v, time: itinerarySchedulesRef.current[poi.id]?.time ?? VISIT_TIMES[0].text }; }}
                               />
                             </div>
                             <div className="flex-1">
                               <WheelPicker
                                 items={VISIT_TIMES}
-                                value={itinerarySchedules[poi.id]?.time ?? VISIT_TIMES[0].text}
-                                onChange={v => setItinerarySchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: v } }))}
+                                value={itinerarySchedulesRef.current[poi.id]?.time ?? VISIT_TIMES[0].text}
+                                onChange={v => { itinerarySchedulesRef.current[poi.id] = { day: itinerarySchedulesRef.current[poi.id]?.day ?? VISIT_DAYS[0].text, time: v }; }}
                               />
                             </div>
                           </div>
@@ -1550,7 +1572,7 @@ export default function App() {
                         onClick={() => {
                           const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, Math.max(0, totalSlots - savedPOIs.length));
                           if (toAdd.length > 0) setSavedPOIs(prev => [...prev, ...toAdd]);
-                          setPoiSchedules(prev => ({ ...prev, ...itinerarySchedules }));
+                          setPoiSchedules(prev => ({ ...prev, ...itinerarySchedulesRef.current }));
                           setActiveItineraryId(it.id);
                           setItinerarySetupId(null);
                           setActivePassportIdx(0);
@@ -1566,6 +1588,92 @@ export default function App() {
                     </div>
                   </motion.div>
                 </>
+              );
+            })()}
+          </AnimatePresence>
+
+          {/* Itinerary stop immersive overlay */}
+          <AnimatePresence>
+            {itineraryStopView && (() => {
+              const it = CURATED_ITINERARIES.find(x => x.id === itineraryStopView.itId);
+              const poi = POIS.find(p => p.id === itineraryStopView.poiId);
+              if (!it || !poi) return null;
+              const stopIdx = it.stops.indexOf(itineraryStopView.poiId);
+              const prevId = stopIdx > 0 ? it.stops[stopIdx - 1] : null;
+              const nextId = stopIdx < it.stops.length - 1 ? it.stops[stopIdx + 1] : null;
+              return (
+                <motion.div
+                  key={`stop-${itineraryStopView.poiId}`}
+                  initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
+                  transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                  className={`fixed inset-0 z-50 bg-gradient-to-b ${it.color} overflow-y-auto`}
+                >
+                  {/* Header bar */}
+                  <div className="flex items-center justify-between px-4 pt-12 pb-3">
+                    <button onClick={() => setItineraryStopView(null)} className="flex items-center gap-2 text-white/90 active:opacity-70">
+                      <ChevronLeft size={20} strokeWidth={2.5} />
+                      <span className="font-bold text-sm">{it.title}</span>
+                    </button>
+                    <span className="text-white/60 text-xs font-bold">{stopIdx + 1} / {it.stops.length}</span>
+                  </div>
+
+                  {/* POI image */}
+                  <div className="mx-4 rounded-3xl overflow-hidden h-52 relative shadow-xl mb-4">
+                    <img src={getPoiImage(poi.id)} alt={poi.name} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    <div className="absolute bottom-4 left-4">
+                      <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">Parada {stopIdx + 1}</p>
+                      <h2 className="text-white font-heading text-2xl tracking-tight">{poi.name}</h2>
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="mx-4 bg-white/20 border border-white/20 rounded-3xl p-5 mb-4">
+                    <p className="text-white font-medium leading-relaxed text-sm mb-4">{poi.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                        <MapPin size={10} strokeWidth={2} /> {poi.location}
+                      </span>
+                      <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+                        {poi.date}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Stop navigation */}
+                  <div className="flex gap-3 mx-4 mb-4">
+                    <button
+                      onClick={() => prevId && setItineraryStopView({ poiId: prevId, itId: it.id })}
+                      disabled={!prevId}
+                      className="flex-1 py-3 bg-white/20 border border-white/20 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform disabled:opacity-30"
+                    >
+                      <ChevronLeft size={16} strokeWidth={2.5} /> Anterior
+                    </button>
+                    <button
+                      onClick={() => nextId && setItineraryStopView({ poiId: nextId, itId: it.id })}
+                      disabled={!nextId}
+                      className="flex-1 py-3 bg-white/20 border border-white/20 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition-transform disabled:opacity-30"
+                    >
+                      Siguiente <ChevronRight size={16} strokeWidth={2.5} />
+                    </button>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="mx-4 pb-safe pb-8">
+                    <button
+                      onClick={() => {
+                        const init: Record<number, { day: string; time: string }> = {};
+                        it.stops.forEach((id, i) => { init[id] = { day: VISIT_DAYS[0].text, time: VISIT_TIMES[i % VISIT_TIMES.length].text }; });
+                        itinerarySchedulesRef.current = init;
+                        setItineraryStopView(null);
+                        setItinerarySetupId(it.id);
+                      }}
+                      className="w-full py-4 bg-white text-[#253884] rounded-2xl font-bold text-base active:scale-[0.97] transition-transform shadow-lg"
+                    >
+                      Usar Itinerario · {it.title} →
+                    </button>
+                  </div>
+                </motion.div>
               );
             })()}
           </AnimatePresence>
@@ -2357,45 +2465,79 @@ export default function App() {
               })()}
             </div>
 
-            <div className="fixed bottom-0 w-full max-w-md mx-auto px-4 pt-3 pb-safe bg-white/90 backdrop-blur-md border-t border-gray-100">
-              {/* Schedule picker — iOS wheel style, slides in after tapping Agregar */}
+            {/* Schedule picker — center popup modal (no flicker: uses ref, not state) */}
+            <AnimatePresence>
               {showScheduleFor === poi.id && !isSaved && (
-                <div className="mb-3 bg-white rounded-2xl border border-gray-200 overflow-hidden">
-                  <p className="text-[10px] font-bold text-[#253884] uppercase tracking-wider px-3 pt-2.5 pb-1 flex items-center gap-1">
-                    <Calendar size={11} strokeWidth={2} /> Elige día y hora
-                  </p>
-                  <div className="flex border-t border-gray-100">
-                    <div className="flex-1 border-r border-gray-100">
-                      <WheelPicker
-                        items={VISIT_DAYS}
-                        value={poiSchedules[poi.id]?.day ?? VISIT_DAYS[0].text}
-                        onChange={v => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: v, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
-                      />
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/40 z-50"
+                    onClick={() => setShowScheduleFor(null)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.92, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.92, y: 20 }}
+                    transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+                    className="fixed inset-x-4 z-50 bg-white rounded-3xl overflow-hidden shadow-2xl"
+                    style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  >
+                    <div className="bg-[#253884] px-5 py-4">
+                      <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">¿Cuándo vas a visitar?</p>
+                      <h3 className="text-white font-heading text-lg tracking-tight">{poi.name}</h3>
                     </div>
-                    <div className="flex-1">
-                      <WheelPicker
-                        items={VISIT_TIMES}
-                        value={poiSchedules[poi.id]?.time ?? VISIT_TIMES[0].text}
-                        onChange={v => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: v } }))}
-                      />
+                    <div className="flex border-b border-gray-100">
+                      <div className="flex-1 border-r border-gray-100">
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider text-center pt-3 pb-1">Día</p>
+                        <WheelPicker
+                          items={VISIT_DAYS}
+                          value={poiPickerRef.current.day}
+                          onChange={v => { poiPickerRef.current.day = v; }}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider text-center pt-3 pb-1">Horario</p>
+                        <WheelPicker
+                          items={VISIT_TIMES}
+                          value={poiPickerRef.current.time}
+                          onChange={v => { poiPickerRef.current.time = v; }}
+                        />
+                      </div>
                     </div>
-                  </div>
-                </div>
+                    <div className="p-4 flex gap-3">
+                      <button
+                        onClick={() => setShowScheduleFor(null)}
+                        className="flex-1 py-3 bg-gray-100 text-gray-500 rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        onClick={() => {
+                          setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: poiPickerRef.current.day, time: poiPickerRef.current.time } }));
+                          setSavedPOIs(prev => [...prev, poi.id]);
+                          setShowScheduleFor(null);
+                          setJustAddedPOI(poi.id);
+                          haptic(15);
+                          setTimeout(() => setJustAddedPOI(null), 3000);
+                        }}
+                        className="flex-[2] py-3 bg-[#253884] text-white rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform"
+                      >
+                        Agregar a Ruta →
+                      </button>
+                    </div>
+                  </motion.div>
+                </>
               )}
+            </AnimatePresence>
+
+            <div className="fixed bottom-0 w-full max-w-md mx-auto px-4 pt-3 pb-safe bg-white/90 backdrop-blur-md border-t border-gray-100">
               {/* Primary action */}
               <button
+                style={{ touchAction: 'manipulation' }}
                 onClick={() => {
                   if (!isSaved) {
-                    if (showScheduleFor !== poi.id) {
-                      setShowScheduleFor(poi.id);
-                      if (!poiSchedules[poi.id]) setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text } }));
-                      return;
-                    }
-                    setSavedPOIs(prev => [...prev, poi.id]);
-                    setShowScheduleFor(null);
-                    setJustAddedPOI(poi.id);
-                    haptic(15);
-                    setTimeout(() => setJustAddedPOI(null), 3000);
+                    poiPickerRef.current = { day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text };
+                    setShowScheduleFor(poi.id);
                   } else {
                     setSavedPOIs(prev => prev.filter(id => id !== poi.id));
                     setShowScheduleFor(null);
@@ -2407,7 +2549,7 @@ export default function App() {
                   <span className="flex items-center justify-center gap-2">
                     <Check size={18} strokeWidth={2.5} /> En Mi Ruta
                   </span>
-                ) : showScheduleFor === poi.id ? 'Confirmar y Agregar →' : 'Agregar a Ruta'}
+                ) : 'Agregar a Ruta'}
               </button>
               {/* Secondary actions */}
               <div className="flex gap-2 pb-3">
