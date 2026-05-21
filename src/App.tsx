@@ -5,7 +5,7 @@ import {
   Coffee, Palette, UtensilsCrossed, Leaf, BookOpen, Landmark, Mountain, Music,
   ShoppingBag, Flower2, Utensils, Disc3, Camera, Guitar, Pizza, IceCream, MapPin,
   Zap, Crown, Backpack, Trophy, Sprout, ScanLine, Share2, Check, Pencil, Sparkles,
-  QrCode, Waves, TreePine, Compass, Calendar, GripVertical, Lock
+  QrCode, Waves, TreePine, Compass, Calendar, GripVertical, Lock, MessageCircle, TrendingUp
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import YetiLogin from './components/YetiLogin';
@@ -93,11 +93,11 @@ const POIS = [
   { id: 38, name: "Museo de Antropología", category: "Cultura",          location: "San Salvador",     description: "El museo nacional que alberga la historia precolombina y los tesoros arqueológicos del país.",                         color: "bg-stone-50 text-stone-800 border-stone-200",   date: "Mar-Dom, 9:00 - 17:00" },
   { id: 39, name: "Los Planes de Renderos",category: "Gastronomía",      location: "Panchimalco",      description: "Zona de recreación con restaurantes de comida típica y vistas espectaculares de la capital.",                          color: "bg-orange-50 text-orange-800 border-orange-200", date: "Fin de Semana, 8:00 - 18:00" },
   { id: 40, name: "Cocina de Don Beto",    category: "Gastronomía",      location: "San Miguel",       description: "Cocina típica oriental con los mejores mariscos, sopa de pata y chorizos de la región.",                              color: "bg-red-50 text-red-800 border-red-200",         date: "Lun-Dom, 8:00 - 21:00" },
-  { id: 101, name: 'Atardecer Acústico', category: 'Evento Flash', location: 'Café Central',  description: 'Sube una selfie etiquetando a @SalePlan.sv y @CafeCentral en historias', pts: '2x Puntos (2 Sellos)', isFlash: true, date: 'Viernes 18, 18:00 - 20:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
-  { id: 102, name: 'Noche de Museos',    category: 'Evento Flash', location: 'Museo de Arte', description: 'Asiste con 2 amigos que tengan la app',                                  pts: 'Entrada VIP Gratis + 1 Sello', isFlash: true, date: 'Sábado 19, 19:00 - 23:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
-  { id: 103, name: 'Flash Burger',       category: 'Evento Flash', location: 'Burger Fest',  description: 'Compra el combo "Explorador" para validar',                              pts: '3x Puntos (3 Sellos)', isFlash: true, date: 'Hoy, 12:00 - 15:00', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
-  { id: 104, name: 'Cena de Temporada',  category: 'Evento Flash', location: 'Restaurante Gaia', description: 'Menu degustacion exclusivo con maridaje de vinos nacionales',           pts: 'Reserva Prioritaria + 2 Sellos', isFlash: true, isPremium: true, date: 'Viernes 18, 20:00 - 23:00', color: "bg-indigo-50 text-indigo-800 border-indigo-200" },
-  { id: 105, name: 'Rooftop Sessions',   category: 'Evento Flash', location: 'Hotel Sheraton',   description: 'Noche de jazz en el rooftop con barra libre de cocteles de autor',    pts: 'Experiencia VIP + 3 Sellos',    isFlash: true, isPremium: true, date: 'Sabado 19, 21:00 - 1:00',    color: "bg-indigo-50 text-indigo-800 border-indigo-200" }
+  { id: 101, name: 'Atardecer Acústico', category: 'Evento Flash', location: 'Café Central',  description: 'Sube una selfie etiquetando a @SalePlan.sv y @CafeCentral en historias', pts: '2x Puntos (2 Sellos)', isFlash: true, date: 'Vie 18, 6:00–8:00 PM', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
+  { id: 102, name: 'Noche de Museos',    category: 'Evento Flash', location: 'Museo de Arte', description: 'Asiste con 2 amigos que tengan la app',                                  pts: 'Entrada VIP Gratis + 1 Sello', isFlash: true, date: 'Sáb 19, 7:00–11:00 PM', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
+  { id: 103, name: 'Flash Burger',       category: 'Evento Flash', location: 'Burger Fest',  description: 'Compra el combo "Explorador" para validar',                              pts: '3x Puntos (3 Sellos)', isFlash: true, date: 'Hoy, 12:00–3:00 PM', color: "bg-yellow-50 text-yellow-800 border-yellow-200" },
+  { id: 104, name: 'Cena de Temporada',  category: 'Evento Flash', location: 'Restaurante Gaia', description: 'Menu degustacion exclusivo con maridaje de vinos nacionales',           pts: 'Reserva Prioritaria + 2 Sellos', isFlash: true, isPremium: true, date: 'Vie 18, 8:00–11:00 PM', color: "bg-indigo-50 text-indigo-800 border-indigo-200" },
+  { id: 105, name: 'Rooftop Sessions',   category: 'Evento Flash', location: 'Hotel Sheraton',   description: 'Noche de jazz en el rooftop con barra libre de cocteles de autor',    pts: 'Experiencia VIP + 3 Sellos',    isFlash: true, isPremium: true, date: 'Sáb 19, 9:00 PM–1:00 AM',    color: "bg-indigo-50 text-indigo-800 border-indigo-200" }
 ];
 
 const FLASH_EVENTS = POIS.filter(poi => poi.isFlash);
@@ -302,7 +302,7 @@ export default function App() {
   const [showPlusAnimation, setShowPlusAnimation] = useState(false);
   const [stampModalSuccess, setStampModalSuccess] = useState(false);
   const [activePassportIdx, setActivePassportIdx] = useState(0);
-  const [deckW] = useState(() => typeof window !== 'undefined' ? window.innerWidth - 32 : 265);
+  const [deckW] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 390);
   const [premiumEventPreviewId, setPremiumEventPreviewId] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
@@ -1054,16 +1054,16 @@ export default function App() {
           {/* Card deck — native CSS snap scroll (smooth, same as levels) */}
           <div
             ref={deckScrollRef}
-            className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory px-4 pb-2 mt-4 w-full"
+            className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 mt-4 w-full"
             onScroll={() => {
               if (!deckScrollRef.current) return;
               const el = deckScrollRef.current;
-              const idx = Math.round(el.scrollLeft / (deckW + 12));
+              const idx = Math.round(el.scrollLeft / el.clientWidth);
               if (idx !== activePassportIdx) setActivePassportIdx(idx);
             }}
           >
             {/* ── Card 0: Personal passport ── */}
-            <div className="snap-start shrink-0 pb-2" style={{ minWidth: deckW }}>
+            <div className="snap-start shrink-0 pb-2 px-4" style={{ minWidth: deckW }}>
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header with name + badges */}
                 <div className="flex items-center gap-3 mb-5 pt-1">
@@ -1270,7 +1270,7 @@ export default function App() {
               );
             }) : (
               /* Non-Plus: teaser card */
-              <div className="snap-start shrink-0 pb-2" style={{ minWidth: deckW }}>
+              <div className="snap-start shrink-0 pb-2 px-4" style={{ minWidth: deckW }}>
                 <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
                   <div className="absolute inset-0 opacity-10 pointer-events-none">
                     {[...Array(8)].map((_, i) => (
@@ -1299,7 +1299,7 @@ export default function App() {
                 key={i}
                 onClick={() => {
                   setActivePassportIdx(i);
-                  deckScrollRef.current?.scrollTo({ left: i * (deckW + 12), behavior: 'smooth' });
+                  deckScrollRef.current?.scrollTo({ left: i * deckW, behavior: 'smooth' });
                 }}
                 className={`rounded-full transition-all duration-300 ${i === activePassportIdx ? 'w-6 h-2 bg-[#253884]' : 'w-2 h-2 bg-gray-300'}`}
               />
@@ -1331,11 +1331,11 @@ export default function App() {
                 )}
               </div>
               {myRoute.length === 0 && (
-                <div className="py-10 text-center">
-                  <img src={ICONS.NAV_MAP} className="w-10 h-10 mx-auto opacity-20 mb-3" alt="" />
+                <div className="py-8 flex flex-col items-start">
+                  <img src={ICONS.NAV_MAP} className="w-10 h-10 opacity-20 mb-3" alt="" />
                   <p className="text-gray-400 font-bold text-sm">Aún no tienes paradas</p>
                   <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
-                  <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-6 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar Lugares</button>
+                  <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-5 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar Lugares</button>
                 </div>
               )}
               {(() => {
@@ -1730,7 +1730,7 @@ export default function App() {
                   <div className={`p-3 rounded-xl border ${isCurrent ? 'bg-white/20 border-white/20' : isDone ? 'bg-white/30 border-white/10' : 'bg-black/10 border-white/10'}`}>
                     <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5">Beneficios:</p>
                     <ul className="text-xs space-y-0.5 font-medium">
-                      {lvl.benefits.map(b => <li key={b}>• {b}</li>)}
+                      {lvl.benefits.map(b => <li key={b} className="flex items-start gap-1.5"><span className="shrink-0 mt-0.5">•</span><span>{b}</span></li>)}
                     </ul>
                   </div>
                 </div>
@@ -1831,7 +1831,7 @@ export default function App() {
 
         <motion.div variants={listVariants} initial="hidden" animate="visible" className="space-y-4">
           {[1, 2, 3].map(i => (
-            <motion.div key={i} variants={itemVariants} className="bg-white p-5 rounded-3xl subtle-shadow">
+            <motion.div key={i} variants={itemVariants} className={`p-5 rounded-3xl subtle-shadow ${['bg-amber-50', 'bg-blue-50', 'bg-violet-50'][i % 3]}`}>
               <div className="flex justify-between items-start mb-3">
                 <div>
                   <h4 className="text-2xl font-heading text-[#253884] tracking-tight">Café El Molino {i}</h4>
@@ -2165,9 +2165,7 @@ export default function App() {
                 <h2 className="text-4xl font-heading text-[#253884] pr-4">{poi.name}</h2>
               </div>
               <div className="flex flex-wrap items-center gap-2 mb-6">
-                <span className="px-3 py-1 bg-gray-100 text-xs font-bold text-gray-500 rounded-lg">{poi.category}</span>
-                <span className="text-sm font-semibold text-gray-400">·</span>
-                <span className="text-sm font-semibold text-gray-500">{poi.location}</span>
+                <span className="text-sm font-semibold text-gray-500 flex items-center gap-1"><MapPin size={12} strokeWidth={2} className="text-gray-400" />{poi.location}</span>
                 <span className="text-sm font-semibold text-gray-400">·</span>
                 <span className="px-2.5 py-1 bg-blue-50 text-xs font-bold text-[#253884] rounded-lg">~{[20, 30, 45, 60, 90][poi.id % 5]} min</span>
                 {savedPOIs.includes(poi.id) && <span className="px-2.5 py-1 bg-green-50 text-xs font-bold text-green-700 rounded-lg flex items-center gap-1"><Check size={10} strokeWidth={3} /> En tu ruta</span>}
@@ -2266,18 +2264,14 @@ export default function App() {
                   </span>
                 ) : 'Agregar a Ruta'}
               </button>
-              <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: poi.name, text: `¡Te invito a ir a ${poi.name} en SalePlan!`, url: window.location.href });
-                  } else {
-                    alert(`Enlace copiado para compartir: ${poi.name}`);
-                  }
-                }}
-                className="w-16 flex items-center justify-center shrink-0 bg-[#e6eaf8] text-[#253884] rounded-2xl active:scale-[0.97] transition-transform"
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent('¡Mira ' + poi.name + ' en SalePlan! Te invito a visitarlo.')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-16 flex items-center justify-center shrink-0 bg-green-500 text-white rounded-2xl active:scale-[0.97] transition-transform"
               >
-                <Share2 size={20} strokeWidth={1.5} />
-              </button>
+                <MessageCircle size={20} strokeWidth={1.5} />
+              </a>
             </div>
           </div>
         </Layout>
@@ -2454,7 +2448,7 @@ export default function App() {
                         </div>
                       </div>
                       <h3 className="font-bold text-[#253884] text-sm leading-tight mb-0.5">{poi.name}</h3>
-                      <p className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">{poi.category}</p>
+                      <p className="text-[10px] font-medium text-gray-400 truncate">{poi.location}</p>
                     </motion.div>
                   );
                 })}
