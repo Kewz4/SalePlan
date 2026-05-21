@@ -1253,21 +1253,13 @@ export default function App() {
               </div>
           </div>
 
-          {/* ── Itinerarios de Expertos — story rings ── */}
-          <div className="mt-5 mb-1">
-            <div className="flex items-center justify-between px-5 mb-3">
-              <div>
-                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Itinerarios de Expertos</h3>
-                <p className="text-[10px] text-gray-400 font-medium mt-0.5">Curados especialmente · Mayo 2026</p>
-              </div>
-              {!hasSalePlanPlus && (
-                <button onClick={() => navigateTo('USER_PLUS')} className="text-[10px] font-black text-indigo-500 uppercase tracking-wider active:opacity-70">
-                  Desbloquear
-                </button>
-              )}
+          {/* ── Itinerarios de Expertos — compact photo cards ── */}
+          <div className="px-4 mt-5 mb-1">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Itinerarios de Expertos</h3>
+              <span className="text-[10px] text-gray-400 font-medium">Mayo 2026</span>
             </div>
-
-            <div className="flex gap-5 overflow-x-auto no-scrollbar px-5 pb-2">
+            <div className="space-y-2">
               {CURATED_ITINERARIES.map(it => {
                 const isLocked = !hasSalePlanPlus;
                 const isActive = activeItineraryId === it.id;
@@ -1276,69 +1268,38 @@ export default function App() {
                     key={it.id}
                     style={{ touchAction: 'manipulation' }}
                     onClick={() => isLocked ? navigateTo('USER_PLUS') : setSelectedItineraryId(it.id)}
-                    className="flex flex-col items-center gap-1.5 shrink-0 active:scale-[0.93] transition-transform"
+                    className="w-full flex items-center gap-3 bg-white rounded-2xl p-3 active:scale-[0.98] transition-transform subtle-shadow text-left"
                   >
-                    {/* Gradient ring */}
-                    <div
-                      className={`rounded-full bg-gradient-to-br ${it.color} ${isActive ? 'ring-[3px] ring-offset-2 ring-[#253884]' : ''}`}
-                      style={{ padding: 2.5 }}
-                    >
-                      <div className="w-[68px] h-[68px] rounded-full bg-white p-[2px] relative overflow-hidden">
-                        <img
-                          src={it.expert.avatar}
-                          className={`w-full h-full rounded-full object-cover ${isLocked ? 'opacity-40 blur-[1px]' : ''}`}
-                          alt={it.expert.name}
-                        />
-                        {isLocked && (
-                          <div className="absolute inset-0 rounded-full flex items-center justify-center">
-                            <div className="w-7 h-7 bg-[#253884]/80 rounded-full flex items-center justify-center">
-                              <Sparkles size={14} className="text-yellow-300" />
-                            </div>
-                          </div>
-                        )}
-                        {isActive && (
-                          <div className="absolute bottom-1 right-1 w-5 h-5 bg-[#253884] rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
-                            <Check size={10} strokeWidth={3} className="text-white" />
-                          </div>
-                        )}
-                      </div>
+                    {/* Active indicator strip */}
+                    {isActive && <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-[#253884] rounded-r-full" />}
+                    {/* Expert photo */}
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${it.color} flex items-center justify-center shrink-0 overflow-hidden relative`}>
+                      <img src={it.expert.avatar} alt={it.expert.name} className={`w-full h-full object-cover ${isLocked ? 'opacity-30 blur-[1.5px]' : ''}`} />
+                      {isLocked && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Sparkles size={18} className="text-yellow-300 drop-shadow" />
+                        </div>
+                      )}
+                      {isActive && (
+                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow">
+                          <Check size={8} strokeWidth={3} className="text-[#253884]" />
+                        </div>
+                      )}
                     </div>
-                    {/* Label */}
-                    <p className="text-[9px] font-bold text-[#253884] text-center max-w-[72px] leading-tight line-clamp-2">{it.title}</p>
-                    {/* Badge */}
-                    <span className={`text-[8px] font-black px-2 py-0.5 rounded-full leading-none ${isActive ? 'bg-[#253884] text-white' : isLocked ? 'bg-gray-100 text-gray-400' : 'bg-yellow-100 text-yellow-700'}`}>
-                      {isActive ? '● Activo' : isLocked ? '🔒 Plus' : `+${it.reward} pts`}
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-bold text-sm leading-tight ${isActive ? 'text-[#253884]' : 'text-gray-800'}`}>{it.title}</p>
+                      <p className="text-[10px] text-gray-400 font-medium mt-0.5 truncate">{it.expert.name}</p>
+                    </div>
+                    {/* Right badge */}
+                    <span className={`text-[9px] font-black px-2.5 py-1 rounded-full shrink-0 ${isActive ? 'bg-[#253884] text-white' : isLocked ? 'bg-gray-100 text-gray-400' : 'bg-yellow-50 text-yellow-700'}`}>
+                      {isActive ? 'Activo' : isLocked ? 'Plus' : `+${it.reward}`}
                     </span>
+                    <ChevronRight size={14} className="text-gray-300 shrink-0" />
                   </button>
                 );
               })}
             </div>
-
-            {/* Active itinerary progress bar */}
-            {activeItineraryId !== null && (() => {
-              const ait = CURATED_ITINERARIES.find(it => it.id === activeItineraryId);
-              if (!ait) return null;
-              const completed = ait.stops.filter(id => stampedPOIs.includes(id)).length;
-              const pct = Math.round((completed / ait.stops.length) * 100);
-              return (
-                <div className={`mx-5 mt-3 bg-gradient-to-r ${ait.color} rounded-2xl p-3 flex items-center gap-3`}>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white/70 text-[9px] font-bold uppercase tracking-wider">Itinerario activo</p>
-                    <p className="text-white font-bold text-xs leading-tight">{ait.title}</p>
-                    <div className="mt-1.5 h-1.5 bg-white/30 rounded-full overflow-hidden">
-                      <div className="h-full bg-white rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
-                    </div>
-                    <p className="text-white/60 text-[9px] font-medium mt-0.5">{completed} / {ait.stops.length} paradas selladas</p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedItineraryId(ait.id)}
-                    className="bg-white/20 border border-white/30 text-white text-[9px] font-bold px-3 py-1.5 rounded-xl active:scale-[0.97] shrink-0"
-                  >
-                    Ver →
-                  </button>
-                </div>
-              );
-            })()}
           </div>
 
           {/* Ruta de Hoy — always visible */}
