@@ -315,6 +315,8 @@ export default function App() {
   const logoTapRef = useRef(0);
   const logoTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const deckScrollEndRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showScheduleFor, setShowScheduleFor] = useState<number | null>(null);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -1058,9 +1060,12 @@ export default function App() {
             onScroll={() => {
               if (!deckScrollRef.current) return;
               const el = deckScrollRef.current;
-              const maxScroll = el.scrollWidth - el.clientWidth;
-              const idx = maxScroll > 0 ? Math.round((el.scrollLeft / maxScroll) * (totalCards - 1)) : 0;
-              if (idx !== activePassportIdx) setActivePassportIdx(idx);
+              if (deckScrollEndRef.current) clearTimeout(deckScrollEndRef.current);
+              deckScrollEndRef.current = setTimeout(() => {
+                const maxScroll = el.scrollWidth - el.clientWidth;
+                const idx = maxScroll > 0 ? Math.round((el.scrollLeft / maxScroll) * (totalCards - 1)) : 0;
+                if (idx !== activePassportIdx) setActivePassportIdx(idx);
+              }, 120);
             }}
           >
             {/* ── Card 0: Personal passport ── */}
@@ -1633,7 +1638,7 @@ export default function App() {
           </button>
         </div>
 
-        <div className="relative mb-6 z-10 w-32 h-32">
+        <div className="relative mb-3 z-10 w-32 h-32">
           <div className="w-full h-full rounded-full bg-white overflow-hidden subtle-shadow border-4 border-white">
             <img src={selectedAvatar} alt="Profile" className="w-full h-full object-cover" />
           </div>
@@ -1641,6 +1646,7 @@ export default function App() {
             <Pencil size={16} strokeWidth={2} />
           </button>
         </div>
+        <p className="text-2xl font-heading text-[#253884] tracking-tight mb-1">{profileName || 'Alex Rivera'}</p>
         <div className="flex items-center gap-2 mb-6">
           {hasSalePlanPlus && (
             <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[9px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 uppercase tracking-wider shadow-sm">
@@ -2177,32 +2183,7 @@ export default function App() {
                 ))}
               </div>
 
-              {/* Inline schedule picker — shown when adding */}
-              {!isSaved && (
-                <div className="mb-4 bg-gray-50 rounded-2xl p-4 border border-gray-200">
-                  <p className="text-xs font-bold text-[#253884] uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                    <Calendar size={12} strokeWidth={2} /> Elige tu horario
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {VISIT_DAYS.slice(0, 3).map(d => (
-                      <button
-                        key={d.text}
-                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: d.text, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.day === d.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
-                      >{d.label}</button>
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {VISIT_TIMES.map(t => (
-                      <button
-                        key={t.text}
-                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: t.text } }))}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.time === t.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
-                      >{t.label}</button>
-                    ))}
-                  </div>
-                </div>
-              )}
+
 
               {/* Similar places */}
               {(() => {
@@ -2230,19 +2211,47 @@ export default function App() {
             </div>
 
             <div className="fixed bottom-0 w-full max-w-md mx-auto px-4 pt-3 pb-safe bg-white/90 backdrop-blur-md border-t border-gray-100">
+              {/* Schedule picker — slides in after tapping Agregar */}
+              {showScheduleFor === poi.id && !isSaved && (
+                <div className="mb-3 bg-gray-50 rounded-2xl p-3 border border-gray-200">
+                  <p className="text-[10px] font-bold text-[#253884] uppercase tracking-wider mb-2 flex items-center gap-1">
+                    <Calendar size={11} strokeWidth={2} /> Elige tu horario
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {VISIT_DAYS.slice(0, 3).map(d => (
+                      <button key={d.text}
+                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: d.text, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.day === d.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
+                      >{d.label}</button>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {VISIT_TIMES.map(t => (
+                      <button key={t.text}
+                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: t.text } }))}
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.time === t.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
+                      >{t.label}</button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {/* Primary action */}
               <button
                 onClick={() => {
                   if (!isSaved) {
-                    if (!poiSchedules[poi.id]) {
-                      setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text } }));
+                    if (showScheduleFor !== poi.id) {
+                      setShowScheduleFor(poi.id);
+                      if (!poiSchedules[poi.id]) setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text } }));
+                      return;
                     }
                     setSavedPOIs(prev => [...prev, poi.id]);
+                    setShowScheduleFor(null);
                     setJustAddedPOI(poi.id);
                     haptic(15);
                     setTimeout(() => setJustAddedPOI(null), 3000);
                   } else {
                     setSavedPOIs(prev => prev.filter(id => id !== poi.id));
+                    setShowScheduleFor(null);
                   }
                 }}
                 className={`w-full py-3.5 font-bold text-base rounded-2xl shadow-sm transition-[background-color,color] active:scale-[0.97] mb-2.5 ${isSaved ? 'bg-gray-100 text-gray-500' : 'bg-[#253884] text-white'}`}
@@ -2251,7 +2260,7 @@ export default function App() {
                   <span className="flex items-center justify-center gap-2">
                     <Check size={18} strokeWidth={2.5} /> En Mi Ruta
                   </span>
-                ) : 'Agregar a Ruta'}
+                ) : showScheduleFor === poi.id ? 'Confirmar y Agregar →' : 'Agregar a Ruta'}
               </button>
               {/* Secondary actions */}
               <div className="flex gap-2 pb-3">
