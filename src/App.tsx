@@ -289,8 +289,9 @@ export default function App() {
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const levelsScrollRef = useRef<HTMLDivElement>(null);
   const deckScrollRef = useRef<HTMLDivElement>(null);
+  const [activeItineraryId, setActiveItineraryId] = useState<number | null>(null);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
-  const [profileName, setProfileName] = useState('Explorador');
+  const [profileName, setProfileName] = useState('Alex Rivera');
   const [profileEmail, setProfileEmail] = useState('explorador@aventura.com');
   const [profilePhone, setProfilePhone] = useState('');
   const [editingProfile, setEditingProfile] = useState(false);
@@ -836,7 +837,7 @@ export default function App() {
                   <button
                     key={cat.id}
                     onClick={() => toggleCategory(cat.id)}
-                    className={`relative overflow-hidden rounded-full px-5 py-3 font-bold transition-[background-color,border-color,transform,box-shadow] border-2 text-sm flex items-center gap-2 active:scale-[0.97] ${isSelected ? 'bg-[#253884] text-white border-[#253884] shadow-lg scale-105' : 'bg-gray-50 text-gray-500 border-gray-200'}`}
+                    className={`relative overflow-hidden rounded-full px-5 py-3 font-bold transition-[background-color,border-color,transform,box-shadow] border-2 text-base flex items-center gap-2 active:scale-[0.97] ${isSelected ? 'bg-[#253884] text-white border-[#253884] shadow-lg scale-105' : 'bg-gray-50 text-gray-700 border-gray-200'}`}
                   >
                     <CatIcon size={15} strokeWidth={2} />
                     {cat.name}
@@ -907,7 +908,11 @@ export default function App() {
                 <button onClick={() => navigateTo('USER_SEARCH')} className="text-[10px] font-bold text-[#253884] uppercase tracking-widest opacity-60 active:opacity-100">Ver todos</button>
               </div>
               <div className="space-y-2.5">
-                {FLASH_EVENTS.map((event, idx) => {
+                {[...FLASH_EVENTS].sort((a, b) => {
+                    const aT = a.date.toLowerCase().includes('hoy');
+                    const bT = b.date.toLowerCase().includes('hoy');
+                    return aT === bT ? 0 : aT ? -1 : 1;
+                  }).map((event, idx) => {
                   const hoursLeft = [6, 3, 11][idx % 3];
                   const isUrgent = hoursLeft <= 4;
                   const isLocked = event.isPremium && !hasSalePlanPlus;
@@ -1046,26 +1051,19 @@ export default function App() {
 
           </div>
 
-          {/* Card deck — Framer Motion drag swipe with peek */}
-          <div className="overflow-hidden w-full mt-4 px-4">
-          <motion.div
-            className="flex gap-3"
-            drag="x"
-            dragElastic={0.07}
-            dragConstraints={{ left: -(totalCards - 1) * (deckW + 12), right: 0 }}
-            animate={{ x: -activePassportIdx * (deckW + 12) }}
-            transition={{ type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
-            onDragEnd={(_, info) => {
-              const v = info.velocity.x;
-              if ((info.offset.x < -40 || v < -400) && activePassportIdx < totalCards - 1) {
-                setActivePassportIdx(p => p + 1);
-              } else if ((info.offset.x > 40 || v > 400) && activePassportIdx > 0) {
-                setActivePassportIdx(p => p - 1);
-              }
+          {/* Card deck — native CSS snap scroll (smooth, same as levels) */}
+          <div
+            ref={deckScrollRef}
+            className="flex gap-3 overflow-x-auto no-scrollbar snap-x snap-mandatory px-4 pb-2 mt-4 w-full"
+            onScroll={() => {
+              if (!deckScrollRef.current) return;
+              const el = deckScrollRef.current;
+              const idx = Math.round(el.scrollLeft / (deckW + 12));
+              if (idx !== activePassportIdx) setActivePassportIdx(idx);
             }}
           >
             {/* ── Card 0: Personal passport ── */}
-            <div className="flex-none pb-2" style={{ minWidth: deckW }}>
+            <div className="snap-start shrink-0 pb-2" style={{ minWidth: deckW }}>
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header with name + badges */}
                 <div className="flex items-center gap-3 mb-5 pt-1">
@@ -1083,6 +1081,16 @@ export default function App() {
                       <span className="bg-[#e6eaf8] text-[#253884] text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">Nv.2</span>
                     </div>
                     <p className="font-medium text-xs text-gray-500">{myRoute.length} Paradas · {stampedPOIs.length} Selladas</p>
+                    {activeItineraryId !== null && (() => {
+                      const ait = CURATED_ITINERARIES.find(it => it.id === activeItineraryId);
+                      return ait ? (
+                        <div className="flex items-center gap-1 mt-1">
+                          <span className="bg-indigo-50 border border-indigo-100 text-indigo-700 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-0.5">
+                            <MapPin size={7} strokeWidth={2.5} /> {ait.title}
+                          </span>
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 </div>
 
@@ -1249,7 +1257,9 @@ export default function App() {
                       onClick={() => {
                         const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, Math.max(0, totalSlots - savedPOIs.length));
                         if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
+                        setActiveItineraryId(it.id);
                         setActivePassportIdx(0);
+                        deckScrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
                       }}
                       className="w-full py-2.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-1"
                     >
@@ -1260,7 +1270,7 @@ export default function App() {
               );
             }) : (
               /* Non-Plus: teaser card */
-              <div className="flex-none pb-2" style={{ minWidth: deckW }}>
+              <div className="snap-start shrink-0 pb-2" style={{ minWidth: deckW }}>
                 <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
                   <div className="absolute inset-0 opacity-10 pointer-events-none">
                     {[...Array(8)].map((_, i) => (
@@ -1280,7 +1290,6 @@ export default function App() {
                 </div>
               </div>
             )}
-          </motion.div>
           </div>
 
           {/* Dot indicators */}
@@ -1288,7 +1297,10 @@ export default function App() {
             {Array.from({ length: totalCards }).map((_, i) => (
               <button
                 key={i}
-                onClick={() => setActivePassportIdx(i)}
+                onClick={() => {
+                  setActivePassportIdx(i);
+                  deckScrollRef.current?.scrollTo({ left: i * (deckW + 12), behavior: 'smooth' });
+                }}
                 className={`rounded-full transition-all duration-300 ${i === activePassportIdx ? 'w-6 h-2 bg-[#253884]' : 'w-2 h-2 bg-gray-300'}`}
               />
             ))}
@@ -2323,7 +2335,13 @@ export default function App() {
                   <span className="text-[10px] font-bold text-yellow-700 bg-yellow-50 border border-yellow-200 px-2 py-1 rounded-full uppercase tracking-wider">{FLASH_EVENTS.length} activos</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                  {FLASH_EVENTS.map(event => {
+                  {[...FLASH_EVENTS].sort((a, b) => {
+                    const aToday = a.date.toLowerCase().includes('hoy');
+                    const bToday = b.date.toLowerCase().includes('hoy');
+                    if (aToday && !bToday) return -1;
+                    if (!aToday && bToday) return 1;
+                    return 0;
+                  }).map(event => {
                     const isLocked = event.isPremium && !hasSalePlanPlus;
                     return (
                       <div
@@ -2370,9 +2388,9 @@ export default function App() {
                   <button
                     key={cat.id}
                     onClick={() => { setSelectedCategory(isActive ? null : cat.name); setSearchQuery(''); }}
-                    className={`px-3 py-1.5 rounded-full font-bold text-xs whitespace-nowrap shadow-sm border flex items-center gap-1 active:scale-[0.97] transition-[background-color,color,border-color] ${isActive ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-100'}`}
+                    className={`w-9 h-9 rounded-full shadow-sm border flex items-center justify-center active:scale-[0.97] transition-[background-color,color,border-color] ${isActive ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-500 border-gray-100'}`}
                   >
-                    <CatIcon size={11} strokeWidth={2} /> {cat.name}
+                    <CatIcon size={13} strokeWidth={2} />
                   </button>
                 );
               })}
