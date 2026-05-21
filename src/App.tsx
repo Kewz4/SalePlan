@@ -1054,16 +1054,17 @@ export default function App() {
           {/* Card deck — native CSS snap scroll (smooth, same as levels) */}
           <div
             ref={deckScrollRef}
-            className="flex overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 mt-4 w-full"
+            className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4 mt-4"
             onScroll={() => {
               if (!deckScrollRef.current) return;
               const el = deckScrollRef.current;
-              const idx = Math.round(el.scrollLeft / el.clientWidth);
+              const maxScroll = el.scrollWidth - el.clientWidth;
+              const idx = maxScroll > 0 ? Math.round((el.scrollLeft / maxScroll) * (totalCards - 1)) : 0;
               if (idx !== activePassportIdx) setActivePassportIdx(idx);
             }}
           >
             {/* ── Card 0: Personal passport ── */}
-            <div className="snap-start shrink-0 pb-2 px-4" style={{ minWidth: deckW }}>
+            <div className="snap-center shrink-0 w-[84%] pb-2">
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header with name + badges */}
                 <div className="flex items-center gap-3 mb-5 pt-1">
@@ -1195,6 +1196,7 @@ export default function App() {
                 })()}
 
                 {!hasSalePlanPlus && (
+                  <>
                   <button
                     onClick={() => navigateTo('USER_PLUS')}
                     className="mt-5 w-full bg-gradient-to-r from-[#253884] to-indigo-500 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.97] transition-transform shadow-md"
@@ -1211,6 +1213,13 @@ export default function App() {
                       <p className="text-blue-200 text-[9px] font-bold">/mes</p>
                     </div>
                   </button>
+                  <button
+                    onClick={() => navigateTo('USER_PLUS')}
+                    className="mt-3 w-full border-2 border-dashed border-indigo-300 rounded-2xl py-2.5 flex items-center justify-center gap-2 text-indigo-500 font-bold text-xs active:scale-[0.97] transition-transform"
+                  >
+                    <Sparkles size={12} strokeWidth={2} /> ¿Quieres más espacios?
+                  </button>
+                  </>
                 )}
               </div>
             </div>
@@ -1219,7 +1228,7 @@ export default function App() {
             {hasSalePlanPlus ? CURATED_ITINERARIES.map(it => {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
-                <div key={it.id} className="flex-none pb-2" style={{ minWidth: deckW }}>
+                <div key={it.id} className="snap-center shrink-0 w-[84%] pb-2">
                   <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-3 relative overflow-hidden shadow-xl flex flex-col`} >
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
@@ -1259,7 +1268,7 @@ export default function App() {
                         if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
                         setActiveItineraryId(it.id);
                         setActivePassportIdx(0);
-                        deckScrollRef.current?.scrollTo({ left: 0, behavior: 'smooth' });
+                        (deckScrollRef.current?.children[0] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                       }}
                       className="w-full py-2.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-1"
                     >
@@ -1270,7 +1279,7 @@ export default function App() {
               );
             }) : (
               /* Non-Plus: teaser card */
-              <div className="snap-start shrink-0 pb-2 px-4" style={{ minWidth: deckW }}>
+              <div className="snap-center shrink-0 w-[84%] pb-2">
                 <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
                   <div className="absolute inset-0 opacity-10 pointer-events-none">
                     {[...Array(8)].map((_, i) => (
@@ -1299,7 +1308,7 @@ export default function App() {
                 key={i}
                 onClick={() => {
                   setActivePassportIdx(i);
-                  deckScrollRef.current?.scrollTo({ left: i * deckW, behavior: 'smooth' });
+                  (deckScrollRef.current?.children[i] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
                 }}
                 className={`rounded-full transition-all duration-300 ${i === activePassportIdx ? 'w-6 h-2 bg-[#253884]' : 'w-2 h-2 bg-gray-300'}`}
               />
@@ -1331,7 +1340,7 @@ export default function App() {
                 )}
               </div>
               {myRoute.length === 0 && (
-                <div className="py-8 flex flex-col items-start">
+                <div className="py-8">
                   <img src={ICONS.NAV_MAP} className="w-10 h-10 opacity-20 mb-3" alt="" />
                   <p className="text-gray-400 font-bold text-sm">Aún no tienes paradas</p>
                   <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
@@ -2265,13 +2274,33 @@ export default function App() {
                 ) : 'Agregar a Ruta'}
               </button>
               <a
-                href={`https://api.whatsapp.com/send?text=${encodeURIComponent('¡Mira ' + poi.name + ' en SalePlan! Te invito a visitarlo.')}`}
+                href={`https://maps.google.com/maps?q=${encodeURIComponent(poi.name + ' ' + poi.location)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-16 flex items-center justify-center shrink-0 bg-green-500 text-white rounded-2xl active:scale-[0.97] transition-transform"
+                className="w-12 flex items-center justify-center shrink-0 bg-[#e6eaf8] text-[#253884] rounded-2xl active:scale-[0.97] transition-transform"
               >
-                <MessageCircle size={20} strokeWidth={1.5} />
+                <MapPin size={18} strokeWidth={1.5} />
               </a>
+              <a
+                href={`https://api.whatsapp.com/send?text=${encodeURIComponent('¡Visita ' + poi.name + ' en SalePlan! ' + poi.location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-12 flex items-center justify-center shrink-0 bg-green-500 text-white rounded-2xl active:scale-[0.97] transition-transform"
+              >
+                <MessageCircle size={18} strokeWidth={1.5} />
+              </a>
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({ title: poi.name, text: `¡Te invito a ${poi.name} en SalePlan!`, url: window.location.href });
+                  } else {
+                    navigator.clipboard?.writeText(window.location.href).then(() => showToast('Enlace copiado'));
+                  }
+                }}
+                className="w-12 flex items-center justify-center shrink-0 bg-[#e6eaf8] text-[#253884] rounded-2xl active:scale-[0.97] transition-transform"
+              >
+                <Share2 size={18} strokeWidth={1.5} />
+              </button>
             </div>
           </div>
         </Layout>
@@ -2448,7 +2477,7 @@ export default function App() {
                         </div>
                       </div>
                       <h3 className="font-bold text-[#253884] text-sm leading-tight mb-0.5">{poi.name}</h3>
-                      <p className="text-[10px] font-medium text-gray-400 truncate">{poi.location}</p>
+
                     </motion.div>
                   );
                 })}
