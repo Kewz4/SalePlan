@@ -52,21 +52,21 @@ const CAT_ICON_MAP: Record<string, LucideIcon> = {
 
 const POIS = [
   ...[
-    { id: 1,  name: "Café Central",       category: "Café & Postres",   location: "Zona Norte",       description: "El mejor café de especialidad de la ciudad con un ambiente acogedor.",                              color: "bg-blue-50 text-blue-800 border-blue-200",     date: "Lun-Vie, 8:00 - 20:00" },
+    { id: 1,  name: "Café Central",       category: "Café & Postres",   location: "Santa Tecla",      description: "El mejor café de especialidad de la ciudad con un ambiente acogedor.",                              color: "bg-blue-50 text-blue-800 border-blue-200",     date: "Lun-Vie, 8:00 - 20:00" },
     { id: 2,  name: "Museo de Arte",       category: "Arte",             location: "Centro Histórico", description: "Obras clásicas y modernas. No te pierdas la exhibición de los miércoles.",                         color: "bg-purple-50 text-purple-800 border-purple-200", date: "Mar-Dom, 10:00 - 18:00" },
-    { id: 3,  name: "Burger Fest",         category: "Gastronomía",      location: "Zona Sur",         description: "Hamburguesas artesanales de otro planeta con ingredientes locales.",                                color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 12:00 - 23:00" },
-    { id: 4,  name: "Parque Botánico",     category: "Naturaleza",       location: "Este",             description: "Un respiro verde en medio de la jungla de asfalto. Ideal para paseos largos.",                     color: "bg-green-50 text-green-800 border-green-200",   date: "Diario, 6:00 - 18:00" },
+    { id: 3,  name: "Burger Fest",         category: "Gastronomía",      location: "Mejicanos",        description: "Hamburguesas artesanales de otro planeta con ingredientes locales.",                                color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 12:00 - 23:00" },
+    { id: 4,  name: "Parque Botánico",     category: "Naturaleza",       location: "Apopa",            description: "Un respiro verde en medio de la jungla de asfalto. Ideal para paseos largos.",                     color: "bg-green-50 text-green-800 border-green-200",   date: "Diario, 6:00 - 18:00" },
     { id: 5,  name: "Librería El Tomo",    category: "Comercio",         location: "Centro Histórico", description: "Libros raros, primeras ediciones y un ambiente mágico para leer.",                                 color: "bg-yellow-50 text-yellow-800 border-yellow-200", date: "Lun-Sáb, 9:00 - 19:00" },
-    { id: 6,  name: "Heladería Polar",     category: "Café & Postres",   location: "Zona Norte",       description: "Helados artesanales con sabores únicos e inigualables.",                                           color: "bg-pink-50 text-pink-800 border-pink-200",      date: "Diario, 11:00 - 21:00" },
-    { id: 7,  name: "Teatro Municipal",    category: "Cultura",          location: "Centro",           description: "Las mejores obras teatrales clásicas y contemporáneas de la ciudad.",                               color: "bg-purple-50 text-purple-800 border-purple-200", date: "Funciones Variables" },
-    { id: 8,  name: "Mirador del Valle",   category: "Turismo",          location: "Oeste",            description: "La mejor vista panorámica para ver el atardecer perfecto.",                                        color: "bg-blue-50 text-blue-800 border-blue-200",      date: "Diario, 24h" },
-    { id: 9,  name: "Club de Jazz Local",  category: "Vida Nocturna",    location: "Centro",           description: "Música en vivo cada noche con los mejores músicos locales e internacionales.",                     color: "bg-indigo-50 text-indigo-800 border-indigo-200", date: "Jue-Sáb, 20:00 - 2:00" },
-    { id: 10, name: "Pizzería Nápoles",    category: "Gastronomía",      location: "Zona Sur",         description: "Auténtica pizza napolitana al horno de leña, como en Italia.",                                     color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 12:00 - 22:00" },
-    { id: 11, name: "Boutique Vintage",    category: "Tiendas Locales",  location: "Este",             description: "Ropa vintage y piezas curadas de los años 80 y 90.",                                              color: "bg-orange-50 text-orange-800 border-orange-200", date: "Lun-Sáb, 10:00 - 19:00" },
-    { id: 12, name: "Jardín Japonés",      category: "Naturaleza",       location: "Oeste",            description: "Conecta con la naturaleza y encuentra tu zen interior en este hermoso espacio.",                   color: "bg-green-50 text-green-800 border-green-200",   date: "Mar-Dom, 9:00 - 17:00" },
-    { id: 13, name: "Barra de Sushi",      category: "Gastronomía",      location: "Zona Norte",       description: "Los mejores cortes y rollos creativos con pescado fresco todos los días.",                         color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 12:00 - 23:00" },
+    { id: 6,  name: "Heladería Polar",     category: "Café & Postres",   location: "Santa Tecla",      description: "Helados artesanales con sabores únicos e inigualables.",                                           color: "bg-pink-50 text-pink-800 border-pink-200",      date: "Diario, 11:00 - 21:00" },
+    { id: 7,  name: "Teatro Municipal",    category: "Cultura",          location: "San Salvador",     description: "Las mejores obras teatrales clásicas y contemporáneas de la ciudad.",                               color: "bg-purple-50 text-purple-800 border-purple-200", date: "Funciones Variables" },
+    { id: 8,  name: "Mirador del Valle",   category: "Turismo",          location: "Lourdes",          description: "La mejor vista panorámica para ver el atardecer perfecto.",                                        color: "bg-blue-50 text-blue-800 border-blue-200",      date: "Diario, 24h" },
+    { id: 9,  name: "Club de Jazz Local",  category: "Vida Nocturna",    location: "San Salvador",     description: "Música en vivo cada noche con los mejores músicos locales e internacionales.",                     color: "bg-indigo-50 text-indigo-800 border-indigo-200", date: "Jue-Sáb, 20:00 - 2:00" },
+    { id: 10, name: "Pizzería Nápoles",    category: "Gastronomía",      location: "Mejicanos",        description: "Auténtica pizza napolitana al horno de leña, como en Italia.",                                     color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 12:00 - 22:00" },
+    { id: 11, name: "Boutique Vintage",    category: "Tiendas Locales",  location: "Apopa",            description: "Ropa vintage y piezas curadas de los años 80 y 90.",                                              color: "bg-orange-50 text-orange-800 border-orange-200", date: "Lun-Sáb, 10:00 - 19:00" },
+    { id: 12, name: "Jardín Japonés",      category: "Naturaleza",       location: "Lourdes",          description: "Conecta con la naturaleza y encuentra tu zen interior en este hermoso espacio.",                   color: "bg-green-50 text-green-800 border-green-200",   date: "Mar-Dom, 9:00 - 17:00" },
+    { id: 13, name: "Barra de Sushi",      category: "Gastronomía",      location: "Santa Tecla",      description: "Los mejores cortes y rollos creativos con pescado fresco todos los días.",                         color: "bg-red-50 text-red-800 border-red-200",         date: "Diario, 12:00 - 23:00" },
     { id: 14, name: "Tienda de Discos",    category: "Tiendas Locales",  location: "Centro Histórico", description: "Vinilos clásicos, nuevos lanzamientos y joyas escondidas musicales.",                              color: "bg-zinc-50 text-zinc-800 border-zinc-200",      date: "Lun-Sáb, 11:00 - 20:00" },
-    { id: 15, name: "Mercado Local",       category: "Turismo",          location: "Sur",              description: "Descubre la comida callejera, frutas exóticas y la vibra del verdadero comercio.",                 color: "bg-orange-50 text-orange-800 border-orange-200", date: "Diario, 7:00 - 16:00" }
+    { id: 15, name: "Mercado Local",       category: "Turismo",          location: "San Salvador",     description: "Descubre la comida callejera, frutas exóticas y la vibra del verdadero comercio.",                 color: "bg-orange-50 text-orange-800 border-orange-200", date: "Diario, 7:00 - 16:00" }
   ],
   { id: 16, name: "Catedral Metropolitana", category: "Cultura",         location: "Centro Histórico", description: "La imponente catedral neoclásica que domina el corazón del centro histórico de San Salvador.",                          color: "bg-purple-50 text-purple-800 border-purple-200", date: "Lun-Dom, 6:00 - 18:00" },
   { id: 17, name: "Parque Cuscatlán",      category: "Naturaleza",       location: "San Salvador",     description: "El parque urbano más grande del país, ideal para paseos, ejercicio y cultura al aire libre.",                         color: "bg-green-50 text-green-800 border-green-200",   date: "Diario, 5:00 - 19:00" },
@@ -244,10 +244,10 @@ const LEVELS = [
 ];
 
 const CURATED_ITINERARIES = [
-  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'Desde el mejor café de especialidad hasta pupusas artesanales — recorrido culinario.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500', expert: { name: 'Chef María Martínez', role: 'Chef · Crítica Gastronómica', avatar: AVATARS[1] }, reward: 420, month: 'Mayo 2026' },
-  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías contemporáneas y teatro. Circuito cultural completo.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600', expert: { name: 'Andrés Villalba', role: 'Curador · Museo Nacional', avatar: AVATARS[0] }, reward: 380, month: 'Mayo 2026' },
-  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza pura.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600', expert: { name: 'Valeria Ortiz', role: 'Guía Ecológica · Bióloga', avatar: AVATARS[2] }, reward: 450, month: 'Mayo 2026' },
-  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'Catedral, mercados coloniales y centros culturales del corazón de El Salvador.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600', expert: { name: 'Prof. Jorge Salinas', role: 'Historiador · UTEC', avatar: AVATARS[3] }, reward: 400, month: 'Mayo 2026' },
+  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'Desde el mejor café de especialidad hasta pupusas artesanales — recorrido culinario.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500', expert: { name: 'Chef María Martínez', role: 'Chef · Crítica Gastronómica', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' }, reward: 420, month: 'Mayo 2026' },
+  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías contemporáneas y teatro. Circuito cultural completo.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600', expert: { name: 'Andrés Villalba', role: 'Curador · Museo Nacional', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' }, reward: 380, month: 'Mayo 2026' },
+  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza pura.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600', expert: { name: 'Valeria Ortiz', role: 'Guía Ecológica · Bióloga', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' }, reward: 450, month: 'Mayo 2026' },
+  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'Catedral, mercados coloniales y centros culturales del corazón de El Salvador.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600', expert: { name: 'Prof. Jorge Salinas', role: 'Historiador · UTEC', avatar: 'https://randomuser.me/api/portraits/men/75.jpg' }, reward: 400, month: 'Mayo 2026' },
 ];
 
 // iOS-style scroll-wheel picker (3-item window, center selected)
@@ -417,6 +417,27 @@ export default function App() {
     if (selectedPOI && currentScreen === 'USER_SEARCH') hash = `poi-${selectedPOI}`;
     if (window.location.hash !== `#/${hash}`) window.location.hash = `#/${hash}`;
   }, [currentScreen, selectedPOI]);
+
+  // Dynamic PWA status-bar / theme-color
+  React.useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) return;
+    if (itineraryStopView) {
+      const it = CURATED_ITINERARIES.find(x => x.id === itineraryStopView.itId);
+      // gradient start colors per itinerary
+      const starts: Record<number, string> = { 1: '#fb923c', 2: '#a855f7', 3: '#22c55e', 4: '#f59e0b' };
+      meta.setAttribute('content', it ? (starts[it.id] ?? '#253884') : '#253884');
+    } else if (selectedItineraryId !== null) {
+      const starts: Record<number, string> = { 1: '#fb923c', 2: '#a855f7', 3: '#22c55e', 4: '#f59e0b' };
+      meta.setAttribute('content', starts[selectedItineraryId] ?? '#253884');
+    } else if (['ONBOARDING','USER_HOME','COMMERCE_LOGIN','COMMERCE_DASHBOARD'].includes(currentScreen)) {
+      meta.setAttribute('content', '#253884');
+    } else if (currentScreen === 'USER_WALLET') {
+      meta.setAttribute('content', '#e6eaf8');
+    } else {
+      meta.setAttribute('content', '#ffffff');
+    }
+  }, [currentScreen, itineraryStopView, selectedItineraryId]);
 
   React.useEffect(() => {
     if (currentScreen === 'USER_PROFILE' && levelsScrollRef.current) {
@@ -1253,177 +1274,160 @@ export default function App() {
               </div>
           </div>
 
-          {/* ── Itinerarios de Expertos — compact photo cards ── */}
-          <div className="px-4 mt-5 mb-1">
-            <div className="flex items-center justify-between mb-3">
+          {/* ── Itinerarios de Expertos — horizontal slider ── */}
+          <div className="mt-5 mb-1">
+            <div className="flex items-center justify-between px-4 mb-3">
               <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Itinerarios de Expertos</h3>
               <span className="text-[10px] text-gray-400 font-medium">Mayo 2026</span>
             </div>
-            <div className="space-y-2">
+            <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x px-4 pb-2" style={{ touchAction: 'pan-x' }}>
               {CURATED_ITINERARIES.map(it => {
                 const isLocked = !hasSalePlanPlus;
                 const isActive = activeItineraryId === it.id;
                 return (
                   <button
                     key={it.id}
-                    style={{ touchAction: 'manipulation' }}
+                    style={{ touchAction: 'manipulation', scrollSnapAlign: 'start' }}
                     onClick={() => isLocked ? navigateTo('USER_PLUS') : setSelectedItineraryId(it.id)}
-                    className="w-full flex items-center gap-3 bg-white rounded-2xl p-3 active:scale-[0.98] transition-transform subtle-shadow text-left"
+                    className={`flex-none w-[72%] bg-gradient-to-br ${it.color} rounded-2xl p-4 text-left active:scale-[0.97] transition-transform relative overflow-hidden`}
                   >
-                    {/* Active indicator strip */}
-                    {isActive && <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-[#253884] rounded-r-full" />}
-                    {/* Expert photo */}
-                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${it.color} flex items-center justify-center shrink-0 overflow-hidden relative`}>
-                      <img src={it.expert.avatar} alt={it.expert.name} className={`w-full h-full object-cover ${isLocked ? 'opacity-30 blur-[1.5px]' : ''}`} />
-                      {isLocked && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Sparkles size={18} className="text-yellow-300 drop-shadow" />
+                    {isActive && (
+                      <div className="absolute top-3 right-3 bg-white/25 border border-white/30 rounded-full px-2 py-0.5">
+                        <span className="text-white text-[8px] font-black uppercase tracking-wider">Activo</span>
+                      </div>
+                    )}
+                    {/* Expert row */}
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/40 shrink-0">
+                        <img src={it.expert.avatar} alt={it.expert.name} className={`w-full h-full object-cover ${isLocked ? 'blur-[1.5px] opacity-40' : ''}`} />
+                      </div>
+                      {isLocked ? (
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles size={14} className="text-yellow-300" />
+                          <span className="text-white/80 text-xs font-bold">SalePlan+</span>
                         </div>
-                      )}
-                      {isActive && (
-                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow">
-                          <Check size={8} strokeWidth={3} className="text-[#253884]" />
+                      ) : (
+                        <div className="min-w-0">
+                          <p className="text-white font-bold text-xs leading-tight truncate">{it.expert.name}</p>
+                          <p className="text-white/60 text-[9px] font-medium truncate">{it.expert.role}</p>
                         </div>
                       )}
                     </div>
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-bold text-sm leading-tight ${isActive ? 'text-[#253884]' : 'text-gray-800'}`}>{it.title}</p>
-                      <p className="text-[10px] text-gray-400 font-medium mt-0.5 truncate">{it.expert.name}</p>
+                    <h3 className="text-white font-heading text-base tracking-tight leading-tight mb-1">{it.title}</h3>
+                    <p className="text-white/70 text-[10px] font-medium leading-snug line-clamp-2 mb-3">{it.description}</p>
+                    <div className="flex items-center gap-2">
+                      <span className="bg-yellow-400 text-yellow-900 text-[9px] font-black px-2 py-0.5 rounded-full">+{it.reward} pts</span>
+                      <span className="text-white/60 text-[9px] font-bold">{it.stops.length} paradas</span>
                     </div>
-                    {/* Right badge */}
-                    <span className={`text-[9px] font-black px-2.5 py-1 rounded-full shrink-0 ${isActive ? 'bg-[#253884] text-white' : isLocked ? 'bg-gray-100 text-gray-400' : 'bg-yellow-50 text-yellow-700'}`}>
-                      {isActive ? 'Activo' : isLocked ? 'Plus' : `+${it.reward}`}
-                    </span>
-                    <ChevronRight size={14} className="text-gray-300 shrink-0" />
                   </button>
                 );
               })}
+              {/* Peek ghost card */}
+              <div className="flex-none w-4 shrink-0" />
             </div>
           </div>
 
-          {/* Ruta de Hoy — always visible */}
-          <div className="px-5 pb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
-                  Ruta de Hoy
-                  {myRoute.length > 0 && <span className="ml-2 text-blue-300 font-bold">{myRoute.length} parada{myRoute.length !== 1 ? 's' : ''}</span>}
-                </h3>
-                {myRoute.length > 0 && (
-                  <button
-                    onClick={() => {
-                      const routeText = myRoute.map(p => `• ${p.name}${poiSchedules[p.id] ? ` (${poiSchedules[p.id].day} ${poiSchedules[p.id].time})` : ''}`).join('\n');
-                      if (navigator.share) {
-                        navigator.share({ title: 'Mi Ruta SalePlan', text: `Mi ruta de hoy:\n${routeText}`, url: window.location.origin });
-                      } else {
-                        navigator.clipboard?.writeText(routeText).then(() => alert('Ruta copiada al portapapeles'));
-                      }
-                    }}
-                    className="flex items-center gap-1.5 text-[10px] font-black text-[#253884] uppercase tracking-wider bg-[#253884]/10 px-3 py-1.5 rounded-full active:scale-[0.97] transition-transform"
-                  >
-                    <Share2 size={11} strokeWidth={2.5} /> Compartir
-                  </button>
+          {/* Ruta de Hoy + Ruta de la Semana */}
+          {(() => {
+            const TIME_RANK: Record<string, number> = { '08:00 – 12:00': 0, '12:00 – 17:00': 1, '17:00 – 22:00': 2 };
+            const todayRoute = myRoute.filter(p => !poiSchedules[p.id] || poiSchedules[p.id].day === 'Hoy').sort((a, b) => {
+              const ta = poiSchedules[a.id]?.time, tb = poiSchedules[b.id]?.time;
+              return (TIME_RANK[ta ?? ''] ?? 99) - (TIME_RANK[tb ?? ''] ?? 99);
+            });
+            const weekRoute = myRoute.filter(p => poiSchedules[p.id] && poiSchedules[p.id].day !== 'Hoy').sort((a, b) => {
+              const DAY_RANK: Record<string, number> = { 'Mañana': 0, 'Sáb 23 may': 1, 'Lun 25 may': 2 };
+              return (DAY_RANK[poiSchedules[a.id]?.day ?? ''] ?? 99) - (DAY_RANK[poiSchedules[b.id]?.day ?? ''] ?? 99);
+            });
+
+            const RouteItem = ({ poi }: { poi: typeof myRoute[0] }) => {
+              const isStamped = stampedPOIs.includes(poi.id);
+              const schedule = poiSchedules[poi.id];
+              const idx = todayRoute.indexOf(poi);
+              const isDragging = dragIndex === idx;
+              const isDragOver = dragOverIndex === idx;
+              return (
+                <div
+                  key={poi.id}
+                  draggable={!schedule}
+                  onDragStart={() => !schedule && setDragIndex(idx)}
+                  onDragOver={e => { e.preventDefault(); setDragOverIndex(idx); }}
+                  onDrop={() => {
+                    if (dragIndex === null || dragIndex === idx) { setDragIndex(null); setDragOverIndex(null); return; }
+                    setSavedPOIs(prev => { const s = [...prev]; const [m] = s.splice(dragIndex, 1); s.splice(idx, 0, m); return s; });
+                    setDragIndex(null); setDragOverIndex(null);
+                  }}
+                  onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
+                  onClick={() => navigateTo('USER_SEARCH', poi.id)}
+                  className={`flex items-center gap-3 bg-white rounded-2xl p-3 cursor-pointer active:scale-[0.98] transition-[transform,border-color,opacity] subtle-shadow border-2 ${isStamped ? 'border-[#253884]/20 bg-[#e6eaf8]/50' : isDragOver ? 'border-[#253884]' : 'border-transparent'} ${isDragging ? 'opacity-50 scale-[0.97]' : ''}`}
+                >
+                  {!schedule && <GripVertical size={16} strokeWidth={2} className="text-gray-300 shrink-0 cursor-grab active:cursor-grabbing" />}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
+                    <PoiIcon id={poi.id} size={18} strokeWidth={1.5} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-[#253884] text-sm leading-tight truncate">{poi.name}</p>
+                    {schedule ? (
+                      <p className="text-[10px] font-bold text-green-600 uppercase tracking-wider mt-0.5">{schedule.day} · {schedule.time}</p>
+                    ) : (
+                      <p className="text-[10px] font-medium text-gray-400 mt-0.5">{poi.location}</p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {isStamped && <div className="w-6 h-6 bg-[#253884] rounded-full flex items-center justify-center shadow"><img src={ICONS.LOGO} className="w-3.5 h-3.5 brightness-0 invert" alt="" /></div>}
+                    <button onClick={e => { e.stopPropagation(); if (!isStamped) { setStampModalSuccess(false); setQrModalPOIId(poi.id); } }} disabled={isStamped} className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-colors ${isStamped ? 'border-[#253884]/20 bg-[#e6eaf8] cursor-default' : 'border-gray-200 bg-gray-50 active:scale-[0.97]'}`}>
+                      {isStamped ? <Check size={13} strokeWidth={2.5} className="text-[#253884]" /> : <QrCode size={13} strokeWidth={1.5} className="text-gray-500" />}
+                    </button>
+                    {!isStamped && <button onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); haptic([10, 20, 10]); }} className="w-8 h-8 rounded-xl flex items-center justify-center border border-red-100 bg-red-50 active:scale-[0.97] transition-transform"><X size={13} strokeWidth={2.5} className="text-red-500" /></button>}
+                  </div>
+                </div>
+              );
+            };
+
+            return (
+              <div className="px-5 pb-6 space-y-6">
+                {/* Ruta de Hoy */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
+                      Ruta de Hoy
+                      {todayRoute.length > 0 && <span className="ml-2 text-blue-300 font-bold">{todayRoute.length} parada{todayRoute.length !== 1 ? 's' : ''}</span>}
+                    </h3>
+                    {todayRoute.length > 0 && (
+                      <button onClick={() => {
+                        const txt = todayRoute.map(p => `• ${p.name}${poiSchedules[p.id] ? ` (${poiSchedules[p.id].time})` : ''}`).join('\n');
+                        navigator.share ? navigator.share({ title: 'Mi Ruta de Hoy', text: txt, url: window.location.origin }) : navigator.clipboard?.writeText(txt);
+                      }} className="flex items-center gap-1.5 text-[10px] font-black text-[#253884] uppercase tracking-wider bg-[#253884]/10 px-3 py-1.5 rounded-full active:scale-[0.97] transition-transform">
+                        <Share2 size={11} strokeWidth={2.5} /> Compartir
+                      </button>
+                    )}
+                  </div>
+                  {todayRoute.length === 0 ? (
+                    <div className="py-6 flex flex-col items-center">
+                      <img src={ICONS.NAV_MAP} className="w-10 h-10 opacity-20 mb-3" alt="" />
+                      <p className="text-gray-400 font-bold text-sm">Sin paradas para hoy</p>
+                      <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
+                      <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-5 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar</button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">{todayRoute.map(poi => <RouteItem key={poi.id} poi={poi} />)}</div>
+                  )}
+                </div>
+
+                {/* Ruta de la Semana */}
+                {weekRoute.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-3">
+                      Ruta de la Semana
+                      <span className="ml-2 text-blue-300 font-bold">{weekRoute.length} parada{weekRoute.length !== 1 ? 's' : ''}</span>
+                    </h3>
+                    <div className="space-y-2">{weekRoute.map(poi => <RouteItem key={poi.id} poi={poi} />)}</div>
+                  </div>
                 )}
               </div>
-              {myRoute.length === 0 && (
-                <div className="py-8">
-                  <img src={ICONS.NAV_MAP} className="w-10 h-10 opacity-20 mb-3" alt="" />
-                  <p className="text-gray-400 font-bold text-sm">Aún no tienes paradas</p>
-                  <p className="text-gray-400 text-xs font-medium mt-1">Explora y agrega lugares a tu ruta</p>
-                  <button onClick={() => navigateTo('USER_SEARCH')} className="mt-4 bg-[#253884] text-white px-5 py-2.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-transform">Explorar Lugares</button>
-                </div>
-              )}
-              {(() => {
-                const DAY_RANK: Record<string, number> = { 'Hoy': 0, 'Mañana': 1, 'Sáb 23 may': 2, 'Lun 25 may': 3 };
-                const TIME_RANK: Record<string, number> = { '08:00 – 12:00': 0, '12:00 – 17:00': 1, '17:00 – 22:00': 2 };
-                const sortedRoute = [...myRoute].sort((a, b) => {
-                  const sa = poiSchedules[a.id], sb = poiSchedules[b.id];
-                  if (!sa && !sb) return 0;
-                  if (!sa) return 1;
-                  if (!sb) return -1;
-                  const dayDiff = (DAY_RANK[sa.day] ?? 99) - (DAY_RANK[sb.day] ?? 99);
-                  if (dayDiff !== 0) return dayDiff;
-                  return (TIME_RANK[sa.time] ?? 99) - (TIME_RANK[sb.time] ?? 99);
-                });
-                return (
-                  <div className="space-y-3">
-                    {sortedRoute.map((poi, idx) => {
-                      const isStamped = stampedPOIs.includes(poi.id);
-                      const hasSchedule = !!poiSchedules[poi.id];
-                      const isDragging = dragIndex === idx;
-                      const isDragOver = dragOverIndex === idx;
-                      return (
-                        <div
-                          key={poi.id}
-                          draggable={!hasSchedule}
-                          onDragStart={() => !hasSchedule && setDragIndex(idx)}
-                          onDragOver={e => { e.preventDefault(); setDragOverIndex(idx); }}
-                          onDrop={() => {
-                            if (dragIndex === null || dragIndex === idx) { setDragIndex(null); setDragOverIndex(null); return; }
-                            setSavedPOIs(prev => {
-                              const sorted = [...prev];
-                              const [moved] = sorted.splice(dragIndex, 1);
-                              sorted.splice(idx, 0, moved);
-                              return sorted;
-                            });
-                            setDragIndex(null); setDragOverIndex(null);
-                          }}
-                          onDragEnd={() => { setDragIndex(null); setDragOverIndex(null); }}
-                          onClick={() => navigateTo('USER_SEARCH', poi.id)}
-                          className={`flex items-center gap-3 bg-white rounded-2xl p-3 cursor-pointer active:scale-[0.98] transition-[transform,border-color,opacity] subtle-shadow border-2 ${isStamped ? 'border-[#253884]/20 bg-[#e6eaf8]/50' : isDragOver ? 'border-[#253884]' : 'border-transparent'} ${isDragging ? 'opacity-50 scale-[0.97]' : ''}`}
-                        >
-                          {!hasSchedule && (
-                            <div className="text-gray-300 shrink-0 cursor-grab active:cursor-grabbing">
-                              <GripVertical size={16} strokeWidth={2} />
-                            </div>
-                          )}
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
-                            <PoiIcon id={poi.id} size={18} strokeWidth={1.5} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-bold text-[#253884] text-sm leading-tight truncate">{poi.name}</p>
-                            {hasSchedule ? (
-                              <p className="text-[10px] font-bold text-green-600 uppercase tracking-wider mt-0.5">
-                                {poiSchedules[poi.id].day} · {poiSchedules[poi.id].time}
-                              </p>
-                            ) : (
-                              <p className="text-[10px] font-medium text-gray-400 mt-0.5">{poi.location}</p>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            {isStamped && (
-                              <div className="w-6 h-6 bg-[#253884] rounded-full flex items-center justify-center shadow">
-                                <img src={ICONS.LOGO} className="w-3.5 h-3.5 brightness-0 invert" alt="" />
-                              </div>
-                            )}
-                            <button
-                              onClick={e => {
-                                e.stopPropagation();
-                                if (!isStamped) { setStampModalSuccess(false); setQrModalPOIId(poi.id); }
-                              }}
-                              disabled={isStamped}
-                              className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-colors ${isStamped ? 'border-[#253884]/20 bg-[#e6eaf8] cursor-default' : 'border-gray-200 bg-gray-50 active:scale-[0.97]'}`}
-                            >
-                              {isStamped ? <Check size={13} strokeWidth={2.5} className="text-[#253884]" /> : <QrCode size={13} strokeWidth={1.5} className="text-gray-500" />}
-                            </button>
-                            {!isStamped && (
-                              <button
-                                onClick={e => { e.stopPropagation(); setSavedPOIs(prev => prev.filter(id => id !== poi.id)); haptic([10, 20, 10]); }}
-                                className="w-8 h-8 rounded-xl flex items-center justify-center border border-red-100 bg-red-50 active:scale-[0.97] transition-transform"
-                              >
-                                <X size={13} strokeWidth={2.5} className="text-red-500" />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })()}
-            </div>
+            );
+          })()}
 
-          {/* Full-screen itinerary detail — opens from story ring tap */}
+          {/* Full-screen itinerary detail — opens from slider card tap */}
           <AnimatePresence>
             {selectedItineraryId !== null && (() => {
               const it = CURATED_ITINERARIES.find(x => x.id === selectedItineraryId);
@@ -1434,7 +1438,8 @@ export default function App() {
                   key={`detail-${selectedItineraryId}`}
                   initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
                   transition={{ type: 'spring', damping: 32, stiffness: 280 }}
-                  className="fixed inset-0 z-40 overflow-y-auto bg-gray-50"
+                  className="fixed inset-0 z-50 overflow-y-auto bg-gray-50"
+                  style={{ overscrollBehavior: 'contain' }}
                 >
                   {/* Hero gradient header */}
                   <div className={`bg-gradient-to-b ${it.color} pt-12 pb-10 px-5 relative overflow-hidden`}>
