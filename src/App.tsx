@@ -250,6 +250,65 @@ const CURATED_ITINERARIES = [
   { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'Catedral, mercados coloniales y centros culturales del corazón de El Salvador.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600', expert: { name: 'Prof. Jorge Salinas', role: 'Historiador · UTEC', avatar: AVATARS[3] }, reward: 400, month: 'Mayo 2026' },
 ];
 
+// iOS-style scroll-wheel picker (3-item window, center selected)
+function WheelPicker({ items, value, onChange }: {
+  items: { label: string; text: string }[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const ITEM_H = 44;
+  const ref = React.useRef<HTMLDivElement>(null);
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  React.useEffect(() => {
+    const idx = items.findIndex(i => i.text === value);
+    if (ref.current && idx >= 0) {
+      ref.current.scrollTop = idx * ITEM_H;
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleScroll = () => {
+    if (!ref.current) return;
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      if (!ref.current) return;
+      const idx = Math.round(ref.current.scrollTop / ITEM_H);
+      const clamped = Math.max(0, Math.min(idx, items.length - 1));
+      if (items[clamped]?.text !== value) onChange(items[clamped].text);
+    }, 80);
+  };
+
+  return (
+    <div className="relative overflow-hidden" style={{ height: ITEM_H * 3 }}>
+      <div className="absolute inset-x-0 pointer-events-none z-10" style={{ top: ITEM_H, height: ITEM_H, background: 'rgba(37,56,132,0.08)', borderRadius: 10 }} />
+      <div
+        ref={ref}
+        onScroll={handleScroll}
+        className="overflow-y-auto no-scrollbar"
+        style={{ height: ITEM_H * 3, scrollSnapType: 'y mandatory', paddingTop: ITEM_H, paddingBottom: ITEM_H }}
+      >
+        {items.map(item => (
+          <div
+            key={item.text}
+            style={{ height: ITEM_H, scrollSnapAlign: 'center' }}
+            className="flex items-center justify-center text-[11px] font-bold text-[#253884] cursor-pointer px-2 text-center leading-tight"
+            onClick={() => {
+              const idx = items.findIndex(i => i.text === item.text);
+              ref.current?.scrollTo({ top: idx * ITEM_H, behavior: 'smooth' });
+              onChange(item.text);
+            }}
+          >
+            {item.label}
+          </div>
+        ))}
+      </div>
+      <div className="absolute inset-x-0 top-0 pointer-events-none z-10" style={{ height: ITEM_H, background: 'linear-gradient(to bottom, white 40%, transparent)' }} />
+      <div className="absolute inset-x-0 bottom-0 pointer-events-none z-10" style={{ height: ITEM_H, background: 'linear-gradient(to top, white 40%, transparent)' }} />
+    </div>
+  );
+}
+
 // Motion stagger variants — Emil: stagger 30-80ms between items
 const listVariants = {
   hidden: {},
@@ -317,6 +376,8 @@ export default function App() {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const deckScrollEndRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showScheduleFor, setShowScheduleFor] = useState<number | null>(null);
+  const [itinerarySetupId, setItinerarySetupId] = useState<number | null>(null);
+  const [itinerarySchedules, setItinerarySchedules] = useState<Record<number, { day: string; time: string }>>({});
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -1069,7 +1130,7 @@ export default function App() {
             }}
           >
             {/* ── Card 0: Personal passport ── */}
-            <div className="snap-center shrink-0 w-[84%] pb-2">
+            <div className="snap-center shrink-0 w-[84%] pb-2" style={{ scrollSnapStop: 'always' }}>
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header: photo centered, name below */}
                 <div className="flex flex-col items-center mb-5 pt-1">
@@ -1213,7 +1274,7 @@ export default function App() {
             {hasSalePlanPlus ? CURATED_ITINERARIES.map(it => {
               const itStops = POIS.filter(p => it.stops.includes(p.id));
               return (
-                <div key={it.id} className="snap-center shrink-0 w-[84%] pb-2">
+                <div key={it.id} className="snap-center shrink-0 w-[84%] pb-2" style={{ scrollSnapStop: 'always' }}>
                   <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-3 relative overflow-hidden shadow-xl flex flex-col`} >
                     {/* Month badge */}
                     <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
@@ -1237,23 +1298,24 @@ export default function App() {
                       <span className="text-white/80 text-[10px] font-bold">Completar itinerario</span>
                       <span className="text-yellow-300 font-black text-sm">+{it.reward} pts</span>
                     </div>
-                    {/* Stop grid */}
+                    {/* Stop grid — tap to view POI detail */}
                     <div className="grid grid-cols-2 gap-1.5 mb-3 mt-2">
                       {itStops.slice(0, 6).map(poi => (
-                        <div key={poi.id} className="bg-white/20 border border-white/10 rounded-xl h-[48px] flex flex-row items-center gap-2 px-2">
+                        <button key={poi.id} onClick={() => navigateTo('USER_SEARCH', poi.id)} className="bg-white/20 border border-white/10 rounded-xl h-[48px] flex flex-row items-center gap-2 px-2 active:scale-[0.95] transition-transform text-left">
                           <PoiIcon id={poi.id} size={14} strokeWidth={1.5} className="text-white shrink-0" />
                           <p className="text-white text-[9px] font-bold leading-tight line-clamp-2">{poi.name}</p>
-                        </div>
+                        </button>
                       ))}
                     </div>
-                    {/* CTA */}
+                    {/* CTA — opens schedule-per-stop setup */}
                     <button
                       onClick={() => {
-                        const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, Math.max(0, totalSlots - savedPOIs.length));
-                        if (toAdd.length > 0) { setSavedPOIs(prev => [...prev, ...toAdd]); haptic([10, 20, 10]); }
-                        setActiveItineraryId(it.id);
-                        setActivePassportIdx(0);
-                        (deckScrollRef.current?.children[0] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        const init: Record<number, { day: string; time: string }> = {};
+                        it.stops.forEach((id, i) => {
+                          init[id] = { day: VISIT_DAYS[0].text, time: VISIT_TIMES[i % VISIT_TIMES.length].text };
+                        });
+                        setItinerarySchedules(init);
+                        setItinerarySetupId(it.id);
                       }}
                       className="w-full py-2.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-1"
                     >
@@ -1264,7 +1326,7 @@ export default function App() {
               );
             }) : (
               /* Non-Plus: teaser card */
-              <div className="snap-center shrink-0 w-[84%] pb-2">
+              <div className="snap-center shrink-0 w-[84%] pb-2" style={{ scrollSnapStop: 'always' }}>
                 <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
                   <div className="absolute inset-0 opacity-10 pointer-events-none">
                     {[...Array(8)].map((_, i) => (
@@ -1300,9 +1362,8 @@ export default function App() {
             ))}
           </div>
 
-          {/* Ruta de Hoy — only shown for Card 0 */}
-          {activePassportIdx === 0 && (
-            <div className="px-5 pb-6">
+          {/* Ruta de Hoy — always visible */}
+          <div className="px-5 pb-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">
                   Ruta de Hoy
@@ -1421,9 +1482,95 @@ export default function App() {
                 );
               })()}
             </div>
-          )}
 
-                    {/* QR Stamp Modal — Emil: animate from scale(0.95), not scale(0) */}
+          {/* Itinerary setup modal — pick time for each stop */}
+          <AnimatePresence>
+            {itinerarySetupId !== null && (() => {
+              const it = CURATED_ITINERARIES.find(x => x.id === itinerarySetupId);
+              if (!it) return null;
+              const itStops = POIS.filter(p => it.stops.includes(p.id));
+              return (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/60 z-50"
+                    onClick={() => setItinerarySetupId(null)}
+                  />
+                  <motion.div
+                    initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                    transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                    className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-white rounded-t-3xl overflow-hidden"
+                    style={{ maxHeight: '85dvh' }}
+                  >
+                    {/* Header */}
+                    <div className={`bg-gradient-to-r ${it.color} px-5 pt-5 pb-4`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">Planifica tu visita</p>
+                        <button onClick={() => setItinerarySetupId(null)} className="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97]">
+                          <X size={13} strokeWidth={2.5} className="text-white" />
+                        </button>
+                      </div>
+                      <h3 className="text-white font-heading text-lg tracking-tight">{it.title}</h3>
+                    </div>
+                    {/* Stops */}
+                    <div className="overflow-y-auto" style={{ maxHeight: 'calc(85dvh - 180px)' }}>
+                      {itStops.map((poi, idx) => (
+                        <div key={poi.id} className="border-b border-gray-100 last:border-0">
+                          <div className="flex items-center gap-3 px-4 pt-3 pb-1">
+                            <div className="w-8 h-8 rounded-full bg-[#e6eaf8] flex items-center justify-center shrink-0">
+                              <PoiIcon id={poi.id} size={16} strokeWidth={1.5} className="text-[#253884]" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-bold text-[#253884] text-xs leading-tight">{poi.name}</p>
+                              <p className="text-[10px] text-gray-400 font-medium">Parada {idx + 1}</p>
+                            </div>
+                          </div>
+                          <div className="flex mx-4 mb-2 border border-gray-100 rounded-2xl overflow-hidden bg-gray-50">
+                            <div className="flex-1 border-r border-gray-100">
+                              <WheelPicker
+                                items={VISIT_DAYS}
+                                value={itinerarySchedules[poi.id]?.day ?? VISIT_DAYS[0].text}
+                                onChange={v => setItinerarySchedules(prev => ({ ...prev, [poi.id]: { day: v, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <WheelPicker
+                                items={VISIT_TIMES}
+                                value={itinerarySchedules[poi.id]?.time ?? VISIT_TIMES[0].text}
+                                onChange={v => setItinerarySchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: v } }))}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Confirm */}
+                    <div className="px-4 pt-3 pb-safe border-t border-gray-100">
+                      <button
+                        onClick={() => {
+                          const toAdd = it.stops.filter(id => !savedPOIs.includes(id)).slice(0, Math.max(0, totalSlots - savedPOIs.length));
+                          if (toAdd.length > 0) setSavedPOIs(prev => [...prev, ...toAdd]);
+                          setPoiSchedules(prev => ({ ...prev, ...itinerarySchedules }));
+                          setActiveItineraryId(it.id);
+                          setItinerarySetupId(null);
+                          setActivePassportIdx(0);
+                          haptic([10, 20, 10]);
+                          setTimeout(() => {
+                            (deckScrollRef.current?.children[0] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                          }, 100);
+                        }}
+                        className={`w-full py-3.5 bg-gradient-to-r ${it.color} text-white rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mb-2`}
+                      >
+                        Confirmar Itinerario · {itStops.length} paradas →
+                      </button>
+                    </div>
+                  </motion.div>
+                </>
+              );
+            })()}
+          </AnimatePresence>
+
+          {/* QR Stamp Modal — Emil: animate from scale(0.95), not scale(0) */}
           <AnimatePresence>
             {qrModalPOIId && (
               <>
@@ -2211,27 +2358,27 @@ export default function App() {
             </div>
 
             <div className="fixed bottom-0 w-full max-w-md mx-auto px-4 pt-3 pb-safe bg-white/90 backdrop-blur-md border-t border-gray-100">
-              {/* Schedule picker — slides in after tapping Agregar */}
+              {/* Schedule picker — iOS wheel style, slides in after tapping Agregar */}
               {showScheduleFor === poi.id && !isSaved && (
-                <div className="mb-3 bg-gray-50 rounded-2xl p-3 border border-gray-200">
-                  <p className="text-[10px] font-bold text-[#253884] uppercase tracking-wider mb-2 flex items-center gap-1">
-                    <Calendar size={11} strokeWidth={2} /> Elige tu horario
+                <div className="mb-3 bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                  <p className="text-[10px] font-bold text-[#253884] uppercase tracking-wider px-3 pt-2.5 pb-1 flex items-center gap-1">
+                    <Calendar size={11} strokeWidth={2} /> Elige día y hora
                   </p>
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {VISIT_DAYS.slice(0, 3).map(d => (
-                      <button key={d.text}
-                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: d.text, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.day === d.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
-                      >{d.label}</button>
-                    ))}
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {VISIT_TIMES.map(t => (
-                      <button key={t.text}
-                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: t.text } }))}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.time === t.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
-                      >{t.label}</button>
-                    ))}
+                  <div className="flex border-t border-gray-100">
+                    <div className="flex-1 border-r border-gray-100">
+                      <WheelPicker
+                        items={VISIT_DAYS}
+                        value={poiSchedules[poi.id]?.day ?? VISIT_DAYS[0].text}
+                        onChange={v => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: v, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <WheelPicker
+                        items={VISIT_TIMES}
+                        value={poiSchedules[poi.id]?.time ?? VISIT_TIMES[0].text}
+                        onChange={v => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: v } }))}
+                      />
+                    </div>
                   </div>
                 </div>
               )}
