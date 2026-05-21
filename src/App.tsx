@@ -1054,7 +1054,7 @@ export default function App() {
           {/* Card deck — native CSS snap scroll (smooth, same as levels) */}
           <div
             ref={deckScrollRef}
-            className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4 mt-4"
+            className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4 mt-4" style={{ touchAction: "pan-x" }}
             onScroll={() => {
               if (!deckScrollRef.current) return;
               const el = deckScrollRef.current;
@@ -1066,33 +1066,31 @@ export default function App() {
             {/* ── Card 0: Personal passport ── */}
             <div className="snap-center shrink-0 w-[84%] pb-2">
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
-                {/* Header with name + badges */}
-                <div className="flex items-center gap-3 mb-5 pt-1">
-                  <div className="w-14 h-14 rounded-full bg-gray-100 overflow-hidden shrink-0">
+                {/* Header: photo centered, name below */}
+                <div className="flex flex-col items-center mb-5 pt-1">
+                  <div className="w-20 h-20 rounded-full bg-gray-100 overflow-hidden mb-2 ring-4 ring-[#e6eaf8]">
                     <img src={selectedAvatar} className="w-full h-full object-cover" alt="Avatar" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
-                      <p className="text-lg font-heading text-[#253884] leading-tight">{profileName}</p>
-                      {hasSalePlanPlus && (
-                        <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider shrink-0">
-                          <Sparkles size={7} strokeWidth={2} /> Plus
-                        </span>
-                      )}
-                      <span className="bg-[#e6eaf8] text-[#253884] text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">Nv.2</span>
-                    </div>
-                    <p className="font-medium text-xs text-gray-500">{myRoute.length} Paradas · {stampedPOIs.length} Selladas</p>
-                    {activeItineraryId !== null && (() => {
-                      const ait = CURATED_ITINERARIES.find(it => it.id === activeItineraryId);
-                      return ait ? (
-                        <div className="flex items-center gap-1 mt-1">
-                          <span className="bg-indigo-50 border border-indigo-100 text-indigo-700 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-0.5">
-                            <MapPin size={7} strokeWidth={2.5} /> {ait.title}
-                          </span>
-                        </div>
-                      ) : null;
-                    })()}
+                  <p className="text-xl font-heading text-[#253884] leading-tight mb-0.5">{profileName || 'Alex Rivera'}</p>
+                  <div className="flex items-center justify-center gap-1.5 flex-wrap mb-1">
+                    {hasSalePlanPlus && (
+                      <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider">
+                        <Sparkles size={7} strokeWidth={2} /> Plus
+                      </span>
+                    )}
+                    <span className="bg-[#e6eaf8] text-[#253884] text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider">Nv.2</span>
                   </div>
+                  <p className="font-medium text-xs text-gray-500">{myRoute.length} Paradas · {stampedPOIs.length} Selladas</p>
+                  {activeItineraryId !== null && (() => {
+                    const ait = CURATED_ITINERARIES.find(it => it.id === activeItineraryId);
+                    return ait ? (
+                      <div className="flex items-center justify-center gap-1 mt-1">
+                        <span className="bg-indigo-50 border border-indigo-100 text-indigo-700 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-0.5">
+                          <MapPin size={7} strokeWidth={2.5} /> {ait.title}
+                        </span>
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
 
                 {/* Passport grid */}
@@ -1196,30 +1194,12 @@ export default function App() {
                 })()}
 
                 {!hasSalePlanPlus && (
-                  <>
                   <button
                     onClick={() => navigateTo('USER_PLUS')}
-                    className="mt-5 w-full bg-gradient-to-r from-[#253884] to-indigo-500 rounded-2xl p-4 flex items-center gap-3 active:scale-[0.97] transition-transform shadow-md"
+                    className="mt-4 w-full border-2 border-dashed border-indigo-300 rounded-2xl py-3 flex items-center justify-center gap-2 text-indigo-500 font-bold text-sm active:scale-[0.97] transition-transform"
                   >
-                    <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
-                      <Sparkles size={18} strokeWidth={1.5} className="text-white" />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <p className="text-white font-heading text-sm tracking-tight leading-tight">SalePlan<span className="text-yellow-300">+</span></p>
-                      <p className="text-blue-200 text-[9px] font-semibold">10 paradas · 2x XP · Itinerarios expertos</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-yellow-300 font-black text-sm">$3.99</p>
-                      <p className="text-blue-200 text-[9px] font-bold">/mes</p>
-                    </div>
+                    <Sparkles size={14} strokeWidth={2} /> ¿Quieres más espacios?
                   </button>
-                  <button
-                    onClick={() => navigateTo('USER_PLUS')}
-                    className="mt-3 w-full border-2 border-dashed border-indigo-300 rounded-2xl py-2.5 flex items-center justify-center gap-2 text-indigo-500 font-bold text-xs active:scale-[0.97] transition-transform"
-                  >
-                    <Sparkles size={12} strokeWidth={2} /> ¿Quieres más espacios?
-                  </button>
-                  </>
                 )}
               </div>
             </div>
@@ -2180,48 +2160,49 @@ export default function App() {
                 {savedPOIs.includes(poi.id) && <span className="px-2.5 py-1 bg-green-50 text-xs font-bold text-green-700 rounded-lg flex items-center gap-1"><Check size={10} strokeWidth={3} /> En tu ruta</span>}
               </div>
 
-              <p className="text-gray-600 font-medium leading-relaxed mb-10">{poi.description}</p>
+              <p className="text-gray-600 font-medium leading-relaxed mb-6">{poi.description}</p>
 
-              <div className="space-y-4">
-                {/* Date/time planner — available for all events */}
-                <div className={`p-4 rounded-2xl border transition-[border-color,background-color] ${requireScheduleFor === poi.id ? 'bg-red-50 border-red-400 animate-pulse' : poi.isFlash ? 'bg-yellow-50 border-yellow-200' : 'bg-gray-50 border-gray-200'}`}>
-                  <p className={`font-bold mb-3 flex items-center gap-1.5 text-sm ${requireScheduleFor === poi.id ? 'text-red-700' : poi.isFlash ? 'text-yellow-800' : 'text-[#253884]'}`}>
-                    <Calendar size={14} strokeWidth={2} />
-                    {poi.isFlash ? 'Planear Asistencia' : 'Planear mi Visita'}
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <select
-                      value={poiSchedules[poi.id]?.day ?? VISIT_DAYS[0].text}
-                      onChange={e => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: e.target.value, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
-                      className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}
-                    >
-                      {VISIT_DAYS.map(d => <option key={d.text} value={d.text}>{d.label}</option>)}
-                    </select>
-                    <select
-                      value={poiSchedules[poi.id]?.time ?? VISIT_TIMES[0].text}
-                      onChange={e => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: e.target.value } }))}
-                      className={`border-2 rounded-xl px-3 py-2 text-xs font-bold outline-none ${poi.isFlash ? 'bg-white border-yellow-200 text-yellow-900' : 'bg-white border-gray-200 text-[#253884]'}`}
-                    >
-                      {VISIT_TIMES.map(t => <option key={t.text} value={t.text}>{t.label}</option>)}
-                    </select>
+              {/* Experience highlights */}
+              <div className="mb-6 space-y-2">
+                <h4 className="text-sm font-heading text-[#253884] tracking-tight mb-3">¿Qué harás aquí?</h4>
+                {[
+                  poi.isFlash ? `Evento especial · ${poi.date}` : `Visita estimada: ~${[20, 30, 45, 60, 90][poi.id % 5]} minutos`,
+                  poi.isFlash ? poi.description : `Explora ${poi.category.toLowerCase()} en ${poi.location}`,
+                  `Recompensa: ${poi.pts || '1 Sello + 10 pts'}`
+                ].map((line, i) => (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#253884] mt-1.5 shrink-0" />
+                    <p className="text-sm text-gray-600 font-medium leading-snug">{line}</p>
                   </div>
-                  {requireScheduleFor === poi.id && (
-                    <p className="text-xs font-bold text-red-500 mt-2 animate-pulse">
-                      Selecciona un horario antes de agregar
-                    </p>
-                  )}
-                </div>
-
-                <div className="bg-gray-50 p-4 rounded-2xl flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-yellow-600">
-                    <Crown size={22} strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="font-bold text-[#253884]">{poi.isFlash ? 'Recompensa Limitada' : 'Recompensa Actual'}</p>
-                    <p className="text-xs font-medium text-gray-500">{poi.pts || '1 Sello + 10% Descuento'}</p>
-                  </div>
-                </div>
+                ))}
               </div>
+
+              {/* Inline schedule picker — shown when adding */}
+              {!isSaved && (
+                <div className="mb-4 bg-gray-50 rounded-2xl p-4 border border-gray-200">
+                  <p className="text-xs font-bold text-[#253884] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                    <Calendar size={12} strokeWidth={2} /> Elige tu horario
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {VISIT_DAYS.slice(0, 3).map(d => (
+                      <button
+                        key={d.text}
+                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: d.text, time: prev[poi.id]?.time ?? VISIT_TIMES[0].text } }))}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.day === d.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
+                      >{d.label}</button>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {VISIT_TIMES.map(t => (
+                      <button
+                        key={t.text}
+                        onClick={() => setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: prev[poi.id]?.day ?? VISIT_DAYS[0].text, time: t.text } }))}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-[background-color,color,border-color] active:scale-[0.97] ${poiSchedules[poi.id]?.time === t.text ? 'bg-[#253884] text-white border-[#253884]' : 'bg-white text-gray-600 border-gray-200'}`}
+                      >{t.label}</button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Similar places */}
               {(() => {
@@ -2248,14 +2229,13 @@ export default function App() {
               })()}
             </div>
 
-            <div className="fixed bottom-0 w-full max-w-md mx-auto p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 pb-safe flex gap-3">
+            <div className="fixed bottom-0 w-full max-w-md mx-auto px-4 pt-3 pb-safe bg-white/90 backdrop-blur-md border-t border-gray-100">
+              {/* Primary action */}
               <button
                 onClick={() => {
                   if (!isSaved) {
                     if (!poiSchedules[poi.id]) {
-                      setRequireScheduleFor(poi.id);
-                      setTimeout(() => setRequireScheduleFor(null), 1500);
-                      return;
+                      setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text } }));
                     }
                     setSavedPOIs(prev => [...prev, poi.id]);
                     setJustAddedPOI(poi.id);
@@ -2265,7 +2245,7 @@ export default function App() {
                     setSavedPOIs(prev => prev.filter(id => id !== poi.id));
                   }
                 }}
-                className={`flex-1 py-4 font-bold text-lg rounded-2xl shadow-sm transition-[background-color,color] active:scale-[0.97] ${isSaved ? 'bg-gray-100 text-gray-500' : 'bg-[#253884] text-white'}`}
+                className={`w-full py-3.5 font-bold text-base rounded-2xl shadow-sm transition-[background-color,color] active:scale-[0.97] mb-2.5 ${isSaved ? 'bg-gray-100 text-gray-500' : 'bg-[#253884] text-white'}`}
               >
                 {isSaved ? (
                   <span className="flex items-center justify-center gap-2">
@@ -2273,34 +2253,38 @@ export default function App() {
                   </span>
                 ) : 'Agregar a Ruta'}
               </button>
-              <a
-                href={`https://maps.google.com/maps?q=${encodeURIComponent(poi.name + ' ' + poi.location)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 flex items-center justify-center shrink-0 bg-[#e6eaf8] text-[#253884] rounded-2xl active:scale-[0.97] transition-transform"
-              >
-                <MapPin size={18} strokeWidth={1.5} />
-              </a>
-              <a
-                href={`https://api.whatsapp.com/send?text=${encodeURIComponent('¡Visita ' + poi.name + ' en SalePlan! ' + poi.location)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-12 flex items-center justify-center shrink-0 bg-green-500 text-white rounded-2xl active:scale-[0.97] transition-transform"
-              >
-                <MessageCircle size={18} strokeWidth={1.5} />
-              </a>
-              <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: poi.name, text: `¡Te invito a ${poi.name} en SalePlan!`, url: window.location.href });
-                  } else {
-                    navigator.clipboard?.writeText(window.location.href).then(() => showToast('Enlace copiado'));
-                  }
-                }}
-                className="w-12 flex items-center justify-center shrink-0 bg-[#e6eaf8] text-[#253884] rounded-2xl active:scale-[0.97] transition-transform"
-              >
-                <Share2 size={18} strokeWidth={1.5} />
-              </button>
+              {/* Secondary actions */}
+              <div className="flex gap-2 pb-3">
+                <a
+                  href={`https://maps.google.com/maps?q=${encodeURIComponent(poi.name + ' ' + poi.location)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#e6eaf8] text-[#253884] rounded-xl active:scale-[0.97] transition-transform gap-1"
+                >
+                  <MapPin size={16} strokeWidth={1.5} />
+                  <span className="text-[9px] font-bold uppercase tracking-wide">Direcciones</span>
+                </a>
+                <a
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent('¡Visita ' + poi.name + ' en SalePlan! ' + poi.location)}`}
+                  target="_blank" rel="noopener noreferrer"
+                  className="flex-1 flex flex-col items-center justify-center py-2.5 bg-green-500 text-white rounded-xl active:scale-[0.97] transition-transform gap-1"
+                >
+                  <MessageCircle size={16} strokeWidth={1.5} />
+                  <span className="text-[9px] font-bold uppercase tracking-wide">WhatsApp</span>
+                </a>
+                <button
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({ title: poi.name, text: `¡Te invito a ${poi.name} en SalePlan!`, url: window.location.href });
+                    } else {
+                      navigator.clipboard?.writeText(window.location.href).then(() => showToast('Enlace copiado'));
+                    }
+                  }}
+                  className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#e6eaf8] text-[#253884] rounded-xl active:scale-[0.97] transition-transform gap-1"
+                >
+                  <Share2 size={16} strokeWidth={1.5} />
+                  <span className="text-[9px] font-bold uppercase tracking-wide">Compartir</span>
+                </button>
+              </div>
             </div>
           </div>
         </Layout>
