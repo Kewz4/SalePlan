@@ -347,7 +347,7 @@ export default function App() {
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const levelsScrollRef = useRef<HTMLDivElement>(null);
-  const deckScrollRef = useRef<HTMLDivElement>(null);
+
   const [activeItineraryId, setActiveItineraryId] = useState<number | null>(null);
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [profileName, setProfileName] = useState('Alex Rivera');
@@ -360,8 +360,7 @@ export default function App() {
   const [hasSalePlanPlus, setHasSalePlanPlus] = useState(false);
   const [showPlusAnimation, setShowPlusAnimation] = useState(false);
   const [stampModalSuccess, setStampModalSuccess] = useState(false);
-  const [activePassportIdx, setActivePassportIdx] = useState(0);
-  const [deckW] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 390);
+  const [selectedItineraryId, setSelectedItineraryId] = useState<number | null>(null);
   const [premiumEventPreviewId, setPremiumEventPreviewId] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [isOnline, setIsOnline] = useState(() => typeof navigator !== 'undefined' ? navigator.onLine : true);
@@ -374,8 +373,7 @@ export default function App() {
   const logoTapRef = useRef(0);
   const logoTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const deckScrollEndRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const deckTouchRef = useRef({ x: 0, t: 0 });
+  const deckScrollEndRef = useRef<ReturnType<typeof setTimeout> | null>(null); // kept for cleanup safety
   const [showScheduleFor, setShowScheduleFor] = useState<number | null>(null);
   const poiPickerRef = useRef({ day: VISIT_DAYS[0].text, time: VISIT_TIMES[0].text });
   const [itinerarySetupId, setItinerarySetupId] = useState<number | null>(null);
@@ -1106,48 +1104,16 @@ export default function App() {
     const occupiedCells = myRoute.reduce((sum, poi) => sum + poiW(poi), 0);
     const emptyCells = Math.max(0, totalSlots - occupiedCells);
 
-    const totalCards = hasSalePlanPlus ? 1 + CURATED_ITINERARIES.length : 2;
-
     return (
       <Layout bgClass="bg-gray-50">
         <div className="flex-1 pb-24 flex flex-col">
           {/* Gradient header */}
           <div className="bg-[#e6eaf8] pt-12 pb-6 rounded-b-[2.5rem] shadow-sm">
             <h2 className="text-3xl font-heading text-[#253884] tracking-tight text-center">Mi Pasaporte</h2>
-
           </div>
 
-          {/* Card deck — CSS snap + JS velocity assist */}
-          <div
-            ref={deckScrollRef}
-            className="flex gap-4 overflow-x-auto no-scrollbar snap-x pb-4 mt-4"
-            style={{ touchAction: "manipulation" }}
-            onTouchStart={e => { deckTouchRef.current = { x: e.touches[0].clientX, t: Date.now() }; }}
-            onTouchEnd={e => {
-              const dx = e.changedTouches[0].clientX - deckTouchRef.current.x;
-              const dt = Date.now() - deckTouchRef.current.t;
-              const vel = Math.abs(dx) / Math.max(dt, 1);
-              if (vel > 0.2 || Math.abs(dx) > 48) {
-                const next = dx < 0
-                  ? Math.min(activePassportIdx + 1, totalCards - 1)
-                  : Math.max(activePassportIdx - 1, 0);
-                setActivePassportIdx(next);
-                (deckScrollRef.current?.children[next] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-              }
-            }}
-            onScroll={() => {
-              if (!deckScrollRef.current) return;
-              const el = deckScrollRef.current;
-              if (deckScrollEndRef.current) clearTimeout(deckScrollEndRef.current);
-              deckScrollEndRef.current = setTimeout(() => {
-                const maxScroll = el.scrollWidth - el.clientWidth;
-                const idx = maxScroll > 0 ? Math.round((el.scrollLeft / maxScroll) * (totalCards - 1)) : 0;
-                if (idx !== activePassportIdx) setActivePassportIdx(idx);
-              }, 150);
-            }}
-          >
-            {/* ── Card 0: Personal passport ── */}
-            <div className="snap-center shrink-0 w-[84%] pb-2" style={{ scrollSnapStop: 'always' }}>
+          {/* ── Personal passport card ── */}
+          <div className="px-4 mt-4">
               <div className="bg-white rounded-3xl p-5 subtle-shadow card-shadow relative">
                 {/* Header: photo centered, name below */}
                 <div className="flex flex-col items-center mb-5 pt-1">
@@ -1285,103 +1251,94 @@ export default function App() {
                   </button>
                 )}
               </div>
-            </div>
-
-            {/* ── Cards 1-4: Itinerary passports or Plus promo ── */}
-            {hasSalePlanPlus ? CURATED_ITINERARIES.map(it => {
-              const itStops = POIS.filter(p => it.stops.includes(p.id));
-              return (
-                <div key={it.id} className="snap-center shrink-0 w-[84%] pb-2" style={{ scrollSnapStop: 'always' }}>
-                  <div className={`bg-gradient-to-br ${it.color} rounded-3xl p-3 relative overflow-hidden shadow-xl flex flex-col`} >
-                    {/* Month badge */}
-                    <div className="absolute top-4 right-4 bg-white/20 border border-white/30 px-2.5 py-1 rounded-full">
-                      <p className="text-white text-[9px] font-black uppercase tracking-wider">{it.month}</p>
-                    </div>
-                    {/* Expert */}
-                    <div className="flex items-center gap-2 mb-2 pr-20">
-                      <img src={it.expert.avatar} className="w-8 h-8 rounded-full border-2 border-white/60 shrink-0 shadow-sm" alt={it.expert.name} />
-                      <div className="min-w-0">
-                        <p className="text-white font-bold text-sm leading-tight">{it.expert.name}</p>
-                        <p className="text-white/70 text-[10px] font-bold">{it.expert.role}</p>
-                      </div>
-                    </div>
-                    {/* Title & description */}
-                    <div className="mb-3">
-                      <h3 className="text-white font-heading text-lg tracking-tight leading-tight">{it.title}</h3>
-                      <p className="text-white/75 text-[10px] font-medium mt-1 leading-snug line-clamp-2">{it.description}</p>
-                    </div>
-                    {/* Reward bar */}
-                    <div className="bg-white/20 border border-white/20 rounded-xl px-3 py-1.5 mb-3 flex items-center justify-between">
-                      <span className="text-white/80 text-[10px] font-bold">Completar itinerario</span>
-                      <span className="text-yellow-300 font-black text-sm">+{it.reward} pts</span>
-                    </div>
-                    {/* Stop grid — tap to open immersive stop view */}
-                    <div className="grid grid-cols-2 gap-1.5 mb-3 mt-2">
-                      {itStops.slice(0, 6).map(poi => (
-                        <button
-                          key={poi.id}
-                          style={{ touchAction: 'manipulation' }}
-                          onClick={() => setItineraryStopView({ poiId: poi.id, itId: it.id })}
-                          className="bg-white/20 border border-white/10 rounded-xl h-[48px] flex flex-row items-center gap-2 px-2 active:scale-[0.95] transition-transform text-left"
-                        >
-                          <PoiIcon id={poi.id} size={14} strokeWidth={1.5} className="text-white shrink-0" />
-                          <p className="text-white text-[9px] font-bold leading-tight line-clamp-2">{poi.name}</p>
-                        </button>
-                      ))}
-                    </div>
-                    {/* CTA — opens schedule-per-stop setup */}
-                    <button
-                      onClick={() => {
-                        const init: Record<number, { day: string; time: string }> = {};
-                        it.stops.forEach((id, i) => {
-                          init[id] = { day: VISIT_DAYS[0].text, time: VISIT_TIMES[i % VISIT_TIMES.length].text };
-                        });
-                        itinerarySchedulesRef.current = init;
-                        setItinerarySetupId(it.id);
-                      }}
-                      className="w-full py-2.5 bg-white text-[#253884] rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mt-1"
-                    >
-                      Usar este Itinerario →
-                    </button>
-                  </div>
-                </div>
-              );
-            }) : (
-              /* Non-Plus: teaser card */
-              <div className="snap-center shrink-0 w-[84%] pb-2" style={{ scrollSnapStop: 'always' }}>
-                <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center justify-center text-center" style={{ minHeight: 320 }}>
-                  <div className="absolute inset-0 opacity-10 pointer-events-none">
-                    {[...Array(8)].map((_, i) => (
-                      <div key={i} className="absolute rounded-full bg-white" style={{ width: 4 + (i % 3) * 8, height: 4 + (i % 3) * 8, top: `${(i * 23) % 100}%`, left: `${(i * 37) % 100}%`, opacity: 0.3 }} />
-                    ))}
-                  </div>
-                  <Sparkles size={44} className="text-yellow-300 mb-4 relative z-10" />
-                  <h3 className="text-white font-heading text-2xl tracking-tight mb-2 relative z-10">4 Itinerarios<br />de Expertos</h3>
-                  <p className="text-blue-200 text-sm font-medium mb-2 leading-relaxed relative z-10 max-w-[240px] mx-auto">Nuevos cada mes. Curados por expertos en gastronomía, cultura, naturaleza e historia.</p>
-                  <p className="text-blue-300 text-xs font-bold uppercase tracking-wider mb-6 relative z-10">Mayo 2026</p>
-                  <button
-                    onClick={() => navigateTo('USER_PLUS')}
-                    className="relative z-10 w-full py-3.5 bg-yellow-400 text-yellow-900 rounded-2xl font-black text-sm active:scale-[0.97] transition-transform shadow-lg"
-                  >
-                    Desbloquear · SalePlan+ $3.99/mes
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Dot indicators */}
-          <div className="flex justify-center items-center gap-2 py-3">
-            {Array.from({ length: totalCards }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setActivePassportIdx(i);
-                  (deckScrollRef.current?.children[i] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }}
-                className={`rounded-full transition-all duration-300 ${i === activePassportIdx ? 'w-6 h-2 bg-[#253884]' : 'w-2 h-2 bg-gray-300'}`}
-              />
-            ))}
+          {/* ── Itinerarios de Expertos — story rings ── */}
+          <div className="mt-5 mb-1">
+            <div className="flex items-center justify-between px-5 mb-3">
+              <div>
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Itinerarios de Expertos</h3>
+                <p className="text-[10px] text-gray-400 font-medium mt-0.5">Curados especialmente · Mayo 2026</p>
+              </div>
+              {!hasSalePlanPlus && (
+                <button onClick={() => navigateTo('USER_PLUS')} className="text-[10px] font-black text-indigo-500 uppercase tracking-wider active:opacity-70">
+                  Desbloquear
+                </button>
+              )}
+            </div>
+
+            <div className="flex gap-5 overflow-x-auto no-scrollbar px-5 pb-2">
+              {CURATED_ITINERARIES.map(it => {
+                const isLocked = !hasSalePlanPlus;
+                const isActive = activeItineraryId === it.id;
+                return (
+                  <button
+                    key={it.id}
+                    style={{ touchAction: 'manipulation' }}
+                    onClick={() => isLocked ? navigateTo('USER_PLUS') : setSelectedItineraryId(it.id)}
+                    className="flex flex-col items-center gap-1.5 shrink-0 active:scale-[0.93] transition-transform"
+                  >
+                    {/* Gradient ring */}
+                    <div
+                      className={`rounded-full bg-gradient-to-br ${it.color} ${isActive ? 'ring-[3px] ring-offset-2 ring-[#253884]' : ''}`}
+                      style={{ padding: 2.5 }}
+                    >
+                      <div className="w-[68px] h-[68px] rounded-full bg-white p-[2px] relative overflow-hidden">
+                        <img
+                          src={it.expert.avatar}
+                          className={`w-full h-full rounded-full object-cover ${isLocked ? 'opacity-40 blur-[1px]' : ''}`}
+                          alt={it.expert.name}
+                        />
+                        {isLocked && (
+                          <div className="absolute inset-0 rounded-full flex items-center justify-center">
+                            <div className="w-7 h-7 bg-[#253884]/80 rounded-full flex items-center justify-center">
+                              <Sparkles size={14} className="text-yellow-300" />
+                            </div>
+                          </div>
+                        )}
+                        {isActive && (
+                          <div className="absolute bottom-1 right-1 w-5 h-5 bg-[#253884] rounded-full flex items-center justify-center shadow-md ring-2 ring-white">
+                            <Check size={10} strokeWidth={3} className="text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {/* Label */}
+                    <p className="text-[9px] font-bold text-[#253884] text-center max-w-[72px] leading-tight line-clamp-2">{it.title}</p>
+                    {/* Badge */}
+                    <span className={`text-[8px] font-black px-2 py-0.5 rounded-full leading-none ${isActive ? 'bg-[#253884] text-white' : isLocked ? 'bg-gray-100 text-gray-400' : 'bg-yellow-100 text-yellow-700'}`}>
+                      {isActive ? '● Activo' : isLocked ? '🔒 Plus' : `+${it.reward} pts`}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active itinerary progress bar */}
+            {activeItineraryId !== null && (() => {
+              const ait = CURATED_ITINERARIES.find(it => it.id === activeItineraryId);
+              if (!ait) return null;
+              const completed = ait.stops.filter(id => stampedPOIs.includes(id)).length;
+              const pct = Math.round((completed / ait.stops.length) * 100);
+              return (
+                <div className={`mx-5 mt-3 bg-gradient-to-r ${ait.color} rounded-2xl p-3 flex items-center gap-3`}>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white/70 text-[9px] font-bold uppercase tracking-wider">Itinerario activo</p>
+                    <p className="text-white font-bold text-xs leading-tight">{ait.title}</p>
+                    <div className="mt-1.5 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                      <div className="h-full bg-white rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+                    </div>
+                    <p className="text-white/60 text-[9px] font-medium mt-0.5">{completed} / {ait.stops.length} paradas selladas</p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedItineraryId(ait.id)}
+                    className="bg-white/20 border border-white/30 text-white text-[9px] font-bold px-3 py-1.5 rounded-xl active:scale-[0.97] shrink-0"
+                  >
+                    Ver →
+                  </button>
+                </div>
+              );
+            })()}
           </div>
 
           {/* Ruta de Hoy — always visible */}
@@ -1505,6 +1462,113 @@ export default function App() {
               })()}
             </div>
 
+          {/* Full-screen itinerary detail — opens from story ring tap */}
+          <AnimatePresence>
+            {selectedItineraryId !== null && (() => {
+              const it = CURATED_ITINERARIES.find(x => x.id === selectedItineraryId);
+              if (!it) return null;
+              const itStops = POIS.filter(p => it.stops.includes(p.id));
+              return (
+                <motion.div
+                  key={`detail-${selectedItineraryId}`}
+                  initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                  transition={{ type: 'spring', damping: 32, stiffness: 280 }}
+                  className="fixed inset-0 z-40 overflow-y-auto bg-gray-50"
+                >
+                  {/* Hero gradient header */}
+                  <div className={`bg-gradient-to-b ${it.color} pt-12 pb-10 px-5 relative overflow-hidden`}>
+                    <div className="absolute inset-0 opacity-10 pointer-events-none">
+                      {[...Array(6)].map((_, i) => (
+                        <div key={i} className="absolute rounded-full bg-white" style={{ width: 40 + (i % 3) * 30, height: 40 + (i % 3) * 30, top: `${(i * 30) % 100}%`, left: `${(i * 45) % 100}%`, opacity: 0.4 }} />
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setSelectedItineraryId(null)}
+                      className="flex items-center gap-1.5 text-white/80 mb-6 active:opacity-70 relative z-10"
+                    >
+                      <ChevronLeft size={18} strokeWidth={2.5} />
+                      <span className="text-sm font-bold">Mi Pasaporte</span>
+                    </button>
+                    <div className="flex items-center gap-4 mb-5 relative z-10">
+                      <img src={it.expert.avatar} className="w-16 h-16 rounded-full border-[3px] border-white/60 shadow-xl shrink-0" alt={it.expert.name} />
+                      <div>
+                        <p className="text-white font-heading text-xl leading-tight">{it.expert.name}</p>
+                        <p className="text-white/70 text-xs font-medium">{it.expert.role}</p>
+                      </div>
+                    </div>
+                    <h2 className="text-white font-heading text-3xl tracking-tight mb-2 relative z-10">{it.title}</h2>
+                    <p className="text-white/80 text-sm font-medium leading-relaxed mb-5 relative z-10">{it.description}</p>
+                    <div className="flex flex-wrap gap-2 relative z-10">
+                      <span className="bg-yellow-400 text-yellow-900 font-black text-sm px-3 py-1.5 rounded-full">+{it.reward} pts</span>
+                      <span className="bg-white/25 text-white text-xs font-bold px-3 py-1.5 rounded-full">{itStops.length} paradas</span>
+                      <span className="bg-white/25 text-white text-xs font-bold px-3 py-1.5 rounded-full">{it.month}</span>
+                    </div>
+                  </div>
+
+                  {/* Stops list */}
+                  <div className="px-4 py-5">
+                    <h3 className="text-sm font-heading text-[#253884] tracking-tight mb-3">Paradas del Itinerario</h3>
+                    <div className="space-y-2">
+                      {itStops.map((poi, idx) => {
+                        const isStamped = stampedPOIs.includes(poi.id);
+                        return (
+                          <button
+                            key={poi.id}
+                            style={{ touchAction: 'manipulation' }}
+                            onClick={() => setItineraryStopView({ poiId: poi.id, itId: it.id })}
+                            className="w-full flex items-center gap-3 bg-white rounded-2xl p-3.5 active:scale-[0.98] transition-transform text-left subtle-shadow"
+                          >
+                            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${it.color} flex items-center justify-center shrink-0 relative`}>
+                              <PoiIcon id={poi.id} size={18} strokeWidth={1.5} className="text-white" />
+                              {isStamped && (
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow">
+                                  <Check size={8} strokeWidth={3} className="text-green-500" />
+                                </div>
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <p className="font-bold text-[#253884] text-sm">{poi.name}</p>
+                              <p className="text-xs text-gray-400 font-medium">{poi.location}</p>
+                            </div>
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                              <span className="text-gray-300 text-[9px] font-bold">#{idx + 1}</span>
+                              <ChevronRight size={14} className="text-gray-300" />
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="px-4 pb-10">
+                    {activeItineraryId === it.id ? (
+                      <button
+                        onClick={() => { setActiveItineraryId(null); setSelectedItineraryId(null); }}
+                        className="w-full py-4 bg-gray-100 text-gray-500 rounded-2xl font-bold text-base active:scale-[0.97] transition-transform"
+                      >
+                        Desactivar Itinerario
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          const init: Record<number, { day: string; time: string }> = {};
+                          it.stops.forEach((id, i) => { init[id] = { day: VISIT_DAYS[0].text, time: VISIT_TIMES[i % VISIT_TIMES.length].text }; });
+                          itinerarySchedulesRef.current = init;
+                          setSelectedItineraryId(null);
+                          setItinerarySetupId(it.id);
+                        }}
+                        className={`w-full py-4 bg-gradient-to-r ${it.color} text-white rounded-2xl font-bold text-base active:scale-[0.97] transition-transform shadow-lg`}
+                      >
+                        Usar este Itinerario →
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })()}
+          </AnimatePresence>
+
           {/* Itinerary setup modal — pick time for each stop */}
           <AnimatePresence>
             {itinerarySetupId !== null && (() => {
@@ -1575,11 +1639,7 @@ export default function App() {
                           setPoiSchedules(prev => ({ ...prev, ...itinerarySchedulesRef.current }));
                           setActiveItineraryId(it.id);
                           setItinerarySetupId(null);
-                          setActivePassportIdx(0);
                           haptic([10, 20, 10]);
-                          setTimeout(() => {
-                            (deckScrollRef.current?.children[0] as HTMLElement)?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                          }, 100);
                         }}
                         className={`w-full py-3.5 bg-gradient-to-r ${it.color} text-white rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform shadow-md mb-2`}
                       >
