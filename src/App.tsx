@@ -396,11 +396,20 @@ export default function App() {
   const itinerarySchedulesRef = useRef<Record<number, { day: string; time: string }>>({});
   const [itineraryStopView, setItineraryStopView] = useState<{ poiId: number; itId: number } | null>(null);
   const [itineraryPreviewId, setItineraryPreviewId] = useState<number | null>(null);
+  const [registerPhone, setRegisterPhone] = useState('');
+  const [registerStep, setRegisterStep] = useState<'form' | 'otp'>('form');
+  const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
+  const [otpError, setOtpError] = useState(false);
+  const imagePreloadRef = useRef<HTMLImageElement[]>([]);
 
   React.useEffect(() => {
-    [...AVATARS, ...Object.values(ICONS)].forEach(src => {
+    // Preload all images eagerly so browser caches them before first use
+    const toPreload = [...AVATARS, ...Object.values(ICONS), ...Object.values(POI_IMAGE_MAP),
+      ...CURATED_ITINERARIES.map(it => it.expert.avatar)];
+    toPreload.forEach(src => {
       const img = new Image();
       img.src = src;
+      imagePreloadRef.current.push(img); // keep refs alive to prevent GC / cache eviction
     });
 
     const handleHashChange = () => {
@@ -631,7 +640,7 @@ export default function App() {
   const renderStaticPage = (title: string, content: string) => (
     <Layout bgClass="bg-white halftone-bg-light">
       <div className="flex-1 p-6 flex flex-col pt-12 pb-24 relative max-w-lg mx-auto">
-        <button onClick={() => navigateTo('ONBOARDING')} className="absolute top-4 left-4 bg-white border border-gray-100 w-12 h-12 rounded-2xl flex justify-center items-center shadow-sm z-20 text-[#253884] active:scale-[0.97] transition-transform">
+        <button onClick={() => navigateTo('ONBOARDING')} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }} className="absolute left-4 bg-white border border-gray-100 w-12 h-12 rounded-2xl flex justify-center items-center shadow-sm z-20 text-[#253884] active:scale-[0.97] transition-transform">
           <ChevronLeft size={22} strokeWidth={2} />
         </button>
 
@@ -849,7 +858,7 @@ export default function App() {
   const renderUserLogin = () => (
     <Layout bgClass="bg-white halftone-bg-light">
       <div className="flex-1 p-6 flex flex-col pt-12 pb-24 relative">
-        <button onClick={() => navigateTo('ONBOARDING')} className="absolute top-4 left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
+        <button onClick={() => navigateTo('ONBOARDING')} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }} className="absolute left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
           <ChevronLeft size={20} strokeWidth={2} />
         </button>
 
@@ -865,48 +874,128 @@ export default function App() {
     </Layout>
   );
 
-  const renderUserRegister = () => (
-    <Layout bgClass="bg-white halftone-bg-light">
-      <div className="flex-1 p-6 pb-24 relative flex flex-col items-center pt-16">
-        <button onClick={() => navigateTo('ONBOARDING')} className="absolute top-4 left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
-          <ChevronLeft size={20} strokeWidth={2} />
-        </button>
+  const renderUserRegister = () => {
+    const handleOtpDigit = (idx: number, val: string) => {
+      if (!/^\d*$/.test(val)) return;
+      const next = [...otpDigits];
+      next[idx] = val.slice(-1);
+      setOtpDigits(next);
+      setOtpError(false);
+      if (val && idx < 5) {
+        const nextInput = document.getElementById(`otp-${idx + 1}`);
+        (nextInput as HTMLInputElement)?.focus();
+      }
+    };
+    const handleOtpVerify = () => {
+      const code = otpDigits.join('');
+      if (code.length < 6) { setOtpError(true); return; }
+      // Demo: any 6-digit code is valid
+      handleLoggedAction('USER_ONBOARDING_PREFS');
+      setRegisterStep('form');
+      setOtpDigits(['', '', '', '', '', '']);
+    };
+    return (
+      <Layout bgClass="bg-white halftone-bg-light">
+        <div className="flex-1 p-6 pb-24 relative flex flex-col items-center" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 4rem)' }}>
+          <button
+            onClick={() => registerStep === 'otp' ? setRegisterStep('form') : navigateTo('ONBOARDING')}
+            style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }}
+            className="absolute left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform"
+          >
+            <ChevronLeft size={20} strokeWidth={2} />
+          </button>
 
-        <h1 className="text-4xl font-heading mb-6 text-center text-[#253884] tracking-tight">Crear Perfil</h1>
+          <AnimatePresence mode="wait">
+            {registerStep === 'form' ? (
+              <motion.div key="form" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.2 }} className="w-full">
+                <h1 className="text-4xl font-heading mb-6 text-center text-[#253884] tracking-tight">Crear Perfil</h1>
+                <div className="bg-white p-8 rounded-3xl subtle-shadow w-full card-shadow">
+                  <div className="space-y-4">
+                    <input type="text" placeholder="Nombre o Apodo" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
+                    <input type="email" placeholder="Correo Electrónico" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
+                    <div className="flex gap-2">
+                      <div className="bg-gray-50 border-2 border-transparent rounded-xl px-4 flex items-center text-gray-500 font-bold text-sm shrink-0">+503</div>
+                      <input
+                        type="tel"
+                        inputMode="numeric"
+                        placeholder="Teléfono*"
+                        value={registerPhone}
+                        onChange={e => setRegisterPhone(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                        className={`flex-1 px-5 py-4 bg-gray-50 border-2 focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400 ${registerPhone === '' && otpError ? 'border-red-400' : 'border-transparent focus:border-[#253884]'}`}
+                      />
+                    </div>
+                    {registerPhone === '' && otpError && <p className="text-red-500 text-xs font-bold -mt-2 px-1">El teléfono es obligatorio para verificar tu cuenta</p>}
+                    <input type="password" placeholder="Contraseña Segura" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
 
-        <div className="bg-white p-8 rounded-3xl subtle-shadow w-full card-shadow">
-          <div className="space-y-4">
-            <input type="text" placeholder="Nombre o Apodo" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
-            <input type="email" placeholder="Correo Electrónico" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
-            <div className="flex gap-2">
-              <div className="bg-gray-50 border-2 border-transparent rounded-xl px-4 flex items-center text-gray-500 font-bold text-sm shrink-0">+503</div>
-              <input type="tel" placeholder="Teléfono (opcional)" className="flex-1 px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
-            </div>
-            <input type="password" placeholder="Contraseña Segura" className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#253884] focus:bg-white rounded-xl font-medium text-[#253884] outline-none transition-[border-color,background-color] placeholder:text-gray-400" />
+                    <div className="pt-6 border-t border-gray-100">
+                      <p className="font-bold text-center mb-4 text-sm text-gray-500">¿Qué avatar te representa?</p>
+                      <div className="flex gap-4 p-2 overflow-x-auto no-scrollbar snap-x snap-mandatory">
+                        {AVATARS.map((avatar, idx) => (
+                          <button key={idx} onClick={() => setSelectedAvatar(avatar)}
+                            className={`flex-none w-20 h-20 rounded-full border-4 snap-center transition-[transform,border-color,opacity] duration-200 overflow-hidden ${selectedAvatar === avatar ? 'border-[#253884] scale-110 shadow-lg' : 'border-transparent opacity-60 scale-95 bg-gray-50'}`}>
+                            <img src={avatar} alt={`Avatar ${idx}`} className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-            <div className="pt-6 border-t border-gray-100">
-              <p className="font-bold text-center mb-4 text-sm text-gray-500">¿Qué avatar te representa?</p>
-              <div className="flex gap-4 p-2 overflow-x-auto no-scrollbar snap-x snap-mandatory">
-                {AVATARS.map((avatar, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedAvatar(avatar)}
-                    className={`flex-none w-20 h-20 rounded-full border-4 snap-center transition-[transform,border-color,opacity] duration-200 overflow-hidden ${selectedAvatar === avatar ? 'border-[#253884] scale-110 shadow-lg' : 'border-transparent opacity-60 scale-95 bg-gray-50'}`}
-                  >
-                    <img src={avatar} alt={`Avatar ${idx}`} className="w-full h-full object-cover" />
+                    <button
+                      onClick={() => { if (!registerPhone) { setOtpError(true); return; } setOtpError(false); setOtpDigits(['','','','','','']); setRegisterStep('otp'); }}
+                      className="w-full py-4 bg-[#253884] text-white font-bold text-lg rounded-xl mt-6 subtle-shadow active:scale-[0.97] transition-transform uppercase"
+                    >
+                      Continuar
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div key="otp" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="w-full">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-[#e6eaf8] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg viewBox="0 0 24 24" className="w-8 h-8 fill-[#253884]"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  </div>
+                  <h1 className="text-3xl font-heading text-[#253884] tracking-tight mb-2">Verificar Teléfono</h1>
+                  <p className="text-gray-500 font-medium text-sm">Enviamos un código a</p>
+                  <p className="text-[#253884] font-bold text-base">+503 {registerPhone}</p>
+                  <p className="text-gray-400 text-xs font-medium mt-1">(Demo: cualquier 6 dígitos)</p>
+                </div>
+
+                <div className="bg-white p-8 rounded-3xl subtle-shadow card-shadow">
+                  <div className="flex justify-center gap-3 mb-6">
+                    {otpDigits.map((d, i) => (
+                      <input
+                        key={i}
+                        id={`otp-${i}`}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={d}
+                        onChange={e => handleOtpDigit(i, e.target.value)}
+                        onKeyDown={e => {
+                          if (e.key === 'Backspace' && !otpDigits[i] && i > 0) {
+                            const prev = document.getElementById(`otp-${i - 1}`);
+                            (prev as HTMLInputElement)?.focus();
+                          }
+                        }}
+                        className={`w-12 h-14 text-center text-2xl font-black rounded-2xl border-2 outline-none transition-[border-color,background-color] ${d ? 'border-[#253884] bg-[#e6eaf8] text-[#253884]' : otpError ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50 text-gray-400'}`}
+                      />
+                    ))}
+                  </div>
+                  {otpError && <p className="text-red-500 text-xs font-bold text-center mb-4">Ingresa los 6 dígitos del código</p>}
+                  <button onClick={handleOtpVerify} className="w-full py-4 bg-[#253884] text-white font-bold text-lg rounded-xl subtle-shadow active:scale-[0.97] transition-transform uppercase">
+                    Verificar y Continuar
                   </button>
-                ))}
-              </div>
-            </div>
-
-            <button onClick={() => handleLoggedAction('USER_ONBOARDING_PREFS')} className="w-full py-4 bg-[#253884] text-white font-bold text-lg rounded-xl mt-6 subtle-shadow active:scale-[0.97] transition-transform uppercase">
-              Todo Listo
-            </button>
-          </div>
+                  <button onClick={() => setOtpDigits(['','','','','',''])} className="w-full py-3 text-gray-400 font-bold text-sm mt-2 active:opacity-70">
+                    Reenviar código
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  };
 
   const renderUserOnboardingPrefs = () => {
     const toggleCategory = (id: string) => {
@@ -2233,7 +2322,7 @@ export default function App() {
   const renderCommerceLogin = () => (
     <Layout bgClass="bg-[#253884]">
       <div className="flex-1 p-6 flex flex-col pt-12 pb-24 relative text-white">
-        <button onClick={() => navigateTo('ONBOARDING')} className="absolute top-4 left-4 bg-white/10 border border-white/20 w-10 h-10 rounded-full flex justify-center items-center z-20 text-white active:scale-[0.97] transition-transform">
+        <button onClick={() => navigateTo('ONBOARDING')} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }} className="absolute left-4 bg-white/10 border border-white/20 w-10 h-10 rounded-full flex justify-center items-center z-20 text-white active:scale-[0.97] transition-transform">
           <ChevronLeft size={20} strokeWidth={2} />
         </button>
 
@@ -2273,7 +2362,7 @@ export default function App() {
     <Layout bgClass="bg-gray-50">
       <div className="flex-1 flex flex-col w-full h-full pb-10">
         {/* Header card */}
-        <div className="bg-gradient-to-br from-[#253884] to-blue-800 p-6 pt-12 relative z-20 shadow-md">
+        <div className="bg-gradient-to-br from-[#253884] to-blue-800 px-6 pb-6 relative z-20 shadow-md" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
           <div className="flex justify-between items-start mb-6 relative z-10">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20">
@@ -2529,7 +2618,7 @@ export default function App() {
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-              <button onClick={() => window.history.back()} className="absolute top-6 left-6 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-sm active:scale-[0.97] transition-transform z-10">
+              <button onClick={() => window.history.back()} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }} className="absolute left-6 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-sm active:scale-[0.97] transition-transform z-10">
                 <ChevronLeft size={20} strokeWidth={2} className="text-[#253884]" />
               </button>
               <div className={`absolute bottom-5 right-5 z-10 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center border-2 border-white ${poi.color.split(' ')[1]}`}>
@@ -2678,23 +2767,21 @@ export default function App() {
                   </span>
                 ) : 'Agregar a Ruta'}
               </button>
-              {/* Secondary actions */}
+              {/* Secondary actions — icon only */}
               <div className="flex gap-2 pb-3">
                 <a
                   href={`https://maps.google.com/maps?q=${encodeURIComponent(poi.name + ' ' + poi.location)}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#e6eaf8] text-[#253884] rounded-xl active:scale-[0.97] transition-transform gap-1"
+                  className="flex-1 flex items-center justify-center py-3 bg-[#e6eaf8] text-[#253884] rounded-xl active:scale-[0.97] transition-transform"
                 >
-                  <MapPin size={16} strokeWidth={1.5} />
-                  <span className="text-[9px] font-bold uppercase tracking-wide">Direcciones</span>
+                  <MapPin size={18} strokeWidth={1.5} />
                 </a>
                 <a
                   href={`https://api.whatsapp.com/send?text=${encodeURIComponent('¡Visita ' + poi.name + ' en SalePlan! ' + poi.location)}`}
                   target="_blank" rel="noopener noreferrer"
-                  className="flex-1 flex flex-col items-center justify-center py-2.5 bg-green-500 text-white rounded-xl active:scale-[0.97] transition-transform gap-1"
+                  className="flex-1 flex items-center justify-center py-3 bg-green-500 text-white rounded-xl active:scale-[0.97] transition-transform"
                 >
-                  <MessageCircle size={16} strokeWidth={1.5} />
-                  <span className="text-[9px] font-bold uppercase tracking-wide">WhatsApp</span>
+                  <svg viewBox="0 0 24 24" className="w-[18px] h-[18px] fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 </a>
                 <button
                   onClick={() => {
@@ -2704,10 +2791,9 @@ export default function App() {
                       navigator.clipboard?.writeText(window.location.href).then(() => showToast('Enlace copiado'));
                     }
                   }}
-                  className="flex-1 flex flex-col items-center justify-center py-2.5 bg-[#e6eaf8] text-[#253884] rounded-xl active:scale-[0.97] transition-transform gap-1"
+                  className="flex-1 flex items-center justify-center py-3 bg-[#e6eaf8] text-[#253884] rounded-xl active:scale-[0.97] transition-transform"
                 >
-                  <Share2 size={16} strokeWidth={1.5} />
-                  <span className="text-[9px] font-bold uppercase tracking-wide">Compartir</span>
+                  <Share2 size={18} strokeWidth={1.5} />
                 </button>
               </div>
             </div>
@@ -2925,7 +3011,7 @@ export default function App() {
   const renderLoginChoice = () => (
     <Layout bgClass="bg-white halftone-bg-light">
       <div className="flex-1 p-6 flex flex-col pt-12 pb-24 relative">
-        <button onClick={() => navigateTo('ONBOARDING')} className="absolute top-4 left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
+        <button onClick={() => navigateTo('ONBOARDING')} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }} className="absolute left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
           <ChevronLeft size={20} strokeWidth={2} />
         </button>
 
@@ -2974,7 +3060,7 @@ export default function App() {
   const renderRegisterChoice = () => (
     <Layout bgClass="bg-white halftone-bg-light">
       <div className="flex-1 p-6 flex flex-col pt-12 pb-24 relative">
-        <button onClick={() => navigateTo('ONBOARDING')} className="absolute top-4 left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
+        <button onClick={() => navigateTo('ONBOARDING')} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1rem)' }} className="absolute left-4 bg-white border border-gray-200 w-10 h-10 rounded-full flex justify-center items-center subtle-shadow z-20 text-gray-400 active:scale-[0.97] transition-transform">
           <ChevronLeft size={20} strokeWidth={2} />
         </button>
 
@@ -3030,7 +3116,7 @@ export default function App() {
               <div key={i} className="absolute rounded-full bg-white" style={{ width: 4 + (i % 5) * 6, height: 4 + (i % 5) * 6, top: `${(i * 17) % 100}%`, left: `${(i * 23) % 100}%`, opacity: 0.3 + (i % 4) * 0.2 }} />
             ))}
           </div>
-          <button onClick={() => navigateTo(prevScreen === 'USER_PLUS' || prevScreen === 'USER_PAYMENT' ? 'USER_HOME' : prevScreen)} className="absolute top-6 left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
+          <button onClick={() => navigateTo(prevScreen === 'USER_PLUS' || prevScreen === 'USER_PAYMENT' ? 'USER_HOME' : prevScreen)} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }} className="absolute left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
             <ChevronLeft size={20} strokeWidth={2} className="text-white" />
           </button>
           <div className="relative z-10 text-center">
@@ -3254,7 +3340,7 @@ export default function App() {
             <div className="absolute inset-0 opacity-10">
               {[...Array(12)].map((_, i) => <div key={i} className="absolute rounded-full bg-white" style={{ width: 4+(i%4)*8, height: 4+(i%4)*8, top: `${(i*19)%100}%`, left: `${(i*31)%100}%`, opacity: 0.3 }} />)}
             </div>
-            <button onClick={() => navigateTo('USER_PLUS')} className="absolute top-6 left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
+            <button onClick={() => navigateTo('USER_PLUS')} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }} className="absolute left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
               <ChevronLeft size={20} strokeWidth={2} className="text-white" />
             </button>
             <div className="relative z-10 text-center">
@@ -3274,8 +3360,8 @@ export default function App() {
               >
                 <div className="w-10 h-10 flex items-center justify-center shrink-0">
                   {m.id === 'apple' && <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.39-1.32 2.76-2.54 3.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>}
-                  {m.id === 'google' && <span className="font-black text-xl" style={{fontFamily:'sans-serif',background:'linear-gradient(to bottom,#4285F4,#34A853,#FBBC05,#EA4335)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>G</span>}
-                  {m.id === 'paypal' && <svg viewBox="0 0 24 24" className="w-7 h-7"><path fill="#009cde" d="M20.07 7.24A4.37 4.37 0 0 0 16 4.5H9.25a.75.75 0 0 0-.74.63L6.1 18.37a.45.45 0 0 0 .44.52h3.15l.79-5.02-.02.15a.75.75 0 0 1 .74-.63h1.54c3.03 0 5.4-1.23 6.09-4.79.02-.1.04-.2.05-.3a3.2 3.2 0 0 0-.81-1.06z"/><path fill="#012169" d="M9.93 8.05a.65.65 0 0 1 .64-.55h4.07a8.4 8.4 0 0 1 1.32.1 5.56 5.56 0 0 1 .77.2 4.15 4.15 0 0 1 1.34.74 4.14 4.14 0 0 0-4.07-4.04H7.25a.75.75 0 0 0-.74.63L4.1 18.87a.45.45 0 0 0 .44.52h3.37l.84-5.34 1.18-6z"/></svg>}
+                  {m.id === 'google' && <svg viewBox="0 0 48 20" className="h-5 w-auto"><text x="0" y="16" fontFamily="'Product Sans',Arial,sans-serif" fontSize="16" fontWeight="700"><tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">o</tspan><tspan fill="#FBBC05">o</tspan><tspan fill="#4285F4">g</tspan><tspan fill="#34A853">l</tspan><tspan fill="#EA4335">e</tspan></text><text x="26" y="16" fontFamily="'Product Sans',Arial,sans-serif" fontSize="16" fontWeight="500" fill="#5f6368"> Pay</text></svg>}
+                  {m.id === 'paypal' && <svg viewBox="0 0 24 24" className="w-7 h-7"><path fill="white" d="M20.07 7.24A4.37 4.37 0 0 0 16 4.5H9.25a.75.75 0 0 0-.74.63L6.1 18.37a.45.45 0 0 0 .44.52h3.15l.79-5.02-.02.15a.75.75 0 0 1 .74-.63h1.54c3.03 0 5.4-1.23 6.09-4.79.02-.1.04-.2.05-.3a3.2 3.2 0 0 0-.81-1.06z"/><path fill="rgba(255,255,255,0.7)" d="M9.93 8.05a.65.65 0 0 1 .64-.55h4.07a8.4 8.4 0 0 1 1.32.1 5.56 5.56 0 0 1 .77.2 4.15 4.15 0 0 1 1.34.74 4.14 4.14 0 0 0-4.07-4.04H7.25a.75.75 0 0 0-.74.63L4.1 18.87a.45.45 0 0 0 .44.52h3.37l.84-5.34 1.18-6z"/></svg>}
                   {m.id === 'card' && <svg viewBox="0 0 24 24" className="w-7 h-7 fill-gray-600"><rect x="2" y="5" width="20" height="14" rx="2"/><path fill="white" d="M2 9h20v3H2z"/></svg>}
                   {m.id === 'link' && <svg viewBox="0 0 24 24" className="w-7 h-7 stroke-emerald-600 fill-none" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>}
                 </div>
