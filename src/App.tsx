@@ -2648,56 +2648,236 @@ export default function App() {
           )}
 
           {commerceTab === 'CRM' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-5">
-              <div className="relative">
-                <input type="text" placeholder="Buscar contacto..." className="w-full px-5 py-4 bg-white border border-gray-200 text-gray-800 rounded-2xl outline-none placeholder:text-gray-400 focus:border-[#253884] transition-[border-color] font-medium subtle-shadow" />
-                <img src={ICONS.SEARCH} className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 opacity-40" alt="" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-4">
+              {/* Search + filter */}
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <input type="text" placeholder="Buscar cliente..." className="w-full px-4 py-3 bg-white border border-gray-200 text-gray-800 rounded-2xl outline-none placeholder:text-gray-400 focus:border-[#253884] transition-[border-color] font-medium text-sm subtle-shadow" />
+                  <img src={ICONS.SEARCH} className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 opacity-40" alt="" />
+                </div>
+                <button className="px-3 py-3 bg-[#253884] text-white rounded-2xl active:scale-[0.97] transition-transform shrink-0">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-white" strokeWidth="2.5" strokeLinecap="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+                </button>
               </div>
 
-              <div className="bg-[#253884] rounded-3xl card-shadow p-5 text-white overflow-hidden">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles size={16} strokeWidth={1.5} />
-                  <h4 className="font-heading text-lg tracking-tight">Predicciones SalePlan AI</h4>
+              {/* Segment chips */}
+              <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                {['Todos', 'Frecuentes', 'Nuevos', 'En riesgo'].map(chip => (
+                  <button key={chip} className={`flex-none px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider transition-[background-color,color] ${chip === 'Todos' ? 'bg-[#253884] text-white' : 'bg-white border border-gray-200 text-gray-500'}`}>
+                    {chip}
+                  </button>
+                ))}
+              </div>
+
+              {/* Customer segments summary */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: 'Frecuentes', count: 8, color: 'bg-green-50 border-green-100 text-green-700', dot: 'bg-green-500' },
+                  { label: 'Nuevos', count: 5, color: 'bg-blue-50 border-blue-100 text-blue-700', dot: 'bg-blue-500' },
+                  { label: 'En riesgo', count: 3, color: 'bg-red-50 border-red-100 text-red-700', dot: 'bg-red-400' },
+                ].map(seg => (
+                  <div key={seg.label} className={`p-3 rounded-2xl border text-center ${seg.color}`}>
+                    <div className={`w-2 h-2 rounded-full mx-auto mb-1 ${seg.dot}`} />
+                    <p className="font-black text-lg leading-none">{seg.count}</p>
+                    <p className="font-bold text-[8px] uppercase tracking-wider mt-0.5">{seg.label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* AI Predictions with thermometer */}
+              <div className="bg-gradient-to-br from-[#253884] to-indigo-700 rounded-3xl p-5 text-white">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles size={16} strokeWidth={1.5} className="text-yellow-300" />
+                  <h4 className="font-heading text-lg tracking-tight">Visitas Probables Hoy</h4>
                 </div>
-                <p className="text-xs text-blue-200 mb-4 bg-black/10 p-3 rounded-xl border border-white/10 font-medium">Alta probabilidad de visita hoy según rutas activas.</p>
                 <div className="space-y-3">
-                  {[{ name: 'Valentina Cruz', avatar: AVATARS[0], prob: '94%' }, { name: 'Ricardo Morales', avatar: AVATARS[3], prob: '87%' }].map(user => (
-                    <div key={user.name} className="flex items-center gap-3 bg-white/10 p-3 rounded-2xl border border-white/10 cursor-pointer active:scale-[0.98] transition-transform">
-                      <div className="w-10 h-10 rounded-full border-2 border-white/50 overflow-hidden shrink-0">
-                        <img src={user.avatar} className="w-full h-full object-cover" alt="User" />
+                  {[
+                    { name: 'Valentina Cruz', avatar: AVATARS[0], prob: 94 },
+                    { name: 'Ricardo Morales', avatar: AVATARS[3], prob: 87 },
+                    { name: 'Andrés Portillo', avatar: AVATARS[2], prob: 71 },
+                    { name: 'Laura Castillo', avatar: AVATARS[3], prob: 54 },
+                    { name: 'Carlos Ramos', avatar: AVATARS[0], prob: 32 },
+                  ].map(user => {
+                    const heat = user.prob >= 85 ? '#ef4444' : user.prob >= 65 ? '#f97316' : user.prob >= 45 ? '#eab308' : user.prob >= 25 ? '#60a5fa' : '#93c5fd';
+                    return (
+                      <div key={user.name} className="flex items-center gap-3 bg-white/10 p-3 rounded-2xl border border-white/10">
+                        <div className="w-9 h-9 rounded-full border-2 overflow-hidden shrink-0" style={{ borderColor: heat }}>
+                          <img src={user.avatar} className="w-full h-full object-cover" alt="" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-white text-sm leading-tight truncate">{user.name}</p>
+                          <div className="w-full bg-white/10 rounded-full h-1.5 mt-1">
+                            <div className="h-1.5 rounded-full transition-all" style={{ width: `${user.prob}%`, backgroundColor: heat }} />
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <span className="font-black text-sm" style={{ color: heat }}>{user.prob}%</span>
+                          <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent('Hola! Te esperamos en Café Central hoy 🎉')}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
+                            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Contact directory */}
+              <div className="bg-white rounded-3xl subtle-shadow p-5 border border-gray-100">
+                <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                  <h4 className="font-bold text-[#253884] text-sm">Directorio · {CRM_CONTACTS.length}</h4>
+                  <button onClick={() => alert('Descargando CSV...')} className="flex items-center gap-1.5 text-[9px] bg-emerald-600 text-white font-black px-3 py-1.5 rounded-lg uppercase tracking-widest active:scale-[0.97] transition-transform">
+                    <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
+                    Exportar
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {CRM_CONTACTS.slice(0, 8).map(contact => (
+                    <div key={contact.name} className="flex items-center gap-3 p-2 -mx-2 rounded-xl active:scale-[0.98] transition-transform cursor-pointer">
+                      <div className={`w-10 h-10 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-sm ${contact.badge === 'Frecuente' ? 'border-[#253884]' : contact.badge === 'Nuevo' ? 'border-green-400' : 'border-gray-200'} ${!contact.avatar ? 'bg-purple-50 text-purple-700' : ''}`}>
+                        {contact.avatar ? <img src={contact.avatar} className="w-full h-full object-cover" alt="" /> : contact.initial}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-white leading-tight truncate">{user.name}</p>
-                        <p className="text-[9px] text-blue-200 font-bold uppercase truncate mt-0.5">{user.prob} probabilidad</p>
+                        <p className="font-bold text-[#253884] text-sm leading-tight truncate">{contact.name}</p>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">{contact.time}</p>
                       </div>
-                      <button className="bg-white text-[#253884] text-[10px] font-bold px-3 py-1.5 rounded-lg active:scale-[0.97] transition-transform shrink-0">Invitar</button>
+                      {contact.badge && (
+                        <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase ${contact.badge === 'Frecuente' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{contact.badge}</span>
+                      )}
+                      <a href="https://api.whatsapp.com/send?text=Hola!" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="w-7 h-7 bg-green-50 border border-green-200 rounded-full flex items-center justify-center shrink-0 active:scale-[0.97] transition-transform">
+                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-green-600"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                      </a>
+                    </div>
+                  ))}
+                  <button className="w-full py-2.5 bg-gray-50 text-gray-400 font-bold text-xs rounded-xl border border-gray-100 active:scale-[0.97] transition-transform uppercase tracking-wide">
+                    Ver todos ({CRM_CONTACTS.length})
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {commerceTab === 'ANALYTICS' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-5">
+              {/* Date range */}
+              <div className="flex gap-2">
+                {['Hoy', 'Semana', 'Mes', 'Año'].map(r => (
+                  <button key={r} className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-[background-color,color] ${r === 'Mes' ? 'bg-[#253884] text-white' : 'bg-white text-gray-400 border border-gray-100'}`}>{r}</button>
+                ))}
+              </div>
+
+              {/* Revenue chart */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Ingresos Estimados</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-2xl font-heading text-[#253884]">$3,240</p>
+                      <span className="bg-green-100 text-green-700 text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5"><TrendingUp size={9} strokeWidth={2.5} /> +22%</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-gray-400 font-bold">vs mes anterior</p>
+                    <p className="text-lg font-bold text-gray-300">$2,655</p>
+                  </div>
+                </div>
+                {/* Bar chart */}
+                <div className="flex items-end gap-1.5 h-28">
+                  {[
+                    { d: 'L', v: 45 }, { d: 'M', v: 62 }, { d: 'X', v: 38 }, { d: 'J', v: 78 },
+                    { d: 'V', v: 55 }, { d: 'S', v: 92 }, { d: 'D', v: 70 },
+                  ].map((bar, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <div className="w-full rounded-t-lg transition-all" style={{ height: `${bar.v}%`, background: bar.v === 92 ? '#253884' : `rgba(37,56,132,${0.2 + bar.v/200})` }} />
+                      <span className="text-[8px] font-bold text-gray-400">{bar.d}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl subtle-shadow p-5 border border-gray-100">
-                <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-                  <h4 className="font-bold text-[#253884]">Directorio Activo</h4>
-                  <button onClick={() => alert('Descargando lista de contactos en CSV...')} className="text-[9px] bg-green-50 text-green-700 font-bold px-3 py-1.5 rounded-lg border border-green-200 uppercase tracking-widest active:scale-[0.97] transition-transform">
-                    Exportar CSV
-                  </button>
+              {/* Key metrics grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Ticket Promedio', value: '$22.80', delta: '+$3.20', up: true, bg: 'bg-blue-50 border-blue-100', text: 'text-blue-700' },
+                  { label: 'Tasa Retención', value: '73%', delta: '+8%', up: true, bg: 'bg-green-50 border-green-100', text: 'text-green-700' },
+                  { label: 'Nuevos/día', value: '6.4', delta: '+1.2', up: true, bg: 'bg-purple-50 border-purple-100', text: 'text-purple-700' },
+                  { label: 'Sellos/visita', value: '1.8', delta: '+0.3', up: true, bg: 'bg-amber-50 border-amber-100', text: 'text-amber-700' },
+                ].map(m => (
+                  <div key={m.label} className={`p-4 rounded-2xl border ${m.bg}`}>
+                    <p className={`text-[9px] font-black uppercase tracking-wider ${m.text} opacity-70 mb-1`}>{m.label}</p>
+                    <p className={`text-xl font-heading ${m.text}`}>{m.value}</p>
+                    <span className={`text-[9px] font-black flex items-center gap-0.5 ${m.up ? 'text-green-600' : 'text-red-500'} mt-1`}>
+                      <TrendingUp size={9} strokeWidth={2.5} /> {m.delta}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Rating breakdown */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Reseñas</h3>
+                  <div className="flex items-center gap-1">
+                    <svg viewBox="0 0 12 12" className="w-4 h-4 fill-yellow-400"><path d="M6 1l1.39 2.81 3.1.45-2.24 2.18.53 3.1L6 8.15l-2.78 1.46.53-3.1L1.51 4.26l3.1-.45z"/></svg>
+                    <span className="font-black text-[#253884] text-lg">4.8</span>
+                    <span className="text-gray-400 text-xs font-medium">(142)</span>
+                  </div>
                 </div>
-                <div className="space-y-4">
-                  {CRM_CONTACTS.map(contact => (
-                    <div key={contact.name} className="flex items-center gap-3 cursor-pointer p-2 -mx-2 rounded-xl active:scale-[0.98] transition-transform">
-                      <div className={`w-11 h-11 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-lg ${contact.badge === 'Frecuente' ? 'border-[#253884]' : contact.badge === 'Nuevo' ? 'border-green-400' : 'border-gray-100'} ${!contact.avatar ? 'bg-purple-50 text-purple-700 border-purple-200' : ''}`}>
-                        {contact.avatar ? <img src={contact.avatar} className="w-full h-full object-cover" alt="User" /> : contact.initial}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-[#253884] leading-tight truncate">{contact.name}</p>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase truncate tracking-wide">{contact.time}</p>
-                      </div>
-                      {contact.badge && (
-                        <div className={`text-[9px] font-bold px-2 py-1 rounded-lg uppercase flex items-center gap-1 shadow-sm border ${contact.badge === 'Frecuente' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-blue-100 text-blue-800 border-blue-200'}`}>
-                          <Sparkles size={9} strokeWidth={2} /> {contact.badge}
+                <div className="space-y-2">
+                  {[5,4,3,2,1].map(star => {
+                    const pcts = [72, 18, 6, 2, 2];
+                    const pct = pcts[5 - star];
+                    return (
+                      <div key={star} className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-gray-400 w-3 text-right">{star}</span>
+                        <svg viewBox="0 0 12 12" className="w-3 h-3 fill-yellow-400 shrink-0"><path d="M6 1l1.39 2.81 3.1.45-2.24 2.18.53 3.1L6 8.15l-2.78 1.46.53-3.1L1.51 4.26l3.1-.45z"/></svg>
+                        <div className="flex-1 bg-gray-100 rounded-full h-2">
+                          <div className="bg-yellow-400 h-2 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
-                      )}
+                        <span className="text-[9px] font-bold text-gray-400 w-6 text-right">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Top hours heatmap */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Horas Pico</h3>
+                <div className="flex gap-1.5">
+                  {[
+                    { h: '8am', v: 20 }, { h: '9am', v: 35 }, { h: '10am', v: 55 }, { h: '11am', v: 45 },
+                    { h: '12pm', v: 80 }, { h: '1pm', v: 90 }, { h: '2pm', v: 75 }, { h: '3pm', v: 60 },
+                    { h: '4pm', v: 40 }, { h: '5pm', v: 85 }, { h: '6pm', v: 95 }, { h: '7pm', v: 70 },
+                  ].map((h, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <div className="w-full rounded-sm" style={{ height: 40, display: 'flex', alignItems: 'flex-end' }}>
+                        <div className="w-full rounded-sm" style={{ height: `${h.v}%`, background: h.v >= 80 ? '#253884' : h.v >= 60 ? '#6366f1' : h.v >= 40 ? '#a5b4fc' : '#e0e7ff' }} />
+                      </div>
+                      <span className="text-[6px] font-bold text-gray-400">{h.h}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[9px] text-gray-400 font-medium text-center mt-2">Hora más activa: 6 PM</p>
+              </div>
+
+              {/* Competitor benchmark */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Benchmark de Zona</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Tú — Café Central', value: 4.8, max: 5, color: '#253884' },
+                    { label: 'Promedio zona', value: 4.1, max: 5, color: '#93c5fd' },
+                    { label: 'Mejor competidor', value: 4.6, max: 5, color: '#6366f1' },
+                  ].map(c => (
+                    <div key={c.label}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[10px] font-bold text-gray-600">{c.label}</span>
+                        <span className="text-[10px] font-black" style={{ color: c.color }}>{c.value}</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-2">
+                        <div className="h-2 rounded-full" style={{ width: `${(c.value/c.max)*100}%`, backgroundColor: c.color }} />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -2707,33 +2887,142 @@ export default function App() {
 
           {commerceTab === 'CONFIG' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-4">
-              <div className="bg-white rounded-3xl p-6 subtle-shadow card-shadow border border-gray-100">
+              {/* Business profile */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
                 <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Perfil del Negocio</h3>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Nombre Comercial', value: 'Café Central' },
+                    { label: 'Categoría', value: 'Café & Postres' },
+                    { label: 'Administrador', value: 'Juan Pérez' },
+                    { label: 'ID Comercio', value: 'COM-0001', mono: true },
+                    { label: 'Ciudad', value: 'Santa Tecla' },
+                  ].map((f, i, arr) => (
+                    <div key={f.label} className={`flex items-center justify-between py-2.5 ${i < arr.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                      <div>
+                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-wider">{f.label}</p>
+                        <p className={`font-bold text-[#253884] text-sm mt-0.5 ${f.mono ? 'font-mono' : ''}`}>{f.value}</p>
+                      </div>
+                      <button className="w-7 h-7 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center active:scale-[0.97]">
+                        <Pencil size={11} strokeWidth={2} className="text-gray-400" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Business hours */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Horario del Negocio</h3>
+                <div className="space-y-2.5">
+                  {[
+                    { day: 'Lunes – Viernes', hours: '8:00 AM – 8:00 PM', open: true },
+                    { day: 'Sábado', hours: '9:00 AM – 6:00 PM', open: true },
+                    { day: 'Domingo', hours: 'Cerrado', open: false },
+                  ].map(h => (
+                    <div key={h.day} className="flex items-center justify-between py-1.5">
+                      <div>
+                        <p className="text-sm font-bold text-[#253884]">{h.day}</p>
+                        <p className={`text-[10px] font-bold ${h.open ? 'text-gray-400' : 'text-red-400'}`}>{h.hours}</p>
+                      </div>
+                      <div className={`w-10 h-5 rounded-full relative ${h.open ? 'bg-green-400' : 'bg-gray-200'}`}>
+                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${h.open ? 'right-0.5' : 'left-0.5'}`} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Loyalty program settings */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Programa de Lealtad</h3>
                 <div className="space-y-4">
-                  <div className="border-b border-gray-100 pb-4">
-                    <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-1">Nombre Comercial</p>
-                    <p className="text-xl font-heading text-[#253884] tracking-tight">Café Central</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-[#253884]">Puntos por visita</p>
+                      <p className="text-[10px] text-gray-400 font-medium">Actualmente: 50 pts</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button className="w-7 h-7 bg-gray-100 rounded-lg font-black text-gray-600 flex items-center justify-center active:scale-[0.97]">−</button>
+                      <span className="font-black text-[#253884] w-10 text-center">50</span>
+                      <button className="w-7 h-7 bg-[#253884] rounded-lg font-black text-white flex items-center justify-center active:scale-[0.97]">+</button>
+                    </div>
                   </div>
-                  <div className="border-b border-gray-100 pb-4">
-                    <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-1">Administrador</p>
-                    <p className="text-xl font-heading text-[#253884] tracking-tight">Juan Pérez</p>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div>
+                      <p className="text-sm font-bold text-[#253884]">Sello de bienvenida</p>
+                      <p className="text-[10px] text-gray-400 font-medium">Al registrarse en SalePlan</p>
+                    </div>
+                    <div className="w-10 h-5 bg-green-400 rounded-full relative">
+                      <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-[10px] uppercase text-gray-400 tracking-wider mb-1">ID Comercio</p>
-                    <p className="font-bold text-[#253884] font-mono">COM-0001</p>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div>
+                      <p className="text-sm font-bold text-[#253884]">Doble puntos Flash</p>
+                      <p className="text-[10px] text-gray-400 font-medium">En eventos flash activos</p>
+                    </div>
+                    <div className="w-10 h-5 bg-green-400 rounded-full relative">
+                      <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm" />
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* Staff management */}
               <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
-                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-3">Plan Actual</h3>
-                <div className="bg-gradient-to-br from-[#253884] to-blue-700 rounded-2xl p-4 text-white">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-heading text-xl tracking-tight">Plan Pro</p>
-                    <span className="bg-yellow-400 text-yellow-900 text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-wider">Activo</span>
-                  </div>
-                  <p className="text-blue-200 text-xs font-medium">Retos ilimitados · CRM · Predicciones AI</p>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Equipo</h3>
+                  <button className="text-[9px] bg-[#253884] text-white font-black px-3 py-1.5 rounded-lg uppercase tracking-wide active:scale-[0.97] transition-transform">+ Invitar</button>
                 </div>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Juan Pérez', role: 'Administrador', color: 'bg-[#253884]' },
+                    { name: 'María López', role: 'Cajero', color: 'bg-green-500' },
+                  ].map(m => (
+                    <div key={m.name} className="flex items-center gap-3">
+                      <div className={`w-9 h-9 rounded-full ${m.color} flex items-center justify-center font-black text-white text-sm`}>{m.name[0]}</div>
+                      <div className="flex-1">
+                        <p className="font-bold text-[#253884] text-sm">{m.name}</p>
+                        <p className="text-[9px] text-gray-400 font-bold uppercase">{m.role}</p>
+                      </div>
+                      <button className="text-[9px] bg-gray-100 text-gray-500 font-bold px-2 py-1 rounded-lg active:scale-[0.97]">···</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Integrations */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Integraciones</h3>
+                <div className="space-y-3">
+                  {[
+                    { name: 'Menú / Carta digital', icon: '📋', connected: true },
+                    { name: 'Google Maps', icon: '🗺️', connected: true },
+                    { name: 'Instagram', icon: '📸', connected: false },
+                    { name: 'WhatsApp Business', icon: '💬', connected: false },
+                  ].map(int => (
+                    <div key={int.name} className="flex items-center justify-between py-1.5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{int.icon}</span>
+                        <p className="font-bold text-[#253884] text-sm">{int.name}</p>
+                      </div>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase ${int.connected ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
+                        {int.connected ? 'Conectado' : 'Conectar'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Plan + logout */}
+              <div className="bg-gradient-to-br from-[#253884] to-blue-700 rounded-3xl p-5 text-white">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-heading text-xl tracking-tight">Plan Pro</p>
+                  <span className="bg-yellow-400 text-yellow-900 text-[9px] font-black px-2 py-1 rounded-lg uppercase">Activo</span>
+                </div>
+                <p className="text-blue-200 text-xs font-medium mb-4">Retos ilimitados · CRM · Predicciones AI · Analytics</p>
+                <button className="w-full py-2.5 bg-white/20 border border-white/20 rounded-xl font-bold text-xs text-white active:scale-[0.97] transition-transform uppercase tracking-wide">Gestionar Plan</button>
               </div>
 
               <button onClick={() => navigateTo('ONBOARDING')} className="w-full bg-white text-red-600 font-bold rounded-2xl py-4 subtle-shadow border border-red-100 active:scale-[0.97] transition-transform uppercase tracking-wide">
