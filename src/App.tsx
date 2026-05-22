@@ -244,10 +244,14 @@ const LEVELS = [
 ];
 
 const CURATED_ITINERARIES = [
-  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'Desde el mejor café de especialidad hasta pupusas artesanales — recorrido culinario.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500', expert: { name: 'Chef María Martínez', role: 'Chef · Crítica Gastronómica', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' }, reward: 420, month: 'Mayo 2026' },
-  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías contemporáneas y teatro. Circuito cultural completo.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600', expert: { name: 'Andrés Villalba', role: 'Curador · Museo Nacional', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' }, reward: 380, month: 'Mayo 2026' },
-  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza pura.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600', expert: { name: 'Valeria Ortiz', role: 'Guía Ecológica · Bióloga', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' }, reward: 450, month: 'Mayo 2026' },
-  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'Catedral, mercados coloniales y centros culturales del corazón de El Salvador.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600', expert: { name: 'Prof. Jorge Salinas', role: 'Historiador · UTEC', avatar: 'https://randomuser.me/api/portraits/men/75.jpg' }, reward: 400, month: 'Mayo 2026' },
+  { id: 1, title: 'Sabores de la Capital', emoji: '🍽️', description: 'Desde el mejor café de especialidad hasta pupusas artesanales — recorrido culinario.', stops: [1, 3, 6, 10, 21, 23], color: 'from-orange-400 to-red-500', expert: { name: 'Chef María Martínez', role: 'Chef · Crítica Gastronómica', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' }, reward: 420, month: 'Mayo 2026',
+    stopQuotes: { 1: 'El V60 aquí es de otro nivel. Pide el café de Apaneca — es el mejor grano del país.', 3: 'El pan brioche artesanal lo cambia todo. No salgas sin el combo Explorador.', 6: 'El helado de maracuyá es mi secreto capitalino. Perfecto para el calor de mayo.', 10: 'Horno de leña a 400°C, masa fermentada 72h. La pizza napolitana más auténtica de SV.', 21: 'Cuatro generaciones de loroco y chicharrón. Estas pupusas son historia viva.', 23: 'La terraza es perfecta al atardecer. Pide el single origin de Santa Ana.' } },
+  { id: 2, title: 'Arte & Cultura',         emoji: '🎨', description: 'Museos, galerías contemporáneas y teatro. Circuito cultural completo.', stops: [2, 7, 14, 16, 24], color: 'from-purple-500 to-indigo-600', expert: { name: 'Andrés Villalba', role: 'Curador · Museo Nacional', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' }, reward: 380, month: 'Mayo 2026',
+    stopQuotes: { 2: 'La sala contemporánea del piso 2 esconde las piezas más importantes del siglo XX salvadoreño.', 7: 'Los miércoles de función clásica son imperdibles. El teatro tiene una acústica extraordinaria.', 14: 'Aquí encontré el vinilo de Los Yonics que llevaba 10 años buscando. Una joya escondida.', 16: 'La fachada neoclásica es solo el preámbulo. Entra y siente 500 años de historia.', 24: 'Galería Cima representa a los artistas más importantes del país. Cada visita es una revelación.' } },
+  { id: 3, title: 'Naturaleza & Aire Libre',emoji: '🌿', description: 'Parques, jardines y miradores para reconectar con la naturaleza pura.', stops: [4, 8, 12, 17, 18, 19], color: 'from-green-500 to-teal-600', expert: { name: 'Valeria Ortiz', role: 'Guía Ecológica · Bióloga', avatar: 'https://randomuser.me/api/portraits/women/68.jpg' }, reward: 450, month: 'Mayo 2026',
+    stopQuotes: { 4: 'El jardín de orquídeas es un secreto que pocos conocen. Ve a las 7am para ver los colibríes.', 8: 'El atardecer desde este mirador a las 5:30pm es de los mejores momentos que vivirás en SV.', 12: 'El jardín japonés invita a la meditación. Sigue el sendero de bambú hasta el estanque secreto.', 17: 'Parque Cuscatlán alberga más de 80 especies de árboles nativos. Un pulmón verde único.', 18: 'El bosque nuboso a 2000m cambia la perspectiva. Lleva una chaqueta, el fresco es intenso.', 19: 'Las aguas turquesas del lago cráter son de otro planeta. La mejor luz es entre 6 y 8am.' } },
+  { id: 4, title: 'Ruta Histórica',         emoji: '🏛️', description: 'Catedral, mercados coloniales y centros culturales del corazón de El Salvador.', stops: [5, 15, 16, 20, 22, 25], color: 'from-amber-500 to-yellow-600', expert: { name: 'Prof. Jorge Salinas', role: 'Historiador · UTEC', avatar: 'https://randomuser.me/api/portraits/men/75.jpg' }, reward: 400, month: 'Mayo 2026',
+    stopQuotes: { 5: 'Aquí encontrarás primeras ediciones de poetas salvadoreños del siglo XIX. Una joya bibliográfica.', 15: 'El Mercado Central es el corazón económico del país desde 1884. Prueba las riguas de elote.', 16: 'La catedral fue restaurada en 2000 tras el terremoto. El retablo mayor es del siglo XVIII.', 20: 'Suchitoto conserva el trazado colonial original de 1528. Caminar aquí es viajar en el tiempo.', 22: 'El ex-cuartel alberga la mayor concentración de artesanos textiles del país. Apoyo directo.', 25: 'La ruta de las flores florece de noviembre a febrero, pero el café de mayo es insuperable.' } },
 ];
 
 // iOS-style scroll-wheel picker (3-item window, center selected)
@@ -319,6 +323,18 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.23, 1, 0.32, 1] as const } }
 };
 
+// Layout defined outside App so it never remounts on state changes (prevents image flicker)
+const Layout = ({ children, bgClass = 'bg-gray-50' }: { children: React.ReactNode; bgClass?: string }) => (
+  <div className="min-h-screen flex flex-col font-sans text-gray-800 bg-[#f3f4f6]">
+    <div
+      className={`flex-1 w-full max-w-md mx-auto relative flex flex-col shadow-2xl ${bgClass} overflow-x-hidden overflow-y-auto no-scrollbar`}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}
+    >
+      {children}
+    </div>
+  </div>
+);
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('ONBOARDING');
   const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0]);
@@ -379,6 +395,7 @@ export default function App() {
   const [itinerarySetupId, setItinerarySetupId] = useState<number | null>(null);
   const itinerarySchedulesRef = useRef<Record<number, { day: string; time: string }>>({});
   const [itineraryStopView, setItineraryStopView] = useState<{ poiId: number; itId: number } | null>(null);
+  const [itineraryPreviewId, setItineraryPreviewId] = useState<number | null>(null);
 
   React.useEffect(() => {
     [...AVATARS, ...Object.values(ICONS)].forEach(src => {
@@ -502,6 +519,8 @@ export default function App() {
 
   // --- Components ---
 
+  // Layout is defined at module level (outside App) to prevent remounting on state changes
+
   const PwaGuideModal = () => {
     const steps = [
       { title: "Paso 1: Compartir", desc: "Toca el botón 'Compartir' en Safari", img: "https://25nlk7g645.ucarecd.net/aafd6bdc-7f3c-4e64-b776-e9517011c6b2/Paso1.jpg", aspect: "aspect-[1179/276]" },
@@ -577,17 +596,6 @@ export default function App() {
     );
   };
 
-  const Layout = ({ children, bgClass = 'bg-gray-50' }: { children: React.ReactNode; bgClass?: string }) => (
-    <div className="min-h-screen flex flex-col font-sans text-gray-800 bg-[#f3f4f6]">
-      <div
-        className={`flex-1 w-full max-w-md mx-auto relative flex flex-col shadow-2xl ${bgClass} overflow-x-hidden overflow-y-auto no-scrollbar`}
-        style={{ paddingTop: 'env(safe-area-inset-top, 24px)', paddingBottom: 'env(safe-area-inset-bottom, 24px)' }}
-      >
-        {children}
-      </div>
-    </div>
-  );
-
   const BottomNav = ({ active }: { active: string }) => (
     <div className="fixed bottom-0 w-full max-w-md mx-auto bg-white border-t border-gray-100 flex justify-around items-center h-20 px-2 z-40 pb-safe shadow-[0_-4px_20px_rgba(37,56,132,0.05)]">
       <button onClick={() => navigateTo('USER_WALLET')} className="relative flex flex-col items-center justify-center w-14 h-14 active:scale-[0.97] transition-transform">
@@ -656,7 +664,7 @@ export default function App() {
 
   const renderOnboarding = () => (
     <Layout bgClass="bg-white">
-      <div className="flex justify-between items-center p-6 bg-white sticky top-0 z-50 shadow-sm">
+      <div className="flex justify-between items-center px-6 pb-5 bg-white sticky top-0 z-50 shadow-sm" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1.25rem)' }}>
         <div className="flex items-center gap-2 cursor-pointer select-none" onClick={handleLogoTripleTap}>
           <img src={ICONS.LOGO} alt="SalePlan" className="h-8" />
           <span className="font-heading text-2xl text-[#253884] tracking-tighter pt-1">SalePlan</span>
@@ -952,7 +960,7 @@ export default function App() {
     return (
       <Layout bgClass="bg-gray-50">
         <div className="flex-1 pb-24 flex flex-col">
-          <div className="bg-[#253884] px-6 pt-12 pb-10 rounded-b-[2.5rem] relative z-20 overflow-hidden shadow-lg">
+          <div className="bg-[#253884] px-6 pb-10 rounded-b-[2.5rem] relative z-20 overflow-hidden shadow-lg" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
             <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <div className="flex justify-between items-center mb-8 relative z-10">
               <div>
@@ -984,56 +992,76 @@ export default function App() {
           </div>
 
           <div className="flex-1 px-6 pt-8 pb-10 space-y-8 relative z-10 w-full">
-            {/* Flash events — pinned to top of home feed */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xl font-heading text-[#253884] tracking-tight flex items-center gap-2">
-                  Flash de Hoy <Zap size={15} strokeWidth={2.5} className="text-yellow-500" />
-                </h3>
-                <button onClick={() => navigateTo('USER_SEARCH')} className="text-[10px] font-bold text-[#253884] uppercase tracking-widest opacity-60 active:opacity-100">Ver todos</button>
-              </div>
-              <div className="space-y-2.5">
-                {[...FLASH_EVENTS].sort((a, b) => {
-                    const aT = a.date.toLowerCase().includes('hoy');
-                    const bT = b.date.toLowerCase().includes('hoy');
-                    return aT === bT ? 0 : aT ? -1 : 1;
-                  }).map((event, idx) => {
-                  const hoursLeft = [6, 3, 11][idx % 3];
-                  const isUrgent = hoursLeft <= 4;
-                  const isLocked = event.isPremium && !hasSalePlanPlus;
-                  return (
-                    <div
-                      key={event.id}
-                      onClick={() => isLocked ? setPremiumEventPreviewId(event.id) : navigateTo('USER_SEARCH', event.id)}
-                      className={`bg-white rounded-2xl p-3.5 border-2 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
-                    >
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
-                        {isLocked ? <Lock size={20} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={20} strokeWidth={1.5} />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <h4 className="font-bold text-[#253884] text-sm leading-tight">{event.name}</h4>
-                          {isLocked && <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider shrink-0"><Sparkles size={7} strokeWidth={2} /> Plus</span>}
-                          {!isLocked && event.date.toLowerCase().includes('hoy') && <span className="bg-red-500 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0">HOY</span>}
-                        </div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{event.date}</p>
-                        {isLocked ? (
-                          <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider mt-0.5">Exclusivo SalePlan+</p>
-                        ) : (
-                          <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${isUrgent ? 'text-red-500' : 'text-yellow-600'}`}>
-                            {isUrgent ? '🔥 ' : '⏰ '}Termina en {hoursLeft}h
-                          </p>
-                        )}
-                      </div>
-
-                      <div className={`font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0 ${isLocked ? 'bg-indigo-100 text-indigo-700' : 'bg-yellow-400 text-yellow-900'}`}>
-                        {event.pts}
-                      </div>
+            {/* Flash events — 3 sections: Hoy / Semana / Premium */}
+            {(() => {
+              const todayFlash = FLASH_EVENTS.filter(e => !e.isPremium && e.date.toLowerCase().includes('hoy'));
+              const weekFlash  = FLASH_EVENTS.filter(e => !e.isPremium && !e.date.toLowerCase().includes('hoy'));
+              const premFlash  = FLASH_EVENTS.filter(e => e.isPremium);
+              const FlashRow = ({ event, idx }: { event: typeof FLASH_EVENTS[0]; idx: number }) => {
+                const hoursLeft = [6, 3, 11][idx % 3];
+                const isUrgent = hoursLeft <= 4;
+                const isLocked = !!event.isPremium && !hasSalePlanPlus;
+                return (
+                  <div
+                    key={event.id}
+                    onClick={() => isLocked ? setPremiumEventPreviewId(event.id) : navigateTo('USER_SEARCH', event.id)}
+                    className={`bg-white rounded-2xl p-3.5 border-2 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform subtle-shadow ${isLocked ? 'border-indigo-200' : 'border-yellow-200'}`}
+                  >
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shrink-0 ${isLocked ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-yellow-50 text-yellow-700 border-yellow-100'}`}>
+                      {isLocked ? <Lock size={20} strokeWidth={1.5} /> : <PoiIcon id={event.id} size={20} strokeWidth={1.5} />}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <h4 className="font-bold text-[#253884] text-sm leading-tight">{event.name}</h4>
+                        {isLocked && <span className="bg-gradient-to-r from-[#253884] to-indigo-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase tracking-wider shrink-0"><Sparkles size={7} strokeWidth={2} /> Plus</span>}
+                      </div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{event.date}</p>
+                      {isLocked ? (
+                        <p className="text-[10px] font-black text-indigo-500 uppercase tracking-wider mt-0.5">Exclusivo SalePlan+</p>
+                      ) : (
+                        <p className={`text-[10px] font-black uppercase tracking-wider mt-0.5 ${isUrgent ? 'text-red-500' : 'text-yellow-600'}`}>
+                          {isUrgent ? '🔥 ' : '⏰ '}Termina en {hoursLeft}h
+                        </p>
+                      )}
+                    </div>
+                    <div className={`font-black text-[9px] uppercase px-2 py-1 rounded-lg whitespace-nowrap shrink-0 ${isLocked ? 'bg-indigo-100 text-indigo-700' : 'bg-yellow-400 text-yellow-900'}`}>
+                      {event.pts}
+                    </div>
+                  </div>
+                );
+              };
+              return (
+                <div className="space-y-5">
+                  {todayFlash.length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-xl font-heading text-[#253884] tracking-tight flex items-center gap-2">
+                          Flash de Hoy <Zap size={15} strokeWidth={2.5} className="text-yellow-500" />
+                        </h3>
+                        <button onClick={() => navigateTo('USER_SEARCH')} className="text-[10px] font-bold text-[#253884] uppercase tracking-widest opacity-60 active:opacity-100">Ver todos</button>
+                      </div>
+                      <div className="space-y-2.5">{todayFlash.map((e, i) => <FlashRow key={e.id} event={e} idx={i} />)}</div>
+                    </div>
+                  )}
+                  {weekFlash.length > 0 && (
+                    <div>
+                      <h3 className="text-base font-heading text-[#253884] tracking-tight flex items-center gap-2 mb-3">
+                        Flash de la Semana <Calendar size={13} strokeWidth={2.5} className="text-blue-400" />
+                      </h3>
+                      <div className="space-y-2.5">{weekFlash.map((e, i) => <FlashRow key={e.id} event={e} idx={i} />)}</div>
+                    </div>
+                  )}
+                  {premFlash.length > 0 && (
+                    <div>
+                      <h3 className="text-base font-heading text-[#253884] tracking-tight flex items-center gap-2 mb-3">
+                        Premium <Sparkles size={13} strokeWidth={2.5} className="text-indigo-500" />
+                      </h3>
+                      <div className="space-y-2.5">{premFlash.map((e, i) => <FlashRow key={e.id} event={e} idx={i} />)}</div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {recentlyViewed.length > 0 && (
               <div className="w-full">
@@ -1129,7 +1157,7 @@ export default function App() {
       <Layout bgClass="bg-gray-50">
         <div className="flex-1 pb-24 flex flex-col">
           {/* Gradient header */}
-          <div className="bg-[#e6eaf8] pt-12 pb-6 rounded-b-[2.5rem] shadow-sm">
+          <div className="bg-[#e6eaf8] pb-6 rounded-b-[2.5rem] shadow-sm" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
             <h2 className="text-3xl font-heading text-[#253884] tracking-tight text-center">Mi Pasaporte</h2>
           </div>
 
@@ -1280,7 +1308,8 @@ export default function App() {
               <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Itinerarios de Expertos</h3>
               <span className="text-[10px] text-gray-400 font-medium">Mayo 2026</span>
             </div>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar snap-x px-4 pb-2" style={{ touchAction: 'pan-x' }}>
+            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2" style={{ touchAction: 'pan-x', scrollSnapType: 'x mandatory', scrollPaddingLeft: '1rem' }}>
+              <div className="flex-none w-4 shrink-0" />
               {CURATED_ITINERARIES.map(it => {
                 const isLocked = !hasSalePlanPlus;
                 const isActive = activeItineraryId === it.id;
@@ -1288,7 +1317,7 @@ export default function App() {
                   <button
                     key={it.id}
                     style={{ touchAction: 'manipulation', scrollSnapAlign: 'start' }}
-                    onClick={() => isLocked ? navigateTo('USER_PLUS') : setSelectedItineraryId(it.id)}
+                    onClick={() => isLocked ? setItineraryPreviewId(it.id) : setSelectedItineraryId(it.id)}
                     className={`flex-none w-[72%] bg-gradient-to-br ${it.color} rounded-2xl p-4 text-left active:scale-[0.97] transition-transform relative overflow-hidden`}
                   >
                     {isActive && (
@@ -1299,18 +1328,17 @@ export default function App() {
                     {/* Expert row */}
                     <div className="flex items-center gap-2.5 mb-3">
                       <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/40 shrink-0">
-                        <img src={it.expert.avatar} alt={it.expert.name} className={`w-full h-full object-cover ${isLocked ? 'blur-[1.5px] opacity-40' : ''}`} />
+                        <img src={it.expert.avatar} alt={it.expert.name} className="w-full h-full object-cover" />
                       </div>
-                      {isLocked ? (
-                        <div className="flex items-center gap-1.5">
-                          <Sparkles size={14} className="text-yellow-300" />
-                          <span className="text-white/80 text-xs font-bold">SalePlan+</span>
-                        </div>
-                      ) : (
-                        <div className="min-w-0">
-                          <p className="text-white font-bold text-xs leading-tight truncate">{it.expert.name}</p>
-                          <p className="text-white/60 text-[9px] font-medium truncate">{it.expert.role}</p>
-                        </div>
+                      <div className="min-w-0">
+                        <p className="text-white font-bold text-xs leading-tight truncate">{it.expert.name}</p>
+                        <p className="text-white/60 text-[9px] font-medium truncate">{it.expert.role}</p>
+                      </div>
+                      {isLocked && (
+                        <span className="ml-auto bg-white/20 border border-white/30 rounded-full px-2 py-0.5 flex items-center gap-0.5 shrink-0">
+                          <Lock size={9} className="text-white/80" strokeWidth={2.5} />
+                          <span className="text-white/80 text-[9px] font-black">Plus</span>
+                        </span>
                       )}
                     </div>
                     <h3 className="text-white font-heading text-base tracking-tight leading-tight mb-1">{it.title}</h3>
@@ -1322,7 +1350,6 @@ export default function App() {
                   </button>
                 );
               })}
-              {/* Peek ghost card */}
               <div className="flex-none w-4 shrink-0" />
             </div>
           </div>
@@ -1442,7 +1469,7 @@ export default function App() {
                   style={{ overscrollBehavior: 'contain' }}
                 >
                   {/* Hero gradient header */}
-                  <div className={`bg-gradient-to-b ${it.color} pt-12 pb-10 px-5 relative overflow-hidden`}>
+                  <div className={`bg-gradient-to-b ${it.color} pb-10 px-5 relative overflow-hidden`} style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
                     <div className="absolute inset-0 opacity-10 pointer-events-none">
                       {[...Array(6)].map((_, i) => (
                         <div key={i} className="absolute rounded-full bg-white" style={{ width: 40 + (i % 3) * 30, height: 40 + (i % 3) * 30, top: `${(i * 30) % 100}%`, left: `${(i * 45) % 100}%`, opacity: 0.4 }} />
@@ -1618,7 +1645,7 @@ export default function App() {
             })()}
           </AnimatePresence>
 
-          {/* Itinerary stop immersive overlay */}
+          {/* Itinerary stop immersive overlay — stable key prevents bg glitch during navigation */}
           <AnimatePresence>
             {itineraryStopView && (() => {
               const it = CURATED_ITINERARIES.find(x => x.id === itineraryStopView.itId);
@@ -1627,44 +1654,67 @@ export default function App() {
               const stopIdx = it.stops.indexOf(itineraryStopView.poiId);
               const prevId = stopIdx > 0 ? it.stops[stopIdx - 1] : null;
               const nextId = stopIdx < it.stops.length - 1 ? it.stops[stopIdx + 1] : null;
+              const quote = (it.stopQuotes as Record<number, string>)[poi.id];
               return (
                 <motion.div
-                  key={`stop-${itineraryStopView.poiId}`}
+                  key="itinerary-stop-view"
                   initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 40 }}
                   transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                   className={`fixed inset-0 z-50 bg-gradient-to-b ${it.color} overflow-y-auto`}
                 >
                   {/* Header bar */}
-                  <div className="flex items-center justify-between px-4 pt-12 pb-3">
+                  <div className="flex items-center justify-between px-4 pb-3" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 0.75rem)' }}>
                     <button onClick={() => setItineraryStopView(null)} className="flex items-center gap-2 text-white/90 active:opacity-70">
                       <ChevronLeft size={20} strokeWidth={2.5} />
                       <span className="font-bold text-sm">{it.title}</span>
                     </button>
-                    <span className="text-white/60 text-xs font-bold">{stopIdx + 1} / {it.stops.length}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-white/60 text-xs font-bold">{stopIdx + 1} / {it.stops.length}</span>
+                      <img src={ICONS.LOGO} alt="SalePlan" className="h-5 brightness-0 invert opacity-70" />
+                    </div>
                   </div>
 
                   {/* POI image */}
-                  <div className="mx-4 rounded-3xl overflow-hidden h-52 relative shadow-xl mb-4">
-                    <img src={getPoiImage(poi.id)} alt={poi.name} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">Parada {stopIdx + 1}</p>
-                      <h2 className="text-white font-heading text-2xl tracking-tight">{poi.name}</h2>
-                    </div>
-                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`stop-img-${poi.id}`}
+                      initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
+                    >
+                      <div className="mx-4 rounded-3xl overflow-hidden h-52 relative shadow-xl mb-4">
+                        <img src={getPoiImage(poi.id)} alt={poi.name} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                        <div className="absolute bottom-4 left-4">
+                          <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">Parada {stopIdx + 1}</p>
+                          <h2 className="text-white font-heading text-2xl tracking-tight">{poi.name}</h2>
+                        </div>
+                      </div>
 
-                  {/* Info */}
-                  <div className="mx-4 bg-white/20 border border-white/20 rounded-3xl p-5 mb-4">
-                    <p className="text-white font-medium leading-relaxed text-sm mb-4">{poi.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
-                        <MapPin size={10} strokeWidth={2} /> {poi.location}
-                      </span>
-                      <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
-                        {poi.date}
-                      </span>
-                    </div>
-                  </div>
+                      {/* Info */}
+                      <div className="mx-4 bg-white/20 border border-white/20 rounded-3xl p-5 mb-4">
+                        <p className="text-white font-medium leading-relaxed text-sm mb-4">{poi.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+                            <MapPin size={10} strokeWidth={2} /> {poi.location}
+                          </span>
+                          <span className="bg-white/20 text-white text-[10px] font-bold px-3 py-1.5 rounded-full">
+                            {poi.date}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Expert quote */}
+                      {quote && (
+                        <div className="mx-4 mb-4 flex items-start gap-3">
+                          <img src={it.expert.avatar} alt={it.expert.name} className="w-10 h-10 rounded-full border-2 border-white/50 shadow-md shrink-0 object-cover" />
+                          <div className="bg-white/15 border border-white/20 rounded-2xl rounded-tl-sm px-4 py-3 flex-1">
+                            <p className="text-white text-[11px] font-semibold leading-relaxed italic">"{quote}"</p>
+                            <p className="text-white/60 text-[9px] font-bold mt-1.5 uppercase tracking-wider">{it.expert.name}</p>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
 
                   {/* Stop navigation */}
                   <div className="flex gap-3 mx-4 mb-4">
@@ -1696,10 +1746,61 @@ export default function App() {
                       }}
                       className="w-full py-4 bg-white text-[#253884] rounded-2xl font-bold text-base active:scale-[0.97] transition-transform shadow-lg"
                     >
-                      Usar Itinerario · {it.title} →
+                      {it.title} →
                     </button>
                   </div>
                 </motion.div>
+              );
+            })()}
+          </AnimatePresence>
+
+          {/* Non-Plus itinerary preview drawer */}
+          <AnimatePresence>
+            {itineraryPreviewId !== null && (() => {
+              const it = CURATED_ITINERARIES.find(x => x.id === itineraryPreviewId);
+              if (!it) return null;
+              return (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black/60 z-50"
+                    onClick={() => setItineraryPreviewId(null)}
+                  />
+                  <motion.div
+                    initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                    transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                    className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-white rounded-t-3xl overflow-hidden pb-safe"
+                  >
+                    {/* Gradient top with expert photo centered */}
+                    <div className={`bg-gradient-to-b ${it.color} pt-8 pb-10 flex flex-col items-center relative`}>
+                      <button onClick={() => setItineraryPreviewId(null)} className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97]">
+                        <X size={14} strokeWidth={2.5} className="text-white" />
+                      </button>
+                      <img src={it.expert.avatar} alt={it.expert.name} className="w-20 h-20 rounded-full border-4 border-white shadow-xl object-cover mb-3" />
+                      <p className="text-white font-heading text-lg tracking-tight">{it.expert.name}</p>
+                      <p className="text-white/70 text-xs font-medium">{it.expert.role}</p>
+                    </div>
+                    {/* Content lifted over the gradient */}
+                    <div className="px-5 -mt-5 relative">
+                      <div className="bg-white rounded-3xl p-5 shadow-lg mb-4">
+                        <h3 className="text-[#253884] font-heading text-xl tracking-tight mb-1">{it.title}</h3>
+                        <p className="text-gray-500 text-sm font-medium leading-relaxed mb-3">{it.description}</p>
+                        <div className="flex gap-2 flex-wrap">
+                          <span className="bg-yellow-100 text-yellow-800 font-black text-[10px] px-2.5 py-1 rounded-full">+{it.reward} pts</span>
+                          <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-full">{it.stops.length} paradas</span>
+                          <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-full">{it.month}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => { setItineraryPreviewId(null); navigateTo('USER_PLUS'); }}
+                        className="w-full py-4 bg-gradient-to-r from-[#253884] to-indigo-600 text-white rounded-2xl font-bold text-base active:scale-[0.97] transition-transform shadow-lg mb-2 flex items-center justify-center gap-2"
+                      >
+                        <Sparkles size={16} strokeWidth={2} /> Hazte SalePlan+
+                      </button>
+                      <p className="text-center text-gray-400 text-[11px] font-medium pb-4">Desbloquea todos los itinerarios de expertos</p>
+                    </div>
+                  </motion.div>
+                </>
               );
             })()}
           </AnimatePresence>
@@ -1911,7 +2012,7 @@ export default function App() {
 
   const renderUserProfile = () => (
     <Layout bgClass="bg-gray-50">
-      <div className="flex-1 pb-24 p-6 pt-12 flex flex-col items-center">
+      <div className="flex-1 pb-24 px-6 pb-6 flex flex-col items-center" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
         <div className="flex items-center justify-between w-full mb-8">
           <h2 className="text-4xl font-heading text-[#253884] tracking-tight">Mi Perfil</h2>
           <button onClick={() => setEditingProfile(v => !v)} className={`px-4 py-2 rounded-xl font-bold text-sm active:scale-[0.97] transition-[background-color,color] ${editingProfile ? 'bg-[#253884] text-white' : 'bg-white text-[#253884] subtle-shadow'}`}>
@@ -2629,7 +2730,7 @@ export default function App() {
       <Layout bgClass="bg-gray-50">
         <div className="flex-1 pb-24 flex flex-col">
           {/* Compact header — keeps flash events above fold */}
-          <div className="bg-[#253884] px-6 pt-10 pb-5 shadow-sm relative z-20 overflow-hidden">
+          <div className="bg-[#253884] px-6 pb-5 shadow-sm relative z-20 overflow-hidden" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 2.5rem)' }}>
             <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
             <div className="flex items-center justify-between mb-4 relative z-10">
               <h2 className="text-2xl font-heading text-white tracking-tight">
