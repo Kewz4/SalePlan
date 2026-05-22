@@ -349,7 +349,10 @@ export default function App() {
   const [pwaPermanentlyHidden, setPwaPermanentlyHidden] = useState(() => {
     return localStorage.getItem('pwa_guide_hidden') === 'true';
   });
-  const [commerceTab, setCommerceTab] = useState<'ESCANEO' | 'CRM' | 'CONFIG'>('ESCANEO');
+  const [commerceTab, setCommerceTab] = useState<'ESCANEO' | 'CRM' | 'ANALYTICS' | 'CONFIG'>('ESCANEO');
+  const [showQuickAdd, setShowQuickAdd] = useState<boolean>(false);
+  const [quickAddSearch, setQuickAddSearch] = useState<string>('');
+  const [quickAddPoiPick, setQuickAddPoiPick] = useState<number | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [justStampedId, setJustStampedId] = useState<number | null>(null);
@@ -1362,7 +1365,7 @@ export default function App() {
                                 ) : (
                                   <button
                                     key={`e-${ri}-${ci}`}
-                                    onClick={() => navigateTo('USER_SEARCH')}
+                                    onClick={() => { setShowQuickAdd(true); setQuickAddSearch(''); setQuickAddPoiPick(null); }}
                                     style={{ flex: 1, aspectRatio: '1/1' }}
                                     className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center active:scale-[0.97] transition-transform group"
                                   >
@@ -2093,6 +2096,106 @@ export default function App() {
             )}
           </AnimatePresence>
 
+          {/* Quick Add bottom sheet */}
+          <AnimatePresence>
+            {showQuickAdd && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                  className="fixed inset-0 bg-black/60 z-50"
+                  onClick={() => setShowQuickAdd(false)}
+                />
+                <motion.div
+                  initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                  transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                  className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50 bg-white rounded-t-3xl overflow-hidden"
+                  style={{ maxHeight: '85dvh' }}
+                >
+                  <div className="px-5 pt-5 pb-3 border-b border-gray-100 flex items-center justify-between">
+                    <h3 className="font-heading text-xl text-[#253884] tracking-tight">Agregar Parada</h3>
+                    <button onClick={() => setShowQuickAdd(false)} className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center active:scale-[0.97]">
+                      <X size={14} strokeWidth={2.5} className="text-gray-500" />
+                    </button>
+                  </div>
+                  <div className="px-4 pt-3 pb-2">
+                    <input
+                      type="text"
+                      placeholder="Buscar lugar..."
+                      value={quickAddSearch}
+                      onChange={e => setQuickAddSearch(e.target.value)}
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl outline-none text-sm font-medium placeholder:text-gray-400 focus:border-[#253884] transition-[border-color]"
+                    />
+                  </div>
+                  <div className="overflow-y-auto" style={{ maxHeight: 'calc(85dvh - 240px)' }}>
+                    {(() => {
+                      const filtered = POIS.filter(p =>
+                        !savedPOIs.includes(p.id) &&
+                        (quickAddSearch === '' ||
+                          p.name.toLowerCase().includes(quickAddSearch.toLowerCase()) ||
+                          p.location.toLowerCase().includes(quickAddSearch.toLowerCase()))
+                      ).slice(0, 8);
+                      return filtered.map(poi => (
+                        <div key={poi.id} className="border-b border-gray-50 last:border-0">
+                          <div className="flex items-center gap-3 px-4 py-3">
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${poi.color}`}>
+                              <PoiIcon id={poi.id} size={18} strokeWidth={1.5} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold text-[#253884] text-sm leading-tight truncate">{poi.name}</p>
+                              <p className="text-[10px] text-gray-400 font-medium">{poi.location}</p>
+                            </div>
+                            {quickAddPoiPick === poi.id ? (
+                              <span className="text-[10px] font-bold text-[#253884] bg-[#e6eaf8] px-2 py-1 rounded-lg">Elegir hora</span>
+                            ) : (
+                              <button
+                                onClick={() => setQuickAddPoiPick(poi.id)}
+                                className="w-8 h-8 bg-[#253884] rounded-full flex items-center justify-center active:scale-[0.97] transition-transform"
+                              >
+                                <span className="text-white font-black text-lg leading-none">+</span>
+                              </button>
+                            )}
+                          </div>
+                          {quickAddPoiPick === poi.id && (
+                            <div className="px-4 pb-4">
+                              <div className="flex border border-gray-100 rounded-2xl overflow-hidden bg-gray-50 mb-3">
+                                <div className="flex-1 border-r border-gray-100">
+                                  <WheelPicker
+                                    items={VISIT_DAYS}
+                                    value={poiPickerRef.current.day}
+                                    onChange={v => { poiPickerRef.current = { ...poiPickerRef.current, day: v }; }}
+                                  />
+                                </div>
+                                <div className="flex-1">
+                                  <WheelPicker
+                                    items={VISIT_TIMES}
+                                    value={poiPickerRef.current.time}
+                                    onChange={v => { poiPickerRef.current = { ...poiPickerRef.current, time: v }; }}
+                                  />
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  setSavedPOIs(prev => [...prev, poi.id]);
+                                  setPoiSchedules(prev => ({ ...prev, [poi.id]: { day: poiPickerRef.current.day, time: poiPickerRef.current.time } }));
+                                  setShowQuickAdd(false);
+                                  setQuickAddPoiPick(null);
+                                  haptic([10, 20, 10]);
+                                }}
+                                className="w-full py-3 bg-[#253884] text-white rounded-2xl font-bold text-sm active:scale-[0.97] transition-transform"
+                              >
+                                Agregar a Ruta →
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
           <BottomNav active="wallet" />
         </div>
       </Layout>
@@ -2362,51 +2465,68 @@ export default function App() {
     <Layout bgClass="bg-gray-50">
       <div className="flex-1 flex flex-col w-full h-full pb-10">
         {/* Header card */}
-        <div className="bg-gradient-to-br from-[#253884] to-blue-800 px-6 pb-6 relative z-20 shadow-md" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
-          <div className="flex justify-between items-start mb-6 relative z-10">
+        <div className="bg-gradient-to-br from-[#253884] via-blue-700 to-indigo-600 px-6 pb-6 relative z-20 shadow-xl" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-8 -right-8 w-48 h-48 bg-white/5 rounded-full" />
+            <div className="absolute top-16 -left-12 w-32 h-32 bg-blue-400/10 rounded-full" />
+            <div className="absolute bottom-0 right-1/3 w-20 h-20 bg-indigo-300/10 rounded-full" />
+          </div>
+          {/* Business identity row */}
+          <div className="flex justify-between items-start mb-5 relative z-10">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20">
+              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur-sm">
                 <Store size={24} strokeWidth={1.5} className="text-white" />
               </div>
               <div>
                 <h2 className="text-2xl font-heading text-white tracking-tight">Café Central</h2>
-                <p className="font-bold text-[10px] uppercase text-blue-300 mt-0.5 tracking-[0.15em]">Dashboard Activo</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map(s => <svg key={s} viewBox="0 0 12 12" className="w-3 h-3 fill-yellow-300"><path d="M6 1l1.39 2.81 3.1.45-2.24 2.18.53 3.1L6 8.15l-2.78 1.46.53-3.1L1.51 4.26l3.1-.45z"/></svg>)}
+                  </div>
+                  <span className="text-yellow-300 text-[10px] font-black">4.8</span>
+                  <span className="text-blue-200 text-[10px] font-medium">(142 reseñas)</span>
+                </div>
               </div>
             </div>
-            <button onClick={() => navigateTo('ONBOARDING')} className="px-4 py-2 border border-white/20 bg-white/10 rounded-xl font-bold text-xs text-white active:scale-[0.97] transition-transform uppercase tracking-wide">
+            <button onClick={() => navigateTo('ONBOARDING')} className="px-3 py-1.5 border border-white/20 bg-white/10 rounded-xl font-bold text-xs text-white active:scale-[0.97] transition-transform uppercase tracking-wide backdrop-blur-sm">
               Salir
             </button>
           </div>
 
-          {/* Stats grid */}
-          <div className="grid grid-cols-3 gap-3 relative z-10 mb-4">
-            <div className="bg-white/10 border border-white/10 text-white p-3 rounded-2xl backdrop-blur text-center">
-              <p className="font-black text-2xl">142</p>
-              <p className="font-bold text-[9px] uppercase tracking-wider text-blue-300 mt-0.5">Escaneos Hoy</p>
-            </div>
-            <div className="bg-white/10 border border-white/10 text-white p-3 rounded-2xl backdrop-blur text-center">
-              <p className="font-black text-2xl">18</p>
-              <p className="font-bold text-[9px] uppercase tracking-wider text-blue-300 mt-0.5">Nuevos</p>
-            </div>
-            <div className="bg-white/10 border border-white/10 text-white p-3 rounded-2xl backdrop-blur text-center">
-              <div className="flex items-center justify-center gap-1">
-                <p className="font-black text-2xl">4.8</p>
-                <img src={ICONS.STAR_FILLED} className="w-4 h-4 opacity-80" alt="" />
+          {/* Stats grid — 3 cards with trend arrows */}
+          <div className="grid grid-cols-3 gap-2.5 relative z-10 mb-4">
+            {[
+              { label: 'Escaneos Hoy', value: '142', delta: '+18%', icon: <ScanLine size={14} strokeWidth={2} className="text-blue-300" />, deltaUp: true },
+              { label: 'Nuevos Clientes', value: '18', delta: '+5', icon: <UserPlus size={14} strokeWidth={2} className="text-green-300" />, deltaUp: true },
+              { label: 'Sellos Hoy', value: '89', delta: '+12%', icon: <Zap size={14} strokeWidth={2} className="text-yellow-300" />, deltaUp: true },
+            ].map(stat => (
+              <div key={stat.label} className="bg-white/10 border border-white/15 text-white p-3 rounded-2xl backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-1">
+                  {stat.icon}
+                  <span className={`text-[9px] font-black flex items-center gap-0.5 ${stat.deltaUp ? 'text-green-300' : 'text-red-300'}`}>
+                    <TrendingUp size={9} strokeWidth={2.5} /> {stat.delta}
+                  </span>
+                </div>
+                <p className="font-black text-xl leading-none">{stat.value}</p>
+                <p className="font-bold text-[8px] uppercase tracking-wider text-blue-200 mt-1 leading-tight">{stat.label}</p>
               </div>
-              <p className="font-bold text-[9px] uppercase tracking-wider text-blue-300 mt-0.5">Rating</p>
-            </div>
+            ))}
           </div>
 
-          {/* Impacto */}
-          <div className="relative z-10 bg-white/10 border border-white/10 rounded-2xl px-4 py-3 mb-5 flex items-center justify-between">
+          {/* Revenue impact bar */}
+          <div className="relative z-10 bg-white/10 border border-white/15 rounded-2xl px-4 py-3 flex items-center justify-between backdrop-blur-sm">
             <div>
-              <p className="font-bold text-[10px] uppercase text-blue-300 tracking-wider">Impacto Estimado</p>
-              <p className="font-black text-lg text-white">S/. 3,240 este mes</p>
+              <p className="font-bold text-[9px] uppercase text-blue-300 tracking-wider">Impacto Estimado · Mayo</p>
+              <div className="flex items-center gap-2">
+                <p className="font-black text-lg text-white">$3,240</p>
+                <span className="bg-green-400/20 border border-green-400/30 text-green-300 text-[9px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                  <TrendingUp size={8} strokeWidth={2.5} /> +22%
+                </span>
+              </div>
             </div>
-            {/* Mini sparkline */}
-            <div className="flex items-end gap-0.5 h-8">
-              {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-                <div key={i} className="w-2 bg-white/50 rounded-sm" style={{ height: `${h}%` }} />
+            <div className="flex items-end gap-0.5 h-10">
+              {[30, 55, 40, 70, 50, 85, 65].map((h, i) => (
+                <div key={i} className="w-2 rounded-sm" style={{ height: `${h}%`, background: `rgba(255,255,255,${0.3 + (h/100)*0.4})` }} />
               ))}
             </div>
           </div>
@@ -2414,13 +2534,13 @@ export default function App() {
 
         {/* Tabs — underline style inside white content area */}
         <div className="bg-white border-b border-gray-100 px-6 flex gap-0 relative z-10 shadow-sm">
-          {(['ESCANEO', 'CRM', 'CONFIG'] as const).map(tab => (
+          {(['ESCANEO', 'CRM', 'ANALYTICS', 'CONFIG'] as const).map(tab => (
             <button
               key={tab}
               onClick={() => setCommerceTab(tab)}
-              className={`py-4 px-4 font-bold text-xs uppercase tracking-wider transition-[border-color,color] duration-200 border-b-2 active:scale-[0.97] ${commerceTab === tab ? 'border-[#253884] text-[#253884]' : 'border-transparent text-gray-400'}`}
+              className={`py-4 px-3 font-bold text-xs uppercase tracking-wider transition-[border-color,color] duration-200 border-b-2 active:scale-[0.97] ${commerceTab === tab ? 'border-[#253884] text-[#253884]' : 'border-transparent text-gray-400'}`}
             >
-              {tab === 'ESCANEO' ? 'Retos' : tab === 'CRM' ? 'Clientes' : 'Negocio'}
+              {tab === 'ESCANEO' ? 'Retos' : tab === 'CRM' ? 'Clientes' : tab === 'ANALYTICS' ? 'Analytics' : 'Negocio'}
             </button>
           ))}
         </div>
@@ -2428,27 +2548,101 @@ export default function App() {
         <div className="flex-1 p-6 space-y-6 relative z-10 w-full">
           {commerceTab === 'ESCANEO' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-5">
-              <button onClick={() => alert('Abriendo cámara para Escanear Pasaporte QR...')} className="w-full py-5 bg-[#253884] text-white rounded-2xl card-shadow font-bold text-lg uppercase tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-3">
-                <ScanLine size={24} strokeWidth={2} /> <span>Escanear QR de Pasaporte</span>
+              {/* Scan button */}
+              <button onClick={() => alert('Abriendo cámara...')} className="w-full py-5 bg-gradient-to-r from-[#253884] to-blue-600 text-white rounded-2xl shadow-lg font-bold text-lg uppercase tracking-wide active:scale-[0.97] transition-transform flex items-center justify-center gap-3">
+                <ScanLine size={24} strokeWidth={2} /> Escanear QR de Pasaporte
               </button>
 
-              <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] pt-2">Retos Activos</h3>
-              <div className="bg-white p-5 rounded-3xl subtle-shadow flex gap-4 cursor-pointer border border-gray-100 active:scale-[0.98] transition-transform">
-                <div className="w-16 h-16 bg-[#e6eaf8] rounded-2xl flex items-center justify-center shrink-0">
-                  <QrCode size={28} strokeWidth={1.5} className="text-[#253884]" />
+              {/* Monthly goal */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Meta del Mes</h3>
+                  <span className="text-xs font-bold text-[#253884]">142 / 200 escaneos</span>
                 </div>
-                <div className="flex-1">
-                  <h4 className="text-xl font-heading text-[#253884] tracking-tight leading-tight">Degustación de Verano</h4>
-                  <p className="font-bold text-[10px] uppercase text-green-700 bg-green-50 inline-block px-2 py-1 rounded-md mt-2 tracking-wider">Activa hasta 12/Agt</p>
-                  <div className="mt-3">
-                    <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="text-[10px] bg-gray-50 text-[#253884] px-4 py-2 rounded-lg font-bold uppercase tracking-wide active:scale-[0.97] transition-transform border border-gray-100">Editar Reto</button>
+                <div className="w-full bg-gray-100 rounded-full h-3 mb-2">
+                  <div className="bg-gradient-to-r from-[#253884] to-blue-500 h-3 rounded-full transition-all" style={{ width: '71%' }} />
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] text-gray-400 font-bold">71% completado</span>
+                  <span className="text-[10px] font-bold text-green-600 flex items-center gap-0.5"><TrendingUp size={10} strokeWidth={2} /> En camino</span>
+                </div>
+              </div>
+
+              {/* Active retos */}
+              <div>
+                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-3">Retos Activos</h3>
+                {[
+                  { name: 'Degustación de Verano', until: '12 Ago', scans: 89, active: true },
+                  { name: 'Flash Café del Lunes', until: 'Hoy', scans: 23, active: true },
+                ].map((reto, i) => (
+                  <div key={i} className="bg-white p-4 rounded-2xl subtle-shadow flex gap-3 cursor-pointer border border-gray-100 active:scale-[0.98] transition-transform mb-2">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${reto.until === 'Hoy' ? 'bg-yellow-50 text-yellow-600' : 'bg-[#e6eaf8] text-[#253884]'}`}>
+                      {reto.until === 'Hoy' ? <Zap size={22} strokeWidth={1.5} /> : <QrCode size={22} strokeWidth={1.5} />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-bold text-[#253884] text-sm leading-tight truncate">{reto.name}</p>
+                        {reto.until === 'Hoy' && <span className="bg-yellow-400 text-yellow-900 text-[8px] font-black px-1.5 py-0.5 rounded-full shrink-0">HOY</span>}
+                      </div>
+                      <p className="text-[10px] text-gray-400 font-bold mt-0.5">{reto.scans} escaneos · Hasta {reto.until}</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <div className="w-10 h-5 bg-green-100 rounded-full relative cursor-pointer">
+                        <div className="absolute right-0.5 top-0.5 w-4 h-4 bg-green-500 rounded-full shadow-sm transition-all" />
+                      </div>
+                      <button onClick={e => { e.stopPropagation(); navigateTo('COMMERCE_CREATE_EXPERIENCE'); }} className="text-[9px] text-[#253884] font-black uppercase tracking-wide">Editar</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Stamp redemption log */}
+              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Últimos Sellos</h3>
+                  <span className="text-[10px] text-gray-400 font-bold">Hoy</span>
+                </div>
+                <div className="space-y-2.5">
+                  {[
+                    { name: 'Valentina Cruz', time: '14:32', pts: '+2 sellos', color: 'bg-green-50 text-green-600' },
+                    { name: 'Ricardo Morales', time: '13:15', pts: '+1 sello', color: 'bg-blue-50 text-blue-600' },
+                    { name: 'Andrés Portillo', time: '12:08', pts: '+3 sellos', color: 'bg-yellow-50 text-yellow-600' },
+                    { name: 'Laura Castillo', time: '11:44', pts: '+1 sello', color: 'bg-green-50 text-green-600' },
+                    { name: 'Carlos Ramos', time: '10:22', pts: '+2 sellos', color: 'bg-blue-50 text-blue-600' },
+                  ].map((row, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center shrink-0 text-xs font-black text-gray-500">{row.name[0]}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-[#253884] truncate">{row.name}</p>
+                        <p className="text-[9px] text-gray-400 font-medium">{row.time}</p>
+                      </div>
+                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${row.color}`}>{row.pts}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* QR code section */}
+              <div className="bg-gradient-to-br from-[#253884] to-indigo-600 rounded-3xl p-5 text-white">
+                <h3 className="text-xs font-black uppercase tracking-[0.15em] text-blue-200 mb-3">Tu QR de Negocio</h3>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shrink-0">
+                    <QrCode size={48} strokeWidth={1} className="text-[#253884]" />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <button onClick={() => alert('Compartiendo QR...')} className="w-full py-2.5 bg-white/20 border border-white/20 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+                      <Share2 size={13} strokeWidth={2} /> Compartir QR
+                    </button>
+                    <button onClick={() => alert('Descargando QR en alta resolución...')} className="w-full py-2.5 bg-white/20 border border-white/20 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-[0.97] transition-transform">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg> Descargar PNG
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="w-full py-8 border-2 border-dashed border-[#253884]/20 bg-white rounded-3xl text-center active:scale-[0.97] transition-transform">
-                <span className="text-3xl font-black text-[#253884] mb-2 block opacity-40">+</span>
-                <span className="font-bold text-sm uppercase text-[#253884] tracking-wider opacity-70">Nuevo Reto</span>
+              <button onClick={() => navigateTo('COMMERCE_CREATE_EXPERIENCE')} className="w-full py-5 border-2 border-dashed border-[#253884]/20 bg-white rounded-3xl text-center active:scale-[0.97] transition-transform">
+                <span className="text-2xl font-black text-[#253884] mb-1 block opacity-40">+</span>
+                <span className="font-bold text-sm uppercase text-[#253884] tracking-wider opacity-70">Nuevo Reto Flash</span>
               </button>
             </motion.div>
           )}
@@ -3108,7 +3302,10 @@ export default function App() {
 
   const renderUserPlus = () => (
     <Layout bgClass="bg-gray-50">
-      <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+      <div className="relative flex-1 overflow-y-auto no-scrollbar pb-24">
+        <button onClick={() => navigateTo(prevScreen === 'USER_PLUS' || prevScreen === 'USER_PAYMENT' ? 'USER_HOME' : prevScreen)} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)', zIndex: 30 }} className="absolute left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
+          <ChevronLeft size={20} strokeWidth={2} className="text-white" />
+        </button>
         {/* Hero */}
         <div className="relative bg-gradient-to-br from-[#253884] via-indigo-700 to-purple-800 px-6 pt-14 pb-14 overflow-hidden">
           <div className="absolute inset-0 opacity-10">
@@ -3116,9 +3313,6 @@ export default function App() {
               <div key={i} className="absolute rounded-full bg-white" style={{ width: 4 + (i % 5) * 6, height: 4 + (i % 5) * 6, top: `${(i * 17) % 100}%`, left: `${(i * 23) % 100}%`, opacity: 0.3 + (i % 4) * 0.2 }} />
             ))}
           </div>
-          <button onClick={() => navigateTo(prevScreen === 'USER_PLUS' || prevScreen === 'USER_PAYMENT' ? 'USER_HOME' : prevScreen)} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)' }} className="absolute left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
-            <ChevronLeft size={20} strokeWidth={2} className="text-white" />
-          </button>
           <div className="relative z-10 text-center">
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-yellow-900 font-black text-xs uppercase px-4 py-1.5 rounded-full mb-4 tracking-wider">
               <Sparkles size={12} strokeWidth={2.5} /> Desbloquea lo mejor
