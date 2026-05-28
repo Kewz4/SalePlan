@@ -349,6 +349,7 @@ export default function App() {
     return localStorage.getItem('pwa_guide_hidden') === 'true';
   });
   const [commerceTab, setCommerceTab] = useState<'ESCANEO' | 'CRM' | 'ANALYTICS' | 'CONFIG'>('ESCANEO');
+  const [crmShowCount, setCrmShowCount] = useState(10);
   const [showQuickAdd, setShowQuickAdd] = useState<boolean>(false);
   const [quickAddSearch, setQuickAddSearch] = useState<string>('');
   const [quickAddPoiPick, setQuickAddPoiPick] = useState<number | null>(null);
@@ -1077,9 +1078,9 @@ export default function App() {
                 <img src={selectedAvatar} className="w-full h-full object-cover" alt="Perfil" />
               </button>
             </div>
-            <button onClick={() => navigateTo('USER_SEARCH')} className="w-full bg-white shadow-lg rounded-2xl p-4 flex items-center relative z-10 text-left active:scale-[0.98] transition-transform">
-              <img src={ICONS.SEARCH} className="w-5 h-5 mr-3 opacity-40" alt="Buscar" />
-              <span className="font-medium text-gray-400 w-full text-base">¿A dónde vamos hoy?</span>
+            <button onClick={() => navigateTo('USER_SEARCH')} className="w-full bg-white/15 border border-white/25 backdrop-blur-sm rounded-2xl p-4 flex items-center relative z-10 text-left active:scale-[0.98] transition-transform">
+              <img src={ICONS.SEARCH} className="w-5 h-5 mr-3 invert opacity-80" alt="Buscar" />
+              <span className="font-medium text-blue-100 w-full text-base">¿A dónde vamos hoy?</span>
             </button>
           </div>
 
@@ -2219,8 +2220,8 @@ export default function App() {
       <div className="flex-1 pb-24 px-6 pb-6 flex flex-col items-center" style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
         <div className="flex items-center justify-between w-full mb-8">
           <h2 className="text-4xl font-heading text-[#253884] tracking-tight">Mi Perfil</h2>
-          <button onClick={() => setEditingProfile(v => !v)} className={`px-4 py-2 rounded-xl font-bold text-sm active:scale-[0.97] transition-[background-color,color] ${editingProfile ? 'bg-[#253884] text-white' : 'bg-white text-[#253884] subtle-shadow'}`}>
-            {editingProfile ? 'Guardar' : <span className="flex items-center gap-1.5"><Pencil size={13} strokeWidth={2} /> Editar</span>}
+          <button onClick={() => setEditingProfile(true)} className="px-4 py-2 rounded-xl font-bold text-sm active:scale-[0.97] transition-[background-color,color] bg-white text-[#253884] subtle-shadow">
+            <span className="flex items-center gap-1.5"><Pencil size={13} strokeWidth={2} /> Editar</span>
           </button>
         </div>
 
@@ -2327,48 +2328,99 @@ export default function App() {
           </button>
         </div>
 
+        {/* Immersive edit overlay */}
+        <AnimatePresence>
+          {editingProfile && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/60 z-[100]"
+                onClick={() => setEditingProfile(false)}
+              />
+              <motion.div
+                initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 30, stiffness: 280 }}
+                className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-[100] bg-white rounded-t-3xl overflow-hidden"
+                style={{ maxHeight: '90dvh' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div className="bg-gradient-to-r from-[#253884] to-indigo-600 px-6 pt-5 pb-6 relative">
+                  <div className="w-10 h-1 bg-white/30 rounded-full mx-auto mb-4" />
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-white font-heading text-2xl tracking-tight">Editar Perfil</h3>
+                    <button onClick={() => setEditingProfile(false)} className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97]">
+                      <X size={14} strokeWidth={2.5} className="text-white" />
+                    </button>
+                  </div>
+                  <p className="text-blue-200 text-xs font-medium mt-1">Tus datos personales en SalePlan</p>
+                </div>
+                <div className="px-6 pt-5 pb-2 overflow-y-auto space-y-4" style={{ maxHeight: 'calc(90dvh - 120px)' }}>
+                  {/* Avatar */}
+                  <div className="flex items-center gap-4 bg-gray-50 rounded-2xl p-4">
+                    <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#253884]/20 shrink-0">
+                      <img src={selectedAvatar} className="w-full h-full object-cover" alt="" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-[#253884] text-sm">Foto de perfil</p>
+                      <p className="text-[10px] text-gray-400 font-medium mt-0.5">Elige entre los avatares disponibles</p>
+                    </div>
+                    <button onClick={() => setShowAvatarPicker(true)} className="px-3 py-2 bg-[#253884] text-white text-xs font-bold rounded-xl active:scale-[0.97] transition-transform">
+                      Cambiar
+                    </button>
+                  </div>
+                  {/* Fields */}
+                  {[
+                    { label: 'Nombre', type: 'text', value: profileName, setter: setProfileName, placeholder: 'Tu nombre completo' },
+                    { label: 'Correo Electrónico', type: 'email', value: profileEmail, setter: setProfileEmail, placeholder: 'tu@correo.com' },
+                  ].map(f => (
+                    <div key={f.label}>
+                      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">{f.label}</label>
+                      <input
+                        type={f.type}
+                        value={f.value}
+                        onChange={e => f.setter(e.target.value)}
+                        placeholder={f.placeholder}
+                        className="w-full px-4 py-3.5 bg-gray-50 border-2 border-gray-200 focus:border-[#253884] rounded-2xl outline-none font-semibold text-[#253884] text-sm transition-[border-color]"
+                      />
+                    </div>
+                  ))}
+                  <div>
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1.5">Teléfono</label>
+                    <div className="flex gap-2">
+                      <span className="bg-gray-50 border-2 border-gray-200 rounded-2xl px-3 py-3.5 text-sm text-gray-500 font-bold shrink-0">+503</span>
+                      <input
+                        type="tel"
+                        value={profilePhone}
+                        onChange={e => setProfilePhone(e.target.value)}
+                        placeholder="xxxx-xxxx"
+                        className="flex-1 px-4 py-3.5 bg-gray-50 border-2 border-gray-200 focus:border-[#253884] rounded-2xl outline-none font-semibold text-[#253884] text-sm transition-[border-color]"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { setEditingProfile(false); haptic([10, 20, 10]); }}
+                    className="w-full py-4 bg-[#253884] text-white font-bold text-base rounded-2xl active:scale-[0.97] transition-transform mt-2 mb-6"
+                  >
+                    Guardar Cambios
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
         <div className="w-full bg-white rounded-3xl p-6 font-bold space-y-4 subtle-shadow">
           <div className="border-b border-gray-100 pb-4">
             <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 tracking-wider">Nombre</label>
-            {editingProfile ? (
-              <input
-                value={profileName}
-                onChange={e => setProfileName(e.target.value)}
-                className="w-full text-xl font-heading text-[#253884] border-2 border-[#253884]/30 focus:border-[#253884] rounded-xl px-3 py-2 outline-none transition-[border-color] bg-gray-50"
-              />
-            ) : (
-              <p className="text-2xl font-heading text-[#253884]">{profileName}</p>
-            )}
+            <p className="text-2xl font-heading text-[#253884]">{profileName}</p>
           </div>
           <div className="border-b border-gray-100 pb-4">
             <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 tracking-wider">Correo Electrónico</label>
-            {editingProfile ? (
-              <input
-                type="email"
-                value={profileEmail}
-                onChange={e => setProfileEmail(e.target.value)}
-                className="w-full text-base font-semibold text-gray-700 border-2 border-[#253884]/30 focus:border-[#253884] rounded-xl px-3 py-2 outline-none transition-[border-color] bg-gray-50"
-              />
-            ) : (
-              <p className="text-base font-semibold text-gray-700">{profileEmail}</p>
-            )}
+            <p className="text-base font-semibold text-gray-700">{profileEmail}</p>
           </div>
           <div className="border-b border-gray-100 pb-4">
             <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1 tracking-wider">Teléfono</label>
-            {editingProfile ? (
-              <div className="flex gap-2">
-                <span className="bg-gray-50 border-2 border-[#253884]/30 rounded-xl px-3 py-2 text-sm text-gray-500 font-bold shrink-0">+503</span>
-                <input
-                  type="tel"
-                  value={profilePhone}
-                  onChange={e => setProfilePhone(e.target.value)}
-                  placeholder="xxxx-xxxx"
-                  className="flex-1 text-base font-semibold text-gray-700 border-2 border-[#253884]/30 focus:border-[#253884] rounded-xl px-3 py-2 outline-none transition-[border-color] bg-gray-50"
-                />
-              </div>
-            ) : (
-              <p className="text-base font-semibold text-gray-700">{profilePhone ? `+503 ${profilePhone}` : <span className="text-gray-400 font-medium text-sm">Sin número registrado</span>}</p>
-            )}
+            <p className="text-base font-semibold text-gray-700">{profilePhone ? `+503 ${profilePhone}` : <span className="text-gray-400 font-medium text-sm">Sin número registrado</span>}</p>
           </div>
           <div className="pt-2 grid grid-cols-3 gap-3">
             <div className="bg-gray-50 rounded-xl p-3 text-center">
@@ -2736,7 +2788,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {CRM_CONTACTS.slice(0, 40).map((contact, idx) => (
+                  {CRM_CONTACTS.slice(0, crmShowCount).map((contact, idx) => (
                     <div key={idx} onClick={() => setSelectedCrmContact(contact)} className="flex items-center gap-3 p-2 -mx-2 rounded-xl active:scale-[0.98] transition-transform cursor-pointer">
                       <div className={`w-10 h-10 rounded-full border-2 overflow-hidden shrink-0 flex items-center justify-center font-black text-sm ${contact.badge === 'Frecuente' ? 'border-[#253884]' : contact.badge === 'Nuevo' ? 'border-green-400' : 'border-gray-200'} ${!contact.avatar ? 'bg-purple-50 text-purple-700' : ''}`}>
                         {contact.avatar ? <img src={contact.avatar} className="w-full h-full object-cover" alt="" /> : contact.initial}
@@ -2746,16 +2798,18 @@ export default function App() {
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">{contact.lastVisit}</p>
                       </div>
                       {contact.badge && (
-                        <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase ${contact.badge === 'Frecuente' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{contact.badge}</span>
+                        <span className={`text-[8px] font-black px-2 py-0.5 rounded-full uppercase ${contact.badge === 'Frecuente' ? 'bg-green-100 text-green-700' : contact.badge === 'Nuevo' ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'}`}>{contact.badge}</span>
                       )}
-                      <a href="https://api.whatsapp.com/send?text=Hola!" target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="w-7 h-7 bg-green-50 border border-green-200 rounded-full flex items-center justify-center shrink-0 active:scale-[0.97] transition-transform">
-                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-green-600"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                      </a>
+                      <div className="w-7 h-7 bg-[#e6eaf8] rounded-full flex items-center justify-center shrink-0">
+                        <ChevronRight size={14} strokeWidth={2.5} className="text-[#253884]" />
+                      </div>
                     </div>
                   ))}
-                  <button className="w-full py-2.5 bg-gray-50 text-gray-400 font-bold text-xs rounded-xl border border-gray-100 active:scale-[0.97] transition-transform uppercase tracking-wide">
-                    Ver todos · {CRM_CONTACTS.length} contactos
-                  </button>
+                  {crmShowCount < CRM_CONTACTS.length && (
+                    <button onClick={() => setCrmShowCount(c => c + 10)} className="w-full py-2.5 bg-[#e6eaf8] text-[#253884] font-bold text-xs rounded-xl active:scale-[0.97] transition-transform uppercase tracking-wide">
+                      Mostrar 10 más · {CRM_CONTACTS.length - crmShowCount} restantes
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -2821,126 +2875,151 @@ export default function App() {
           </AnimatePresence>
 
           {commerceTab === 'ANALYTICS' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-5">
-              {/* Date range */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="space-y-4">
+              {/* Period selector */}
               <div className="flex gap-2">
                 {['Hoy', 'Semana', 'Mes', 'Año'].map(r => (
                   <button key={r} className={`flex-1 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-[background-color,color] ${r === 'Mes' ? 'bg-[#253884] text-white' : 'bg-white text-gray-400 border border-gray-100'}`}>{r}</button>
                 ))}
               </div>
 
-              {/* Revenue chart */}
-              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Visitantes Estimados</p>
-                    <div className="flex items-center gap-2">
-                      <p className="text-2xl font-heading text-[#253884]">1,340</p>
-                      <span className="bg-green-100 text-green-700 text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-0.5"><TrendingUp size={9} strokeWidth={2.5} /> +22%</span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-gray-400 font-bold">visitas mes anterior</p>
-                    <p className="text-lg font-bold text-gray-300">1,095</p>
-                  </div>
-                </div>
-                {/* Bar chart */}
-                <div className="flex items-end gap-1.5 h-28">
-                  {[
-                    { d: 'L', v: 45 }, { d: 'M', v: 62 }, { d: 'X', v: 38 }, { d: 'J', v: 78 },
-                    { d: 'V', v: 55 }, { d: 'S', v: 92 }, { d: 'D', v: 70 },
-                  ].map((bar, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                      <div className="w-full rounded-t-lg transition-all" style={{ height: `${bar.v}%`, background: bar.v === 92 ? '#253884' : `rgba(37,56,132,${0.2 + bar.v/200})` }} />
-                      <span className="text-[8px] font-bold text-gray-400">{bar.d}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Key metrics grid */}
+              {/* 2×3 main metric cards — navy like reference */}
               <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: 'Ticket Promedio', value: '$22.80', delta: '+$3.20', up: true, bg: 'bg-blue-50 border-blue-100', text: 'text-blue-700' },
-                  { label: 'Tasa Retención', value: '73%', delta: '+8%', up: true, bg: 'bg-green-50 border-green-100', text: 'text-green-700' },
-                  { label: 'Nuevos/día', value: '6.4', delta: '+1.2', up: true, bg: 'bg-purple-50 border-purple-100', text: 'text-purple-700' },
-                  { label: 'Sellos/visita', value: '1.8', delta: '+0.3', up: true, bg: 'bg-amber-50 border-amber-100', text: 'text-amber-700' },
-                ].map(m => (
-                  <div key={m.label} className={`p-4 rounded-2xl border ${m.bg}`}>
-                    <p className={`text-[9px] font-black uppercase tracking-wider ${m.text} opacity-70 mb-1`}>{m.label}</p>
-                    <p className={`text-xl font-heading ${m.text}`}>{m.value}</p>
-                    <span className={`text-[9px] font-black flex items-center gap-0.5 ${m.up ? 'text-green-600' : 'text-red-500'} mt-1`}>
-                      <TrendingUp size={9} strokeWidth={2.5} /> {m.delta}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Rating breakdown */}
-              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em]">Reseñas</h3>
-                  <div className="flex items-center gap-1">
-                    <svg viewBox="0 0 12 12" className="w-4 h-4 fill-yellow-400"><path d="M6 1l1.39 2.81 3.1.45-2.24 2.18.53 3.1L6 8.15l-2.78 1.46.53-3.1L1.51 4.26l3.1-.45z"/></svg>
-                    <span className="font-black text-[#253884] text-lg">4.8</span>
-                    <span className="text-gray-400 text-xs font-medium">(142)</span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  {[5,4,3,2,1].map(star => {
-                    const pcts = [72, 18, 6, 2, 2];
-                    const pct = pcts[5 - star];
-                    return (
-                      <div key={star} className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-gray-400 w-3 text-right">{star}</span>
-                        <svg viewBox="0 0 12 12" className="w-3 h-3 fill-yellow-400 shrink-0"><path d="M6 1l1.39 2.81 3.1.45-2.24 2.18.53 3.1L6 8.15l-2.78 1.46.53-3.1L1.51 4.26l3.1-.45z"/></svg>
-                        <div className="flex-1 bg-gray-100 rounded-full h-2">
-                          <div className="bg-yellow-400 h-2 rounded-full" style={{ width: `${pct}%` }} />
-                        </div>
-                        <span className="text-[9px] font-bold text-gray-400 w-6 text-right">{pct}%</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Top hours heatmap */}
-              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
-                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Horas Pico</h3>
-                <div className="flex gap-1.5">
-                  {[
-                    { h: '8am', v: 20 }, { h: '9am', v: 35 }, { h: '10am', v: 55 }, { h: '11am', v: 45 },
-                    { h: '12pm', v: 80 }, { h: '1pm', v: 90 }, { h: '2pm', v: 75 }, { h: '3pm', v: 60 },
-                    { h: '4pm', v: 40 }, { h: '5pm', v: 85 }, { h: '6pm', v: 95 }, { h: '7pm', v: 70 },
-                  ].map((h, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                      <div className="w-full rounded-sm" style={{ height: 40, display: 'flex', alignItems: 'flex-end' }}>
-                        <div className="w-full rounded-sm" style={{ height: `${h.v}%`, background: h.v >= 80 ? '#253884' : h.v >= 60 ? '#6366f1' : h.v >= 40 ? '#a5b4fc' : '#e0e7ff' }} />
-                      </div>
-                      <span className="text-[6px] font-bold text-gray-400">{h.h}</span>
+                {/* Usuarios Activos */}
+                <div className="bg-[#1a2a6c] rounded-3xl p-4 text-white relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center">
+                      <Users size={14} strokeWidth={1.5} className="text-white" />
                     </div>
-                  ))}
+                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-200">Usuarios Activos</span>
+                  </div>
+                  <p className="text-3xl font-heading leading-none mb-0.5">1,250</p>
+                  <p className="text-[9px] text-blue-300 font-bold mb-2">Meta: 1,000</p>
+                  {/* mini line chart */}
+                  <svg viewBox="0 0 80 24" className="w-full h-8" preserveAspectRatio="none">
+                    <polyline points="0,20 16,16 32,14 48,10 64,6 80,2" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    {[0,16,32,48,64,80].map((x,i) => <circle key={i} cx={x} cy={[20,16,14,10,6,2][i]} r="2" fill="white" />)}
+                  </svg>
+                  <div className="absolute bottom-1 right-2 text-[8px] text-[8px] font-black text-blue-300 flex gap-2">
+                    {['E','F','M','A','M'].map(m => <span key={m}>{m}</span>)}
+                  </div>
                 </div>
-                <p className="text-[9px] text-gray-400 font-medium text-center mt-2">Hora más activa: 6 PM</p>
+
+                {/* Retención */}
+                <div className="bg-[#1a2a6c] rounded-3xl p-4 text-white relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-200">Retención</span>
+                  </div>
+                  {/* donut */}
+                  <div className="flex items-center gap-3">
+                    <svg viewBox="0 0 40 40" className="w-14 h-14 shrink-0">
+                      <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="5"/>
+                      <circle cx="20" cy="20" r="15" fill="none" stroke="white" strokeWidth="5" strokeDasharray={`${0.65*94.2} ${94.2}`} strokeDashoffset="23.6" strokeLinecap="round"/>
+                      <text x="20" y="24" textAnchor="middle" className="text-[8px]" fill="white" fontSize="9" fontWeight="900">65%</text>
+                    </svg>
+                    <div>
+                      <p className="text-2xl font-heading leading-none">65%</p>
+                      <p className="text-[9px] text-blue-300 font-bold">Meta: 60%</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Experiencias Creadas */}
+                <div className="bg-[#1a2a6c] rounded-3xl p-4 text-white relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-200">Experiencias Creadas</span>
+                  </div>
+                  <p className="text-3xl font-heading leading-none mb-0.5">320</p>
+                  <p className="text-[9px] text-blue-300 font-bold mb-2">Meta: 250</p>
+                  {/* mini bar chart */}
+                  <div className="flex items-end gap-0.5 h-7">
+                    {[30,45,40,55,60,70,80,90].map((v,i) => (
+                      <div key={i} className="flex-1 rounded-sm" style={{ height: `${v}%`, background: i === 7 ? 'white' : `rgba(255,255,255,${0.3+v/200})` }} />
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-[6px] text-blue-300 font-bold mt-1">
+                    {['E','F','M','A','M'].map(m => <span key={m}>{m}</span>)}
+                  </div>
+                </div>
+
+                {/* Puntos Acumulados */}
+                <div className="bg-[#1a2a6c] rounded-3xl p-4 text-white relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-200">Puntos Acumulados</span>
+                  </div>
+                  <p className="text-3xl font-heading leading-none mb-0.5">125K</p>
+                  <p className="text-[9px] text-blue-300 font-bold mb-2">Meta: 100K</p>
+                  {/* area line */}
+                  <svg viewBox="0 0 80 24" className="w-full h-8" preserveAspectRatio="none">
+                    <defs><linearGradient id="ag" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="white" stopOpacity="0.3"/><stop offset="100%" stopColor="white" stopOpacity="0"/></linearGradient></defs>
+                    <polygon points="0,22 16,18 32,16 48,11 64,7 80,3 80,24 0,24" fill="url(#ag)"/>
+                    <polyline points="0,22 16,18 32,16 48,11 64,7 80,3" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+
+                {/* Tasa de Conversión */}
+                <div className="bg-[#1a2a6c] rounded-3xl p-4 text-white relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/><path d="M16 11l2 2 4-4"/></svg>
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-200">Conversión Miembros</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <svg viewBox="0 0 40 40" className="w-14 h-14 shrink-0">
+                      <circle cx="20" cy="20" r="15" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="5"/>
+                      <circle cx="20" cy="20" r="15" fill="none" stroke="white" strokeWidth="5" strokeDasharray={`${0.25*94.2} ${94.2}`} strokeDashoffset="23.6" strokeLinecap="round"/>
+                      <text x="20" y="24" textAnchor="middle" fill="white" fontSize="9" fontWeight="900">25%</text>
+                    </svg>
+                    <div>
+                      <p className="text-2xl font-heading leading-none">25%</p>
+                      <p className="text-[9px] text-blue-300 font-bold">Meta: 20%</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* NPS */}
+                <div className="bg-[#1a2a6c] rounded-3xl p-4 text-white relative overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    </div>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-200">NPS</span>
+                  </div>
+                  <p className="text-3xl font-heading leading-none mb-0.5">+40</p>
+                  <p className="text-[9px] text-blue-300 font-bold mb-2">Meta: +30</p>
+                  {/* gauge arc */}
+                  <svg viewBox="0 0 80 40" className="w-full h-8">
+                    <path d="M8 38 A32 32 0 0 1 72 38" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="5" strokeLinecap="round"/>
+                    <path d="M8 38 A32 32 0 0 1 72 38" fill="none" stroke="white" strokeWidth="5" strokeLinecap="round" strokeDasharray="100.5" strokeDashoffset="30"/>
+                    <text x="40" y="40" textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="6">-100   0   +100</text>
+                  </svg>
+                </div>
               </div>
 
-              {/* Competitor benchmark */}
-              <div className="bg-white rounded-3xl p-5 subtle-shadow border border-gray-100">
-                <h3 className="text-xs font-black text-[#253884] uppercase tracking-[0.15em] mb-4">Benchmark de Zona</h3>
-                <div className="space-y-3">
+              {/* Strategic objectives row */}
+              <div className="bg-[#1a2a6c] rounded-3xl p-4">
+                <p className="text-[8px] font-black uppercase tracking-widest text-blue-300 mb-3">Objetivos Estratégicos</p>
+                <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Tú — Café Central', value: 4.8, max: 5, color: '#253884' },
-                    { label: 'Promedio zona', value: 4.1, max: 5, color: '#93c5fd' },
-                    { label: 'Mejor competidor', value: 4.6, max: 5, color: '#6366f1' },
-                  ].map(c => (
-                    <div key={c.label}>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] font-bold text-gray-600">{c.label}</span>
-                        <span className="text-[10px] font-black" style={{ color: c.color }}>{c.value}</span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-2">
-                        <div className="h-2 rounded-full" style={{ width: `${(c.value/c.max)*100}%`, backgroundColor: c.color }} />
-                      </div>
+                    { label: 'Más Usuarios', icon: <Users size={14} strokeWidth={1.5} className="text-white" /> },
+                    { label: 'Mayor Retención', icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> },
+                    { label: 'Más Experiencias', icon: <Sparkles size={14} strokeWidth={1.5} className="text-white" /> },
+                    { label: 'Mayor Valor', icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-white" strokeWidth="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/><path d="M16 11l2 2 4-4"/></svg> },
+                  ].map(obj => (
+                    <div key={obj.label} className="flex items-center gap-2 bg-white/10 rounded-2xl px-3 py-2.5">
+                      <div className="w-7 h-7 bg-white/15 rounded-xl flex items-center justify-center shrink-0">{obj.icon}</div>
+                      <span className="text-[9px] font-black text-white leading-tight">{obj.label}</span>
+                      <TrendingUp size={10} strokeWidth={2.5} className="text-green-300 ml-auto shrink-0" />
                     </div>
                   ))}
                 </div>
@@ -3518,7 +3597,7 @@ export default function App() {
                         </div>
                       </div>
                       <h3 className="font-bold text-[#253884] text-sm leading-tight mb-0.5">{poi.name}</h3>
-
+                      <p className="text-[9px] text-gray-400 font-medium truncate w-full text-center">{poi.location}</p>
                     </motion.div>
                   );
                 })}
