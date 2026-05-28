@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
+import { type FC } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Menu, X, ArrowRight, Book, Mail, HelpCircle, UserPlus, LogIn, Store, ChevronLeft, ChevronRight,
   Coffee, Palette, UtensilsCrossed, Leaf, BookOpen, Landmark, Mountain, Music,
   ShoppingBag, Flower2, Utensils, Disc3, Camera, Guitar, Pizza, IceCream, MapPin,
   Zap, Crown, Backpack, Trophy, Sprout, ScanLine, Share2, Check, Pencil, Sparkles,
-  QrCode, Waves, TreePine, Compass, Calendar, GripVertical, Lock, MessageCircle, TrendingUp
+  QrCode, Waves, TreePine, Compass, Calendar, GripVertical, Lock, MessageCircle, TrendingUp, Users
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import YetiLogin from './components/YetiLogin';
@@ -1090,7 +1091,7 @@ export default function App() {
               const todayFlash = FLASH_EVENTS.filter(e => !e.isPremium && e.date.toLowerCase().includes('hoy'));
               const weekFlash  = FLASH_EVENTS.filter(e => !e.isPremium && !e.date.toLowerCase().includes('hoy'));
               const premFlash  = FLASH_EVENTS.filter(e => e.isPremium);
-              const FlashRow = ({ event, idx }: { event: typeof FLASH_EVENTS[0]; idx: number }) => {
+              const FlashRow: FC<{ event: typeof FLASH_EVENTS[0]; idx: number }> = ({ event, idx }) => {
                 const hoursLeft = [6, 3, 11][idx % 3];
                 const isUrgent = hoursLeft <= 4;
                 const isLocked = !!event.isPremium && !hasSalePlanPlus;
@@ -1306,7 +1307,7 @@ export default function App() {
                     while (rowW < COLS) { row.push({ kind: 'empty', idx: -rowW }); rowW++; }
                     rows.push(row);
                   }
-                  const PassportCell = ({ poi, pw }: { poi: typeof myRoute[0]; pw: number }) => {
+                  const PassportCell: FC<{ poi: typeof myRoute[0]; pw: number }> = ({ poi, pw }) => {
                     const isStamped = stampedPOIs.includes(poi.id);
                     const isJustStamped = justStampedId === poi.id;
                     return (
@@ -1459,7 +1460,7 @@ export default function App() {
               return (DAY_RANK[poiSchedules[a.id]?.day ?? ''] ?? 99) - (DAY_RANK[poiSchedules[b.id]?.day ?? ''] ?? 99);
             });
 
-            const RouteItem = ({ poi }: { poi: typeof myRoute[0] }) => {
+            const RouteItem: FC<{ poi: typeof myRoute[0] }> = ({ poi }) => {
               const isStamped = stampedPOIs.includes(poi.id);
               const schedule = poiSchedules[poi.id];
               const idx = todayRoute.indexOf(poi);
