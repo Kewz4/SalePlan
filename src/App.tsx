@@ -2654,83 +2654,27 @@ export default function App() {
             </button>
           </div>
 
-          {/* Analytics metric cards — 2×3 grid, same style as Analytics tab */}
+          {/* Analytics metric cards — 2×3 grid */}
           <div className="grid grid-cols-3 gap-2 relative z-10 mb-2">
-            {/* Usuarios Activos */}
-            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <Users size={11} strokeWidth={2} className="text-blue-200" />
-                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +25%</span>
+            {([
+              { icon: <Users size={12} strokeWidth={2} className="text-blue-200" />, value: '1,250', label: 'Usuarios', trend: '+25%' },
+              { icon: <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-blue-200" strokeWidth="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>, value: '65%', label: 'Retención', trend: '+8%' },
+              { icon: <Calendar size={12} strokeWidth={2} className="text-blue-200" />, value: '320', label: 'Experiencias', trend: '+28%' },
+              { icon: <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-yellow-300" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, value: '125K', label: 'Puntos', trend: '+25%' },
+              { icon: <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-green-300" strokeWidth="2.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/><path d="M16 11l2 2 4-4"/></svg>, value: '25%', label: 'Conversión', trend: '+5%' },
+              { icon: <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-blue-200" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>, value: '+40', label: 'NPS', trend: '+10' },
+            ] as { icon: React.ReactNode; value: string; label: string; trend: string }[]).map((m, i) => (
+              <div key={i} className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-1.5">
+                  {m.icon}
+                  <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5">
+                    <TrendingUp size={7} strokeWidth={2.5} />{m.trend}
+                  </span>
+                </div>
+                <p className="font-black text-base leading-none">{m.value}</p>
+                <p className="font-semibold text-[7px] uppercase tracking-wider text-white/50 mt-1 leading-tight">{m.label}</p>
               </div>
-              <p className="font-black text-lg leading-none">1,250</p>
-              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Usuarios Activos</p>
-              <svg viewBox="0 0 50 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
-                <polyline points="0,14 10,11 20,12 30,7 40,4 50,1" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
-            {/* Retención */}
-            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-blue-200" strokeWidth="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +8%</span>
-              </div>
-              <p className="font-black text-lg leading-none">65%</p>
-              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Retención</p>
-              <div className="flex items-end gap-0.5 h-3 mt-auto">
-                {[40,55,50,65,60,72,65].map((v,i) => <div key={i} className="flex-1 rounded-sm" style={{ height: `${v}%`, background: i===6 ? 'rgba(255,255,255,0.8)' : `rgba(255,255,255,${0.2+v/200})` }}/>)}
-              </div>
-            </div>
-            {/* Experiencias */}
-            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <Calendar size={11} strokeWidth={2} className="text-blue-200" />
-                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +28%</span>
-              </div>
-              <p className="font-black text-lg leading-none">320</p>
-              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Experiencias</p>
-              <div className="flex items-end gap-0.5 h-3 mt-auto">
-                {[30,42,38,55,60,70,80].map((v,i) => <div key={i} className="flex-1 rounded-sm" style={{ height: `${v}%`, background: i===6 ? 'rgba(255,255,255,0.8)' : `rgba(255,255,255,${0.2+v/200})` }}/>)}
-              </div>
-            </div>
-            {/* Puntos */}
-            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-yellow-300" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +25%</span>
-              </div>
-              <p className="font-black text-lg leading-none">125K</p>
-              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Puntos</p>
-              <svg viewBox="0 0 50 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
-                <polygon points="0,14 10,12 20,11 30,8 40,5 50,2 50,16 0,16" fill="rgba(255,255,255,0.08)"/>
-                <polyline points="0,14 10,12 20,11 30,8 40,5 50,2" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </div>
-            {/* Conversión */}
-            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-green-300" strokeWidth="2.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/><path d="M16 11l2 2 4-4"/></svg>
-                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +5%</span>
-              </div>
-              <p className="font-black text-lg leading-none">25%</p>
-              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Conversión</p>
-              <svg viewBox="0 0 30 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
-                <circle cx="15" cy="8" r="7" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="3"/>
-                <circle cx="15" cy="8" r="7" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="3" strokeDasharray="11 33" strokeDashoffset="11" strokeLinecap="round"/>
-              </svg>
-            </div>
-            {/* NPS */}
-            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-blue-200" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +10</span>
-              </div>
-              <p className="font-black text-lg leading-none">+40</p>
-              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">NPS</p>
-              <svg viewBox="0 0 50 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
-                <path d="M2 14 A22 22 0 0 1 48 14" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2.5" strokeLinecap="round"/>
-                <path d="M2 14 A22 22 0 0 1 48 14" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="46" strokeDashoffset="12"/>
-              </svg>
-            </div>
+            ))}
           </div>
         </div>
 
