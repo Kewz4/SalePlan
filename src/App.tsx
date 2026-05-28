@@ -406,6 +406,10 @@ export default function App() {
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const [otpError, setOtpError] = useState(false);
   const imagePreloadRef = useRef<HTMLImageElement[]>([]);
+  const plusScrollRef = useRef<HTMLDivElement>(null);
+  const [termsChecked, setTermsChecked] = useState(false);
+  const [privacyChecked, setPrivacyChecked] = useState(false);
+  const [legalModal, setLegalModal] = useState<'terms' | 'privacy' | null>(null);
 
   React.useEffect(() => {
     // Preload all images eagerly so browser caches them before first use
@@ -484,6 +488,12 @@ export default function App() {
     window.addEventListener('offline', goOffline);
     return () => { window.removeEventListener('online', goOnline); window.removeEventListener('offline', goOffline); };
   }, []);
+
+  React.useEffect(() => {
+    if (currentScreen === 'USER_PLUS' && plusScrollRef.current) {
+      plusScrollRef.current.scrollTop = 0;
+    }
+  }, [currentScreen]);
 
   const haptic = (pattern: number | number[] = 10) => {
     if ('vibrate' in navigator) (navigator as any).vibrate(pattern);
@@ -945,23 +955,90 @@ export default function App() {
                     </div>
 
                     <div className="space-y-3 pt-2">
-                      {[
-                        { id: 'terms', label: 'Acepto los', link: 'Términos y Condiciones' },
-                        { id: 'privacy', label: 'Acepto la', link: 'Política de Privacidad' },
-                      ].map(item => (
-                        <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
-                          <div className="relative mt-0.5 shrink-0">
-                            <input type="checkbox" className="peer sr-only" id={item.id} />
-                            <div className="w-5 h-5 rounded-md border-2 border-gray-300 peer-checked:bg-[#253884] peer-checked:border-[#253884] transition-[background-color,border-color] flex items-center justify-center">
-                              <svg viewBox="0 0 12 10" className="w-3 h-3 fill-none stroke-white stroke-2 opacity-0 peer-checked:opacity-100 hidden peer-checked:block"><polyline points="1,5 4,8 11,1"/></svg>
-                            </div>
-                          </div>
+                      {([
+                        { key: 'terms' as const, checked: termsChecked, set: setTermsChecked, label: 'Acepto los', link: 'Términos y Condiciones' },
+                        { key: 'privacy' as const, checked: privacyChecked, set: setPrivacyChecked, label: 'Acepto la', link: 'Política de Privacidad' },
+                      ]).map(item => (
+                        <div key={item.key} className="flex items-start gap-3">
+                          <button
+                            type="button"
+                            onClick={() => item.set(v => !v)}
+                            className={`w-5 h-5 rounded-md border-2 shrink-0 mt-0.5 flex items-center justify-center transition-[background-color,border-color] active:scale-[0.95] ${item.checked ? 'bg-[#253884] border-[#253884]' : 'border-gray-300 bg-white'}`}
+                          >
+                            {item.checked && (
+                              <svg viewBox="0 0 12 10" className="w-3 h-3" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="1,5 4.5,8.5 11,1" />
+                              </svg>
+                            )}
+                          </button>
                           <span className="text-sm text-gray-500 font-medium leading-snug">
-                            {item.label} <button type="button" className="text-[#253884] font-bold underline underline-offset-2">{item.link}</button>
+                            {item.label}{' '}
+                            <button type="button" onClick={() => setLegalModal(item.key)} className="text-[#253884] font-bold underline underline-offset-2">{item.link}</button>
                           </span>
-                        </label>
+                        </div>
                       ))}
                     </div>
+
+                    {/* Legal modal */}
+                    <AnimatePresence>
+                      {legalModal && (
+                        <>
+                          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 z-[200]" onClick={() => setLegalModal(null)} />
+                          <motion.div
+                            initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+                            transition={{ type: 'spring', damping: 30, stiffness: 280 }}
+                            className="fixed bottom-0 left-0 right-0 max-w-md mx-auto z-[200] bg-white rounded-t-3xl overflow-hidden"
+                            style={{ maxHeight: '80dvh' }}
+                            onClick={e => e.stopPropagation()}
+                          >
+                            <div className="bg-[#253884] px-5 pt-5 pb-4 flex items-center justify-between">
+                              <h3 className="text-white font-heading text-xl tracking-tight">{legalModal === 'terms' ? 'Términos y Condiciones' : 'Política de Privacidad'}</h3>
+                              <button onClick={() => setLegalModal(null)} className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"><X size={14} strokeWidth={2.5} className="text-white" /></button>
+                            </div>
+                            <div className="px-5 py-5 overflow-y-auto space-y-4 text-sm text-gray-600 font-medium leading-relaxed" style={{ maxHeight: 'calc(80dvh - 72px)' }}>
+                              {legalModal === 'terms' ? (
+                                <>
+                                  <p className="font-black text-[#253884] text-base">1. Aceptación de los Términos</p>
+                                  <p>Al registrarte en SalePlan, aceptas estos Términos y Condiciones. SalePlan es una plataforma digital que conecta usuarios con comercios locales mediante experiencias, sellos y recompensas.</p>
+                                  <p className="font-black text-[#253884] text-base">2. Uso de la Plataforma</p>
+                                  <p>El uso de SalePlan es personal e intransferible. Queda prohibido el uso automatizado, la reventa de puntos o sellos, o cualquier actividad que comprometa la integridad de la plataforma.</p>
+                                  <p className="font-black text-[#253884] text-base">3. Sellos y Recompensas</p>
+                                  <p>Los sellos digitales se otorgan al completar experiencias verificadas en comercios aliados. Los puntos y sellos no tienen valor monetario y no son canjeables por dinero en efectivo. La vigencia de las recompensas es determinada por cada comercio aliado.</p>
+                                  <p className="font-black text-[#253884] text-base">4. SalePlan+</p>
+                                  <p>La membresía SalePlan+ es una suscripción mensual renovable automáticamente. Puedes cancelarla en cualquier momento desde tu perfil. No se realizan reembolsos por períodos ya iniciados.</p>
+                                  <p className="font-black text-[#253884] text-base">5. Responsabilidad</p>
+                                  <p>SalePlan actúa como intermediario entre usuarios y comercios. No somos responsables por la calidad de productos o servicios de los comercios aliados, ni por cambios en sus ofertas o disponibilidad.</p>
+                                  <p className="font-black text-[#253884] text-base">6. Modificaciones</p>
+                                  <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Los cambios sustanciales serán notificados con al menos 7 días de anticipación.</p>
+                                  <p className="font-black text-[#253884] text-base">7. Cuenta de Usuario</p>
+                                  <p>Eres responsable de mantener la confidencialidad de tu cuenta. Cualquier actividad realizada bajo tu cuenta es tu responsabilidad. Notifícanos inmediatamente si sospechas uso no autorizado.</p>
+                                </>
+                              ) : (
+                                <>
+                                  <p className="font-black text-[#253884] text-base">1. Datos que Recopilamos</p>
+                                  <p>Recopilamos: nombre, correo electrónico, número de teléfono, avatar seleccionado, historial de visitas a comercios, sellos obtenidos, y preferencias de experiencias.</p>
+                                  <p className="font-black text-[#253884] text-base">2. Uso de tus Datos</p>
+                                  <p>Utilizamos tus datos para personalizar tu experiencia, enviarte notificaciones relevantes, calcular recompensas, y permitir que comercios aliados conozcan estadísticas de visita (sin información personal identificable compartida sin tu consentimiento).</p>
+                                  <p className="font-black text-[#253884] text-base">3. Compartición de Datos</p>
+                                  <p>No vendemos tus datos personales. Los comercios aliados pueden acceder a estadísticas agregadas de visitas. Tu nombre y contacto solo se comparten con un comercio si expresamente lo autorizas.</p>
+                                  <p className="font-black text-[#253884] text-base">4. Verificación de Teléfono</p>
+                                  <p>Tu número de teléfono se usa exclusivamente para verificar tu identidad mediante OTP y para comunicaciones de seguridad. No lo usamos para fines publicitarios de terceros.</p>
+                                  <p className="font-black text-[#253884] text-base">5. Seguridad</p>
+                                  <p>Implementamos medidas técnicas y organizativas para proteger tus datos. Tus contraseñas se almacenan de forma encriptada. Sin embargo, ningún sistema es completamente infalible.</p>
+                                  <p className="font-black text-[#253884] text-base">6. Tus Derechos</p>
+                                  <p>Tienes derecho a acceder, rectificar o eliminar tus datos personales. Para ejercer estos derechos, contáctanos en privacidad@saleplan.app. Procesaremos tu solicitud en un máximo de 30 días hábiles.</p>
+                                  <p className="font-black text-[#253884] text-base">7. Retención de Datos</p>
+                                  <p>Conservamos tus datos mientras tu cuenta esté activa. Al eliminar tu cuenta, tus datos personales son anonimizados en 30 días, excepto los requeridos por obligaciones legales.</p>
+                                </>
+                              )}
+                              <button onClick={() => { legalModal === 'terms' ? setTermsChecked(true) : setPrivacyChecked(true); setLegalModal(null); }} className="w-full py-3.5 bg-[#253884] text-white font-bold text-sm rounded-2xl active:scale-[0.97] transition-transform mt-2">
+                                Acepto y Cierro
+                              </button>
+                            </div>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
 
                     <button
                       onClick={() => { if (!registerPhone) { setOtpError(true); return; } setOtpError(false); setOtpDigits(['','','','','','']); setRegisterStep('otp'); }}
@@ -2577,45 +2654,82 @@ export default function App() {
             </button>
           </div>
 
-          {/* Stats grid — 3 cards with trend arrows + sparklines */}
-          <div className="grid grid-cols-3 gap-2.5 relative z-10 mb-4">
-            {[
-              { label: 'Escaneos', value: '142', delta: '+18%', icon: <ScanLine size={13} strokeWidth={2} className="text-blue-300" />, points: '0,18 10,14 20,16 30,10 40,8 50,4 60,2', deltaUp: true },
-              { label: 'Nuevos', value: '18', delta: '+5', icon: <UserPlus size={13} strokeWidth={2} className="text-green-300" />, points: '0,20 10,17 20,15 30,12 40,10 50,6 60,3', deltaUp: true },
-              { label: 'Sellos', value: '89', delta: '+12%', icon: <Zap size={13} strokeWidth={2} className="text-yellow-300" />, points: '0,20 10,16 20,18 30,12 40,9 50,5 60,2', deltaUp: true },
-            ].map(stat => (
-              <div key={stat.label} className="bg-white/10 border border-white/15 text-white p-3 rounded-2xl backdrop-blur-sm flex flex-col">
-                <div className="flex items-center justify-between mb-1">
-                  {stat.icon}
-                  <span className={`text-[8px] font-black flex items-center gap-0.5 ${stat.deltaUp ? 'text-green-300' : 'text-red-300'}`}>
-                    <TrendingUp size={8} strokeWidth={2.5} /> {stat.delta}
-                  </span>
-                </div>
-                <p className="font-black text-xl leading-none">{stat.value}</p>
-                <p className="font-bold text-[7px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">{stat.label}</p>
-                <svg viewBox="0 0 60 22" className="w-full h-5 mt-auto" preserveAspectRatio="none">
-                  <polyline points={stat.points} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polyline points={`${stat.points} 60,22 0,22`} fill="rgba(255,255,255,0.08)" stroke="none"/>
-                </svg>
+          {/* Analytics metric cards — 2×3 grid, same style as Analytics tab */}
+          <div className="grid grid-cols-3 gap-2 relative z-10 mb-2">
+            {/* Usuarios Activos */}
+            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <Users size={11} strokeWidth={2} className="text-blue-200" />
+                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +25%</span>
               </div>
-            ))}
-          </div>
-
-          {/* Revenue impact bar */}
-          <div className="relative z-10 bg-white/10 border border-white/15 rounded-2xl px-4 py-3 flex items-center justify-between backdrop-blur-sm">
-            <div>
-              <p className="font-bold text-[9px] uppercase text-blue-300 tracking-wider">Impacto Estimado · Mayo</p>
-              <div className="flex items-center gap-2">
-                <p className="font-black text-lg text-white">$3,240</p>
-                <span className="bg-green-400/20 border border-green-400/30 text-green-300 text-[9px] font-black px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                  <TrendingUp size={8} strokeWidth={2.5} /> +22%
-                </span>
+              <p className="font-black text-lg leading-none">1,250</p>
+              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Usuarios Activos</p>
+              <svg viewBox="0 0 50 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
+                <polyline points="0,14 10,11 20,12 30,7 40,4 50,1" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            {/* Retención */}
+            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-blue-200" strokeWidth="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +8%</span>
+              </div>
+              <p className="font-black text-lg leading-none">65%</p>
+              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Retención</p>
+              <div className="flex items-end gap-0.5 h-3 mt-auto">
+                {[40,55,50,65,60,72,65].map((v,i) => <div key={i} className="flex-1 rounded-sm" style={{ height: `${v}%`, background: i===6 ? 'rgba(255,255,255,0.8)' : `rgba(255,255,255,${0.2+v/200})` }}/>)}
               </div>
             </div>
-            <div className="flex items-end gap-0.5 h-10">
-              {[30, 55, 40, 70, 50, 85, 65].map((h, i) => (
-                <div key={i} className="w-2 rounded-sm" style={{ height: `${h}%`, background: `rgba(255,255,255,${0.3 + (h/100)*0.4})` }} />
-              ))}
+            {/* Experiencias */}
+            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <Calendar size={11} strokeWidth={2} className="text-blue-200" />
+                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +28%</span>
+              </div>
+              <p className="font-black text-lg leading-none">320</p>
+              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Experiencias</p>
+              <div className="flex items-end gap-0.5 h-3 mt-auto">
+                {[30,42,38,55,60,70,80].map((v,i) => <div key={i} className="flex-1 rounded-sm" style={{ height: `${v}%`, background: i===6 ? 'rgba(255,255,255,0.8)' : `rgba(255,255,255,${0.2+v/200})` }}/>)}
+              </div>
+            </div>
+            {/* Puntos */}
+            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-yellow-300" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +25%</span>
+              </div>
+              <p className="font-black text-lg leading-none">125K</p>
+              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Puntos</p>
+              <svg viewBox="0 0 50 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
+                <polygon points="0,14 10,12 20,11 30,8 40,5 50,2 50,16 0,16" fill="rgba(255,255,255,0.08)"/>
+                <polyline points="0,14 10,12 20,11 30,8 40,5 50,2" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            {/* Conversión */}
+            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-green-300" strokeWidth="2.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/><path d="M16 11l2 2 4-4"/></svg>
+                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +5%</span>
+              </div>
+              <p className="font-black text-lg leading-none">25%</p>
+              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">Conversión</p>
+              <svg viewBox="0 0 30 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
+                <circle cx="15" cy="8" r="7" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="3"/>
+                <circle cx="15" cy="8" r="7" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="3" strokeDasharray="11 33" strokeDashoffset="11" strokeLinecap="round"/>
+              </svg>
+            </div>
+            {/* NPS */}
+            <div className="bg-white/10 border border-white/15 text-white p-2.5 rounded-2xl backdrop-blur-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-blue-200" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                <span className="text-[7px] font-black text-green-300 flex items-center gap-0.5"><TrendingUp size={7} strokeWidth={2.5} /> +10</span>
+              </div>
+              <p className="font-black text-lg leading-none">+40</p>
+              <p className="font-bold text-[6px] uppercase tracking-wider text-blue-200 mt-0.5 leading-tight mb-1">NPS</p>
+              <svg viewBox="0 0 50 16" className="w-full h-3 mt-auto" preserveAspectRatio="none">
+                <path d="M2 14 A22 22 0 0 1 48 14" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M2 14 A22 22 0 0 1 48 14" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="46" strokeDashoffset="12"/>
+              </svg>
             </div>
           </div>
         </div>
@@ -3757,7 +3871,7 @@ export default function App() {
 
   const renderUserPlus = () => (
     <Layout bgClass="bg-gray-50">
-      <div className="relative flex-1 overflow-y-auto no-scrollbar pb-24">
+      <div ref={plusScrollRef} className="relative flex-1 overflow-y-auto no-scrollbar pb-24">
         <button onClick={() => navigateTo(prevScreen === 'USER_PLUS' || prevScreen === 'USER_PAYMENT' ? 'USER_HOME' : prevScreen)} style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.5rem)', zIndex: 30 }} className="absolute left-6 w-10 h-10 bg-white/20 rounded-full flex items-center justify-center active:scale-[0.97] transition-transform">
           <ChevronLeft size={20} strokeWidth={2} className="text-white" />
         </button>
