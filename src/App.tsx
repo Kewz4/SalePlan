@@ -490,8 +490,12 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    if (currentScreen === 'USER_PLUS' && plusScrollRef.current) {
-      plusScrollRef.current.scrollTop = 0;
+    if (currentScreen === 'USER_PLUS') {
+      if (plusScrollRef.current) plusScrollRef.current.scrollTop = 0;
+      const raf = requestAnimationFrame(() => {
+        if (plusScrollRef.current) plusScrollRef.current.scrollTop = 0;
+      });
+      return () => cancelAnimationFrame(raf);
     }
   }, [currentScreen]);
 
